@@ -1,0 +1,26 @@
+{{!
+Display the lock/unlock status for the current document.
+
+Expected data:
+* canupdate - true if the current user can update the lock status
+* islocked - true if the document is currently locked
+* url - if the user can update the lock status, the URL to do that update
+}}
+
+{{#islocked}}
+    {{#canupdate}}
+        <a href="{{{url}}}">
+            {{#pix}}t/locked, core, {{/pix}}{{#str}}lockedunlock, mod_collabora{{/str}}
+        </a>
+    {{/canupdate}}
+    {{^canupdate}}
+        {{#pix}}t/locked, core, {{/pix}}{{#str}}locked, mod_collabora{{/str}}
+    {{/canupdate}}
+{{/islocked}}
+{{^islocked}}
+    {{#canupdate}}
+        <a href="{{{url}}}">
+            {{#pix}}t/unlocked, core, {{/pix}}{{#str}}unlockedlock, mod_collabora{{/str}}
+        </a>
+    {{/canupdate}}
+{{/islocked}}
