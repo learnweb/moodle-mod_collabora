@@ -30,7 +30,7 @@ if ($hassiteconfig) {
 
     $settings->add(new admin_setting_configselect('mod_collabora/defaultformat',
                                                   new lang_string('defaultformat', 'mod_collabora'), '',
-                                                  \mod_collabora\collabora::FORMAT_UPLOAD,
+                                                  \mod_collabora\collabora::FORMAT_WORDPROCESSOR,
                                                   \mod_collabora\collabora::format_menu()));
 
     $settings->add(new admin_setting_configselect('mod_collabora/defaultdisplay',
