@@ -35,7 +35,7 @@ matrix:
 
 env:
   global:
-   - IGNORE_PATHS=thirdparty BEHAT=yes
+   - IGNORE_PATHS="thirdparty,/^classes\/event\/document_(un)?locked\.php/" BEHAT=yes
   matrix:
    - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
    - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
