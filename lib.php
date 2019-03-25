@@ -121,6 +121,10 @@ function collabora_get_coursemodule_info($coursemodule) {
     if ($coursemodule->showdescription) {
         $info->content = format_module_intro('collabora', $collabora, $coursemodule->id, false);
     }
+    $instance = new \mod_collabora\collabora(...);
+    if ($specificicon = $instance->get_module_icon()) {
+        $info->icon = $specificicon;
+    }
     return $info;
 }
 

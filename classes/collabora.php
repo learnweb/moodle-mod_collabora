@@ -364,4 +364,17 @@ class collabora {
         ];
         return $OUTPUT->render_from_template('mod_collabora/lockicon', $data);
     }
+
+    /**
+     * Choose an appropriate filetype icon based on the mimetype.
+     * @return string|false Icon URL to be used in `cached_cm_info` or false if there is no appropriate icon.
+     */
+    public function get_filetype_icon() {
+        global $OUTPUT;
+        $mimetype = $this->get_file_mimetype();
+        switch ($mimetype) {
+
+        }
+        return false;
+    }
 }
