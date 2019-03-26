@@ -369,11 +369,22 @@ class collabora {
      * Choose an appropriate filetype icon based on the mimetype.
      * @return string|false Icon URL to be used in `cached_cm_info` or false if there is no appropriate icon.
      */
-    public function get_filetype_icon() {
-        global $OUTPUT;
+    public function get_module_icon() {
         $mimetype = $this->get_file_mimetype();
         switch ($mimetype) {
-
+            case 'application/vnd.oasis.opendocument.text': // ODT.
+            case 'application/msword': // DOC.
+            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': // DOCX.
+            case 'text/rtf': // RTF.
+                return 'mod/collabora/odt';
+            case 'application/vnd.oasis.opendocument.spreadsheet': // ODS.
+            case 'application/vnd.ms-excel': // XLS.
+            case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': // XLSX.
+                return 'mod/collabora/ods';
+            case 'application/vnd.oasis.opendocument.presentation': // ODP.
+            case 'application/vnd.ms-powerpoint': // PPT.
+            case 'application/vnd.openxmlformats-officedocument.presentationml.presentation': // PPTX.
+                return 'mod/collabora/odp';
         }
         return false;
     }

@@ -107,7 +107,7 @@ function collabora_delete_instance($id) {
 }
 
 function collabora_get_coursemodule_info($coursemodule) {
-    global $DB;
+    global $DB, $USER;
     if (!$collabora = $DB->get_record('collabora', ['id' => $coursemodule->instance])) {
         return null;
     }
@@ -121,7 +121,8 @@ function collabora_get_coursemodule_info($coursemodule) {
     if ($coursemodule->showdescription) {
         $info->content = format_module_intro('collabora', $collabora, $coursemodule->id, false);
     }
-    $instance = new \mod_collabora\collabora(...);
+
+    $instance = new \mod_collabora\collabora($collabora, context_module::instance($coursemodule->id), 0, $USER->id);
     if ($specificicon = $instance->get_module_icon()) {
         $info->icon = $specificicon;
     }
