@@ -76,8 +76,8 @@ class collabora {
         return [
             '.txt', '.rtf',
             '.doc', '.docx', '.odt',
-            '.xls', '.xlsx', '.ots',
-            '.ppt', '.pptx', '.otp',
+            '.xls', '.xlsx', '.ods',
+            '.ppt', '.pptx', '.odp',
             '.odg',
         ];
     }
