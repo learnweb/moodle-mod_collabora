@@ -340,7 +340,7 @@ class collabora {
         $fileid = $this->get_file_id();
         $token = $this->get_user_token();
 
-        return $collaboraurl.'WOPISrc='.$callbackurl->out().'/wopi/files/'.$fileid.'&access_token='.$token;
+        return $collaboraurl.'WOPISrc='.$callbackurl->out().'/wopi/files/'.$fileid.'&access_token='.$token.'&closebutton=1';
     }
 
     public function get_lock_icon() {
