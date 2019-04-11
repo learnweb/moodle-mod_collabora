@@ -17,11 +17,8 @@ This plugin is originaly written by Davo Smith from Synergy Learning in 2019 and
 This plugin should go into mod/collabora. Upon installation, several default settings need to be defined for this activity (see Settings).
 
 ## Settings of the activity module
-- the Collabora URL (the URL of the Collabora Online Server URL)
+- the Collabora URL (the URL of the Collabora Online Server)
 - the default format (File upload, Specified text, Spreadsheet, Wordprocessor document or Presentation)
 - the default display (current tab or new tab)
 - the default display name
 - the default display description
-
-## Screenshots
-to be continued
