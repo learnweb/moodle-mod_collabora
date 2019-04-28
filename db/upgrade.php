@@ -23,6 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-function xmldb_mod_collabora_upgrade($oldversion) {
+function xmldb_collabora_upgrade($oldversion) {
     return true;
 }
