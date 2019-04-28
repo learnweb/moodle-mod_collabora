@@ -6,7 +6,7 @@ Changes
 
 ### v3.7-r1
 
-* Show custom course module icon that depends on the type of its file
+* 2019-04-28 - Show custom course module icon that depends on the type of its file
 
 ### v3.5-r1
 
