@@ -27,7 +27,7 @@ global $CFG;
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
 
 class mod_collabora_mod_form extends moodleform_mod {
-    public function get_filemanager_opts() {
+    public static function get_filemanager_opts() {
         return [
             'subdirs' => 0,
             'maxbytes' => 0,

@@ -23,6 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+require_once(__DIR__.'/mod_form.php');
 
 function collabora_supports($feature) {
     switch ($feature) {
@@ -66,7 +67,7 @@ function collabora_add_instance($collabora, $mform) {
 
     // Save the 'initial file'.
     $context = context_module::instance($collabora->coursemodule);
-    file_postupdate_standard_filemanager($collabora, 'initialfile', $mform->get_filemanager_opts(),
+    file_postupdate_standard_filemanager($collabora, 'initialfile', mod_collabora_mod_form::get_filemanager_opts(),
                                          $context, 'mod_collabora', \mod_collabora\collabora::FILEAREA_INITIAL, 0);
 
     return $collabora->id;
