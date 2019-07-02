@@ -40,3 +40,4 @@ This plugin should go into mod/collabora. Upon installation, several default set
 ## View of a presentation document
 ![collabora_presentation](https://user-images.githubusercontent.com/2102425/55972302-8e564380-5c83-11e9-9152-b7ea6edeb5a9.png)
 
+If you want to test the mod-Collabora plugin on a local Moodle installation and a local Collabora Online server via docker then you will find the [Collabora-Config.md](https://github.com/learnweb/moodle-mod_collabora/blob/master/Collabora-Config.md) file for help.
