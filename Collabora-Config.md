@@ -19,7 +19,7 @@ systemctl restart apache2.service
 
 *Here are the example settings for a local test setup:*
 
-configure the local Moodle installation with a Apache server via https:
+Alternative 1: configure the local Moodle installation with a Apache server *via https*:
 
 add in the Moodle config file ~/moodle/config.php
 
@@ -27,7 +27,7 @@ add in the Moodle config file ~/moodle/config.php
 wwwroot: https://my-local-ipaddress/moodle
 ```
 
-and in the plugin settings at `Site administration ► Plugins ► Activity modules ► collabora` add:
+and in the plugin settings at `Site administration ► Plugins ► Activity modules ► Collaborative document` add:
 
 ```
 url: https://localhost:9980/
@@ -40,7 +40,7 @@ docker run -t -d -p 127.0.0.1:9980:9980 -p [::1]:9980:9980 -e 'domain=my\\.-loca
 {code}
 ```
 
-configure the local Moodle installation with a Apache server via http:
+Alternative 2: configure the local Moodle installation with a Apache server *via http*:
 
 add in the Moodle config file ~/moodle/config.php
 
@@ -48,7 +48,7 @@ add in the Moodle config file ~/moodle/config.php
 wwwroot: http://my-local-ipaddress/moodle
 ```
 
-and in the plugin settings at `Site administration ► Plugins ► Activity modules ► collabora` add:
+and in the plugin settings at `Site administration ► Plugins ► Activity modules ► Collaborative document` add:
 
 ```
 url: http://localhost:9980/
@@ -60,4 +60,4 @@ start the local Collabora Online Server (CODE) installation with http via docker
 docker run -t -d -p 127.0.0.1:9980:9980 -p [::1]:9980:9980 -e 'domain=my\\.-local\\.-ip\\.address' -e "username=admin" -e "password=secret" --restart always --cap-add MKNOD -e "extra_params=--o:ssl.enable=false" --name=code collabora/code
 ```
 
-Please note: replace the string `my-local-ipaddress` with your local IP addresse!
+Please note: replace the string `my-local-ipaddress` with your local IP address! Each `.` of the address must be accompanied by the double-backslash `\\`, thus avoiding misinterpretations.
