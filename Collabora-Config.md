@@ -85,25 +85,25 @@ cd moodle-docker
 
 Quick start ([https://github.com/moodlehq/moodle-docker/blob/master/README.md])
 
-Set up path to Moodle code
+Set up path to Moodle code:
 export MOODLE_DOCKER_WWWROOT=/path/to/moodle/code
 
-Choose a db server (Currently supported: pgsql, mariadb, mysql, mssql, oracle)
+Choose a db server (Currently supported: pgsql, mariadb, mysql, mssql, oracle):
 export MOODLE_DOCKER_DB=pgsql
 
-Set host
+Set host:
 export MOODLE_DOCKER_WEB_HOST=my.ip.address
 
-Ensure customized config.php for the Docker containers is in place
+Ensure customized config.php for the Docker containers is in place:
 cp config.docker-template.php $MOODLE_DOCKER_WWWROOT/config.php
 
-Start up containers
+Start up containers:
 bin/moodle-docker-compose up -d
 
-Stop containers
+Stop containers:
 bin/moodle-docker-compose stop
 
-Restart containers
+Restart containers:
 bin/moodle-docker-compose start
 
 *Admin settings in moodle*
