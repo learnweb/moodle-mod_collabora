@@ -1,4 +1,4 @@
-The icons used in this plugin are made available to you under the following licenses.
+The icons used in this plugin are made available to you according to the following conditions.
 
 | File     | License/Origin |
 | -------- | ------- |
