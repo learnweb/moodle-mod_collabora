@@ -65,3 +65,9 @@ $string['upload'] = 'File upload';
 $string['unlockedlock'] = 'Document currently unlocked, click here to lock it and prevent editing';
 $string['width'] = 'Width (0 for automatic)';
 $string['wordprocessor'] = 'Wordprocessor document';
+// Privacy API.
+$string['privacy:metadata:core_files'] = 'mod_collabora stores the collaborative files.';
+$string['privacy:metadata:collabora_extsystem'] = 'File infos and content are shared with Collabora to allow collaborative work';
+$string['privacy:metadata:collabora_extsystem:username'] = 'The Username';
+$string['privacy:metadata:collabora_extsystem:lastmodified'] = 'The time when the file was last modified';
+$string['privacy:metadata:collabora_extsystem:filecontent'] = 'The content of the file';
