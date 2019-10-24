@@ -18,7 +18,7 @@
  * Privacy class for requesting user data.
  *
  * @package    collabora
- * @copyright  2019 Benjamin Ellis, Synergy Learning
+ * @copyright  2019 Justus Dieckmann, WWU; based on code by Benjamin Ellis, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,7 +37,7 @@ use \core_privacy\local\request\contextlist;
  * Privacy class for requesting user data.
  *
  * @package    collabora
- * @copyright  2019 Justus Dieckmann WWU
+ * @copyright  2019 Justus Dieckmann, WWU; based on code by Benjamin Ellis, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
