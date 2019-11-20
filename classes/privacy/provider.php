@@ -29,9 +29,10 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use \core_privacy\local\metadata\collection;
-use core_privacy\local\request\approved_contextlist;
-use core_privacy\local\request\context;
+use \core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\contextlist;
+use core_privacy\local\request\userlist;
 
 /**
  * Privacy class for requesting user data.
@@ -42,7 +43,8 @@ use \core_privacy\local\request\contextlist;
  */
 class provider implements
         \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\plugin\provider {
+        \core_privacy\local\request\plugin\provider,
+        \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Return meta data about this plugin.
@@ -68,6 +70,7 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
         // We don't delete files, because they was submitted as a group. To avoid confusion, we don't export them either.
+        return new contextlist();
     }
 
     /**
@@ -94,6 +97,24 @@ class provider implements
      * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
+        // We don't delete files, because they was submitted as a group. To avoid confusion, we don't export them either.
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+        // We don't delete files, because they was submitted as a group. To avoid confusion, we don't export them either.
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
         // We don't delete files, because they was submitted as a group. To avoid confusion, we don't export them either.
     }
 }
