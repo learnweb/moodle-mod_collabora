@@ -4,6 +4,11 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.8-r1
+
+* 2019-11-21 - Fix part of Privacy API implementation
+* 2019-10-14 - Implement Privacy API
+
 ### v3.7-r1
 
 * 2019-04-28 - Show custom course module icon that depends on the type of its file
