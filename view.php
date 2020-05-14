@@ -112,7 +112,7 @@ if ($groupid >= 0) {
 
     $viewurl = $collabora->get_view_url();
     echo '<iframe src="'.$viewurl.'" class="collabora-iframe" width="'.$width.'" height="'.$height.
-        '" allow="fullscreen"></iframe>';
+        '" allow="fullscreen" allowfullscreen="true"></iframe>';
 } else {
     echo '<div class="alert alert-warning">'.get_string('nogroupaccess', 'mod_collabora').'</div>';
 }
