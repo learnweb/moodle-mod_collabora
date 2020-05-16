@@ -6,8 +6,8 @@ Changes
 
 ### v3.8-r2
 
-* 2020-05-16 - Fix fullscreen for firefox (PR Nr. 12)
-* 2020-05-16 - Added a check in the validation method for the update instance in mod_form.php (PR Nr. 13)
+* 2020-05-16 - Fix fullscreen for firefox (PR #12)
+* 2020-05-16 - Added a check in the validation method for the update instance in mod_form.php (PR #13)
 * Thanks to Andreas Grabs
 
 ### v3.8-r1
