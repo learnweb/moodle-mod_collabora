@@ -115,18 +115,20 @@ class mod_collabora_mod_form extends moodleform_mod {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if ($data['format'] === \mod_collabora\collabora::FORMAT_UPLOAD) {
-            if (empty($data['initialfile_filemanager'])) {
-                $errors['initialfile_filemanager'] = get_string('requiredforupload', 'mod_collabora');
-            } else {
-                $info = file_get_draft_area_info($data['initialfile_filemanager']);
-                if (!$info['filecount']) {
+        if (!$this->_instance) {
+            if ($data['format'] === \mod_collabora\collabora::FORMAT_UPLOAD) {
+                if (empty($data['initialfile_filemanager'])) {
                     $errors['initialfile_filemanager'] = get_string('requiredforupload', 'mod_collabora');
+                } else {
+                    $info = file_get_draft_area_info($data['initialfile_filemanager']);
+                    if (!$info['filecount']) {
+                        $errors['initialfile_filemanager'] = get_string('requiredforupload', 'mod_collabora');
+                    }
                 }
-            }
-        } else if ($data['format'] === \mod_collabora\collabora::FORMAT_TEXT) {
-            if (!isset($data['initialtext']) || !trim($data['initialtext'])) {
-                $errors['initialtext'] = get_string('requiredfortext', 'mod_collabora');
+            } elseif ($data['format'] === \mod_collabora\collabora::FORMAT_TEXT) {
+                if (!isset($data['initialtext']) || !trim($data['initialtext'])) {
+                    $errors['initialtext'] = get_string('requiredfortext', 'mod_collabora');
+                }
             }
         }
         return $errors;
