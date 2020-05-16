@@ -10,8 +10,8 @@ This plugin is originally written by Davo Smith from Synergy Learning in 2019 an
 - Collabora Online Server (Version 4.0.1 or later) and Moodle Server (Version 3.5 or later) with PHP 7.0 or later.
 
 ## Tested Versions
-- Collabora Online Server: 4.0.3
-- Moodle: 3.5.5
+- Collabora Online Server: 4.2.3
+- Moodle: 3.7.5
 
 ## Installation
 This plugin should go into mod/collabora. Upon installation, several default settings need to be defined for this activity (see Settings).
