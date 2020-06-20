@@ -4,7 +4,7 @@
 
 This activity module enables Moodle users to create documents (simple text files, word, spreadsheet and presentation documents or upload a document) via a selfhosted Collabora Online Server i.e. [CODE](https://www.collaboraoffice.com/code/) using the so called WOPI protocol and work collaboratively on this documents.
 
-This plugin is originally written by Davo Smith from Synergy Learning in 2019 and maintained by [Jan Dageförde](https://github.com/Dagefoerde) from the University of Münster and [Michael Wuttke](https://github.com/moodlebeuth) from the Beuth University of Applied Sciences in Berlin.
+This plugin is originally written by [Davo Smith](https://github.com/davosmith) from Synergy Learning in 2019 and maintained by [Jan Dageförde](https://github.com/Dagefoerde) from the University of Münster and [Michael Wuttke](https://github.com/moodlebeuth) from the Beuth University of Applied Sciences in Berlin.
 
 ## Requirements
 - Collabora Online Server (Version 4.0.1 or later) and Moodle Server (Version 3.5 or later) with PHP 7.0 or later.
