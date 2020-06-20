@@ -7,7 +7,7 @@ Changes
 ### v3.9-r1
 
 * 2020-06-20 - updated version.php & CHANGES.md
-* 2020-06-19 - updated travis (#14) with Moodle 3.9
+* 2020-06-19 - updated travis (PR #14) for Moodle 3.9
 
 ### v3.8-r2
 
