@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.9-r1
+
+* 2020-06-19 - updated travis (#14) with Moodle 3.9
+
 ### v3.8-r2
 
 * 2020-05-16 - Fix fullscreen for firefox (PR #12)
