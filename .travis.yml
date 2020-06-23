@@ -13,44 +13,9 @@ services:
   - mysql
 
 php:
-  - 7.0
-  - 7.1
+  - 7.2
   - 7.3
-
-matrix:
- allow_failures:
-#  - env: DB=pgsql MOODLE_BRANCH=master
-#  - env: DB=mysqli MOODLE_BRANCH=master
- exclude:
-  - php: 7.3
-    env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
-  - php: 7.3
-    env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
-  - php: 7.0
-    env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
-  - php: 7.0
-    env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
-  - php: 7.0
-    env: DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
-  - php: 7.0
-    env: DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
-  # - php: 7.0
-  #   env: DB=pgsql MOODLE_BRANCH=MOODLE_39_STABLE
-  # - php: 7.0
-  #   env: DB=mysqli MOODLE_BRANCH=MOODLE_39_STABLE
-  # - php: 7.1
-  #   env: DB=pgsql MOODLE_BRANCH=MOODLE_39_STABLE
-  # - php: 7.1
-  #   env: DB=mysqli MOODLE_BRANCH=MOODLE_39_STABLE
-  - php: 7.0
-    env: DB=pgsql MOODLE_BRANCH=master
-  - php: 7.0
-    env: DB=mysqli MOODLE_BRANCH=master
-  - php: 7.1
-    env: DB=pgsql MOODLE_BRANCH=master
-  - php: 7.1
-    env: DB=mysqli MOODLE_BRANCH=master
- fast_finish: true
+  - 7.4
 
 env:
   global:
@@ -101,6 +66,11 @@ jobs:
       script:
       - moodle-plugin-ci phpunit --coverage-clover
       - moodle-plugin-ci behat
+  exclude:
+    - php: 7.3
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+    - php: 7.3
+      env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
 
 # Unit tests and behat tests against full matrix.
 install:
