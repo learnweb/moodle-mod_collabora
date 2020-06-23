@@ -125,7 +125,7 @@ class mod_collabora_mod_form extends moodleform_mod {
                         $errors['initialfile_filemanager'] = get_string('requiredforupload', 'mod_collabora');
                     }
                 }
-            } elseif ($data['format'] === \mod_collabora\collabora::FORMAT_TEXT) {
+            } else if ($data['format'] === \mod_collabora\collabora::FORMAT_TEXT) {
                 if (!isset($data['initialtext']) || !trim($data['initialtext'])) {
                     $errors['initialtext'] = get_string('requiredfortext', 'mod_collabora');
                 }
