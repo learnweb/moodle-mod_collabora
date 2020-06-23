@@ -42,6 +42,10 @@ This plugin should go into mod/collabora. Upon installation, several default set
 
 If you want to test the collabora activity plugin on a local Moodle installation and a local Collabora Online Server via docker then you may find the [Collabora-Config.md](https://github.com/learnweb/moodle-mod_collabora/blob/master/Collabora-Config.md) file helpful.
 
+## Use of other online editors as Collabora Online
+
+This plugin should also work with the use of LibreOffice Online (LOOL) - which is the base product of Collabora Online - if you set up an LibreOffice Onliner server as described in the documentation of the [Document Foundation](https://wiki.documentfoundation.org/Development/BuildingOnline).
+
 ## Use of Collabora trademarks
 
 The name "Collabora" is used to indicate that the plugin provides an integration facility for use of Collabora Online from within Moodle.
