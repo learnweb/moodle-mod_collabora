@@ -25,10 +25,10 @@ This plugin should go into mod/collabora. Upon installation, several default set
 - the default display name
 - the default display description
 
-## choose the activity Collaborative Document
+## Choose the activity Collaborative Document
 ![collabora_add_activity](https://user-images.githubusercontent.com/2102425/55971859-93ff5980-5c82-11e9-9a8d-9f813b50d921.png)
 
-## define the settings of the Collaborative Document
+## Define the settings of the Collaborative Document
 ![collabora_settings](https://user-images.githubusercontent.com/2102425/55972098-2273db00-5c83-11e9-9c8d-7f715efe8c1b.png)
 
 ## View of a word document
@@ -40,9 +40,11 @@ This plugin should go into mod/collabora. Upon installation, several default set
 ## View of a presentation document
 ![collabora_presentation](https://user-images.githubusercontent.com/2102425/55972302-8e564380-5c83-11e9-9152-b7ea6edeb5a9.png)
 
+## Testing the plugin
+
 If you want to test the collabora activity plugin on a local Moodle installation and a local Collabora Online Server via docker then you may find the [Collabora-Config.md](https://github.com/learnweb/moodle-mod_collabora/blob/master/Collabora-Config.md) file helpful.
 
-## Use of other online editors as Collabora Online
+## Use of other Online Editors as Collabora Online, such as LibreOffice Online
 
 This plugin should also work with the use of LibreOffice Online (LOOL) - which is the base product of Collabora Online - if you set up an LibreOffice Onliner server as described in the documentation of the [Document Foundation](https://wiki.documentfoundation.org/Development/BuildingOnline).
 
