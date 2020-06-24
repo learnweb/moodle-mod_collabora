@@ -6,7 +6,7 @@ Changes
 
 ### v3.9-r1
 
-* 2020-06-24 - updated version.php & CHANGES.md
+* 2020-06-24 - updated version.php, README-md & CHANGES.md
 * 2020-06-24 - merged PR #17: ready for Moodle 3.9
 * 2020-06-19 - merged PR #14: updated travis for Moodle 3.9 (Thanks to rtschu for the PR's)
 
