@@ -107,6 +107,48 @@ function collabora_delete_instance($id) {
     return true;
 }
 
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function collabora_dndupload_register() {
+    $extensions = \mod_collabora\collabora::get_accepted_types();
+    $strdnd = get_string('dnduploadcollabora', 'mod_collabora');
+    $files = array();
+    foreach ($extensions as $extn) {
+        $extn = trim($extn, '.');
+        $files[] = array('extension' => $extn, 'message' => $strdnd);
+    }
+    return array('files' => $files);
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function collabora_dndupload_handle($uploadinfo) {
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '';
+    $data->introformat = FORMAT_HTML;
+    $data->coursemodule = $uploadinfo->coursemodule;
+    $data->initialfile_filemanager = $uploadinfo->draftitemid;
+    $data->format = \mod_collabora\collabora::FORMAT_UPLOAD;
+
+    // Set the display options to the site defaults.
+    $config = get_config('mod_collabora');
+    $data->display = $config->defaultdisplay;
+    $data->width = 0;
+    $data->height = 0;
+    $data->displayname = $config->defaultdisplayname;
+    $data->displaydescription = $config->defaultdisplaydescription;
+
+    return collabora_add_instance($data, null);
+}
+
 function collabora_get_coursemodule_info($coursemodule) {
     global $DB, $USER;
     if (!$collabora = $DB->get_record('collabora', ['id' => $coursemodule->instance])) {

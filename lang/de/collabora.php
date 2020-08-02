@@ -39,6 +39,7 @@ $string['defaultformat'] = 'Standardformat';
 $string['display'] = 'Anzeigen';
 $string['displaydescription'] = 'Beschreibung anzeigen';
 $string['displayname'] = 'Name anzeigen';
+$string['dnduploadcollabora'] = 'Kollaboratives Dokument erstellen';
 $string['eventdocumentlocked'] = 'Kollaboratives Dokument gesperrt';
 $string['eventdocumentunlocked'] = 'Kollaboratives Dokument entsperrt';
 $string['format'] = 'Format';
