@@ -66,7 +66,7 @@ if ($groupid === false) {
 
 // Load the collabora details for this page.
 $collabora = new \mod_collabora\collabora($rec, $PAGE->context, $groupid, $USER->id);
-$collabora->process_lock_unlock();
+$collabora->process_document_settings();
 
 // Set up the page.
 $PAGE->set_title($rec->name);
@@ -107,7 +107,10 @@ if ($collabora->display_description() && trim(strip_tags($rec->intro))) {
 if ($groupid >= 0) {
     groups_print_activity_menu($cm, $PAGE->url, false, true);
 
-    echo $collabora->get_lock_icon();
+    if ($collabora->can_lock_unlock()) {
+        print_collapsible_region($collabora->get_settings_panel($cmid), 'collabora', 'documentsettings', get_string('document_settings', 'mod_collabora'), '', true);
+    }
+
     echo '<br class="clearer"/>';
 
     $viewurl = $collabora->get_view_url();
