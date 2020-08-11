@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.9-r2
+
+* 2020-08-11 - added drag-and-drop support on course pages
+
 ### v3.9-r1
 
 * 2020-06-24 - updated version.php, README-md & CHANGES.md
