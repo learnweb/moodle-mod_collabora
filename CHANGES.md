@@ -6,7 +6,11 @@ Changes
 
 ### v3.9-r2
 
-* 2020-08-11 - added drag-and-drop support on course pages
+* 2020-08-11 - fix getting groupmode from cm (PR #22)
+
+### v3.9-r2
+
+* 2020-08-11 - added drag-and-drop support on course pages (PR #19)
 * 2020-08-11 - removed German language pack as translations are kept in AMOS
 
 ### v3.9-r1
