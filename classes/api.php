@@ -115,7 +115,8 @@ class api {
         // Check the group access.
         $this->isgroupmember = true;
         list($this->course, $this->cm) = get_course_and_cm_from_cmid($this->context->instanceid, 'collabora');
-        if ($this->cm->groupmode == NOGROUPS) {
+        $groupmode = groups_get_activity_groupmode($this->cm);
+        if ($groupmode == NOGROUPS) {
             if ($groupid != 0) {
                 throw new \moodle_exception('invalidgroupid', 'mod_collabora');
             }
@@ -127,7 +128,7 @@ class api {
                 throw new \moodle_exception('invalidgroupid', 'mod_collabora');
             }
             $this->isgroupmember = groups_is_member($groupid, $this->userid);
-            if ($this->cm->groupmode == SEPARATEGROUPS && !$this->isgroupmember) {
+            if ($groupmode == SEPARATEGROUPS && !$this->isgroupmember) {
                 require_capability('moodle/site:accessallgroups', $this->context, $this->userid);
             }
         }
