@@ -4,7 +4,7 @@ moodle-mod_collabora
 Changes
 -------
 
-### v3.9-r2
+### v3.9-r3
 
 * 2020-08-11 - Fix getting groupmode from cm (PR #22)
 
