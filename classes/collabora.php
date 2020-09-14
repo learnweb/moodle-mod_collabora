@@ -118,19 +118,8 @@ class collabora {
         if (!$this->can_lock_unlock()) {
             return;
         }
-        $lock = optional_param('lock', null, PARAM_INT);
-        if ($lock !== $this->groupid) {
-            $lock = null;
-        }
-        $unlock = optional_param('unlock', null, PARAM_INT);
-        if ($unlock !== $this->groupid) {
-            $unlock = null;
-        }
-        if ($lock === null && $unlock === null) {
-            return;
-        }
         require_sesskey();
-        $locked = ($lock !== null) ? 1 : 0;
+        $locked = optional_param('locked', null, PARAM_INT) ? 1 : 0;
         $this->document->locked = $locked;
         $DB->set_field('collabora_document', 'locked', $locked, ['id' => $this->document->id]);
         if ($locked) {
@@ -363,6 +352,182 @@ class collabora {
             'url' => $url,
         ];
         return $OUTPUT->render_from_template('mod_collabora/lockicon', $data);
+    }
+
+    public function get_settings_panel($cmid) {
+        global $PAGE, $OUTPUT, $DB;
+        $canupdate = $this->can_lock_unlock();
+        $islocked = $this->is_locked();
+        $url = null;
+        if ($canupdate) {
+            $params = ['sesskey' => sesskey()];
+            if ($islocked) {
+                $params['unlock'] = $this->groupid;
+            } else {
+                $params['lock'] = $this->groupid;
+            }
+
+            $url = new \moodle_url($PAGE->url);
+        }
+
+        $hideuserslist = $DB->get_field('collabora_document', 'hide_user_list', ['id' => $this->document->id]);
+        $labelstyle = '';
+
+        $data = (object)[
+            'canupdate' => $this->can_lock_unlock(),
+            'islocked' => $islocked,
+            'url' => $PAGE->url,
+            'id' => $cmid,
+            'sesskey' => sesskey(),
+            'fieldsets' => [
+                [
+                    'title' => get_string('docsetting_security_title', 'mod_collabora'),
+                    'fields' => [
+                        [
+                            'name' => 'locked',
+                            'type' => 'checkbox',
+                            'checked' => $DB->get_field('collabora_document', 'locked', ['id' => $this->document->id]) ? 'checked' : '',
+                            'value' => '1',
+                            'label' => get_string('docsetting_locked_label', 'mod_collabora'),
+                            'labelstyle' => $labelstyle,
+                            'tip' => get_string('docsetting_locked_tip', 'mod_collabora'),
+                            'sub' => get_string('docsetting_default_no', 'mod_collabora'),
+                        ],
+                        [
+                            'name' => 'disableprint',
+                            'type' => 'checkbox',
+                            'checked' => !$DB->get_field('collabora_document', 'disable_print', ['id' => $this->document->id]) ? 'checked' : '',
+                            'value' => 'true',
+                            'label' => get_string('docsetting_disableprint_label', 'mod_collabora'),
+                            'labelstyle' => $labelstyle,
+                            'tip' => get_string('docsetting_disableprint_tip', 'mod_collabora'),
+                            'sub' => get_string('docsetting_default_yes', 'mod_collabora'),
+                        ],
+                        [
+                            'name' => 'disableexport',
+                            'type' => 'checkbox',
+                            'checked' => !$DB->get_field('collabora_document', 'disable_export', ['id' => $this->document->id]) ? 'checked' : '',
+                            'value' => 'true',
+                            'label' => get_string('docsetting_disableexport_label', 'mod_collabora'),
+                            'labelstyle' => $labelstyle,
+                            'tip' => get_string('docsetting_disableexport_tip', 'mod_collabora'),
+                            'sub' => get_string('docsetting_default_yes', 'mod_collabora'),
+                        ],
+                        [
+                            'name' => 'disablecopy',
+                            'type' => 'checkbox',
+                            'checked' => !$DB->get_field('collabora_document', 'disable_copy', ['id' => $this->document->id]) ? 'checked' : '',
+                            'value' => 'true',
+                            'label' => get_string('docsetting_disablecopy_label', 'mod_collabora'),
+                            'labelstyle' => $labelstyle,
+                            'tip' => get_string('docsetting_disablecopy_tip', 'mod_collabora'),
+                            'sub' => get_string('docsetting_default_yes', 'mod_collabora'),
+                        ],
+                        [
+                            'name' => 'remoteimage',
+                            'hide' => 'true',
+                            'type' => 'checkbox',
+                            'checked' => !$DB->get_field('collabora_document', 'enable_insert_remote_image', ['id' => $this->document->id]) ? 'checked' : '',
+                            'value' => 'true',
+                            'label' => 'Enable Inserting Remote Images',
+                            'labelstyle' => $labelstyle,
+                            'tip' => 'Enable/Disable users to insert remote images.',
+                            'sub' => get_string('docsetting_default_yes', 'mod_collabora'),
+                        ],
+                        [
+                            'name' => 'watermark',
+                            'type' => 'editbox',
+                            'value' => $DB->get_field('collabora_document', 'watermark_text', ['id' => $this->document->id]),
+                            'widgetstyle' => 'max-width:100% !important',
+                            'label' => get_string('docsetting_watermark_label', 'mod_collabora'),
+                            'tip' => get_string('docsetting_watermark_tip', 'mod_collabora'),
+                            'sub' => get_string('docsetting_default_blank', 'mod_collabora'),
+                        ],
+                    ],
+                ],
+
+                [
+                    'title' => get_string('docsetting_changetracking_title', 'mod_collabora'),
+                    'fields' => [
+                        [
+                            'name' => 'disablechangerecord',
+                            'type' => 'checkbox',
+                            'checked' => !$DB->get_field('collabora_document', 'disable_change_tracking_record', ['id' => $this->document->id]) ? 'checked' : '',
+                            'value' => 'true',
+                            'label' => get_string('docsetting_disablechangerecord_label', 'mod_collabora'),
+                            'labelstyle' => $labelstyle,
+                            'tip' => get_string('docsetting_disablechangerecord_tip', 'mod_collabora'),
+                            'sub' => get_string('docsetting_default_yes', 'mod_collabora'),
+                        ],
+                        [
+                            'name' => 'disablechangeshow',
+                            'type' => 'checkbox',
+                            'checked' => !$DB->get_field('collabora_document', 'disable_change_tracking_show', ['id' => $this->document->id]) ? 'checked' : '',
+                            'value' => 'true',
+                            'label' => get_string('docsetting_disablechangeshow_label', 'mod_collabora'),
+                            'labelstyle' => $labelstyle,
+                            'tip' => get_string('docsetting_disablechangeshow_tip', 'mod_collabora'),
+                            'sub' => get_string('docsetting_default_yes', 'mod_collabora'),
+                        ],
+                        [
+                            'name' => 'hidechangecontrols',
+                            'type' => 'checkbox',
+                            'checked' => !$DB->get_field('collabora_document', 'hide_change_tracking_controls', ['id' => $this->document->id]) ? 'checked' : '',
+                            'value' => 'true',
+                            'label' => get_string('docsetting_hidechangecontrols_label', 'mod_collabora'),
+                            'labelstyle' => $labelstyle,
+                            'tip' => get_string('docsetting_hidechangecontrols_tip', 'mod_collabora'),
+                            'sub' => get_string('docsetting_default_yes', 'mod_collabora'),
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        return $OUTPUT->render_from_template('mod_collabora/settings_panel', $data);
+    }
+
+    public function process_document_settings() {
+        global $DB, $PAGE;
+        if (!$this->can_lock_unlock()) {
+            return;
+        }
+        $sesskey = optional_param('sesskey', null, PARAM_TEXT);
+        if ($sesskey === null) {
+            return;
+        }
+
+        require_sesskey();
+
+        $disableprint = !optional_param('disableprint', null, PARAM_TEXT) ? 1 : 0;
+        $DB->set_field('collabora_document', 'disable_print', $disableprint, ['id' => $this->document->id]);
+
+        $disableexport = !optional_param('disableexport', null, PARAM_TEXT) ? 1 : 0;
+        $DB->set_field('collabora_document', 'disable_export', $disableexport, ['id' => $this->document->id]);
+
+        $disablecopy = !optional_param('disablecopy', null, PARAM_TEXT) ? 1 : 0;
+        $DB->set_field('collabora_document', 'disable_copy', $disablecopy, ['id' => $this->document->id]);
+
+        $disablechangerecord = !optional_param('disablechangerecord', null, PARAM_TEXT) ? 1 : 0;
+        $DB->set_field('collabora_document', 'disable_change_tracking_record', $disablechangerecord, ['id' => $this->document->id]);
+
+        $disablechangeshow = !optional_param('disablechangeshow', null, PARAM_TEXT) ? 1 : 0;
+        $DB->set_field('collabora_document', 'disable_change_tracking_show', $disablechangeshow, ['id' => $this->document->id]);
+
+        $hidechangecontrols = !optional_param('hidechangecontrols', null, PARAM_TEXT) ? 1 : 0;
+        $DB->set_field('collabora_document', 'hide_change_tracking_controls', $hidechangecontrols, ['id' => $this->document->id]);
+
+        $ownertermination = optional_param('ownertermination', null, PARAM_TEXT) ? 1 : 0;
+        $DB->set_field('collabora_document', 'enable_owner_termination', $ownertermination, ['id' => $this->document->id]);
+
+        $remoteimage = !optional_param('remoteimage', null, PARAM_TEXT) ? 1 : 0;
+        $DB->set_field('collabora_document', 'enable_insert_remote_image', $remoteimage, ['id' => $this->document->id]);
+
+        $watermark = optional_param('watermark', null, PARAM_TEXT);
+        $DB->set_field('collabora_document', 'watermark_text', $watermark, ['id' => $this->document->id]);
+
+        // Process the lock state and reload.
+        $this->process_lock_unlock();
     }
 
     /**

@@ -24,5 +24,60 @@
 
 defined('MOODLE_INTERNAL') || die();
 function xmldb_collabora_upgrade($oldversion) {
+    global $CFG, $DB;
+    $dbman = $DB->get_manager();
+    if ($oldversion < 2020091300) {
+
+        $table = new xmldb_table('collabora_document');
+
+        $field = new xmldb_field('watermark_text', XMLDB_TYPE_CHAR, '127', null, null, null, null, 'locked');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('enable_owner_termination', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'watermark_text');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('disable_print', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'enable_owner_termination');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('disable_export', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'disable_print');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('disable_copy', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'disable_export');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('enable_insert_remote_image', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'disable_copy');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('disable_change_tracking_record', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'enable_insert_remote_image');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('disable_change_tracking_show', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'disable_change_tracking_record');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('hide_change_tracking_controls', XMLDB_TYPE_INTEGER, '1', null, null, null, null, 'disable_change_tracking_show');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Collabora savepoint reached.
+        upgrade_mod_savepoint(true, 2020091300, 'collabora');
+    }
+
     return true;
 }

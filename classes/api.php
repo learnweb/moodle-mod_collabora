@@ -190,6 +190,71 @@ class api {
         return \core_user::get_user($this->userid);
     }
 
+    private function get_watermark_text() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'watermark_text', ['id' => $this->docrecord->id]);
+    }
+
+    private function get_hide_print() {
+        return false;
+    }
+
+    private function get_hide_save() {
+        return false;
+    }
+
+    private function get_hide_export() {
+        return false;
+    }
+
+    private function get_enable_owner_termination() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'enable_owner_termination', ['id' => $this->docrecord->id]);
+    }
+
+    private function get_disable_print() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'disable_print', ['id' => $this->docrecord->id]);
+    }
+
+    private function get_disable_export() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'disable_export', ['id' => $this->docrecord->id]);
+    }
+
+    private function get_disable_copy() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'disable_copy', ['id' => $this->docrecord->id]);
+    }
+
+    private function get_enable_insert_remote_image() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'enable_insert_remote_image', ['id' => $this->docrecord->id]);
+    }
+
+    // If set to 'true', the user-list on the status bar will be hidden.
+    // If set to 'mobile' | 'tablet' | 'desktop', it will be hidden on the
+    // specified device(s) only (multiples values can be delimited by comma,
+    // e.g. 'mobile,tablet').
+    private function get_hide_user_list() {
+        return 'false';
+    }
+
+    private function get_disable_change_tracking_record() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'disable_change_tracking_record', ['id' => $this->docrecord->id]);
+    }
+
+    private function get_disable_change_tracking_show() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'disable_change_tracking_show', ['id' => $this->docrecord->id]);
+    }
+
+    private function get_hide_change_tracking_controls() {
+        global $DB;
+        return $DB->get_field('collabora_document', 'hide_change_tracking_controls', ['id' => $this->docrecord->id]);
+    }
+
     /**
      * Handle getfile requests.
      */
@@ -234,7 +299,21 @@ class api {
             'UserCanWrite' => !$this->is_readonly(),
             'UserCanNotWriteRelative' => true,
             'LastModifiedTime' => date('c', $file->get_timemodified()),
+            'WatermarkText' => $this->get_watermark_text(),
+            'HidePrintOption' => $this->get_hide_print(),
+            'HideSaveOption' => $this->get_hide_save(),
+            'HideExportOption' => $this->get_hide_export(),
+            'EnableOwnerTermination' => $this->get_enable_owner_termination(),
+            'DisablePrint' => $this->get_disable_print(),
+            'DisableExport' => $this->get_disable_export(),
+            'DisableCopy' => $this->get_disable_copy(),
+            'EnableInsertRemoteImage' => $this->get_enable_insert_remote_image(),
+            'HideUserList' => $this->get_hide_user_list(),
+            'DisableChangeTrackingRecord' => $this->get_disable_change_tracking_record(),
+            'DisableChangeTrackingShow' => $this->get_disable_change_tracking_show(),
+            'HideChangeTrackingControls' => $this->get_hide_change_tracking_controls(),
         ];
+
         die(json_encode($ret));
     }
 }

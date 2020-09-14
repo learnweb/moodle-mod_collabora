@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/collabora/db" VERSION="20190125" COMMENT="XMLDB file for Moodle mod/collabora"
+<XMLDB PATH="mod/collabora/db" VERSION="20200811" COMMENT="XMLDB file for Moodle mod/collabora"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -31,7 +31,16 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="collaboraid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The collabora instance this relates to"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The group this document relates to"/>
-        <FIELD NAME="locked" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Has this document been locked as read-only?"/>
+        <FIELD NAME="locked" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Has this document been locked as read-only except to those with mod/collabora:editlocked?"/>
+        <FIELD NAME="watermark_text" TYPE="char" LENGTH="127" NOTNULL="false" SEQUENCE="false" COMMENT="The watermark to show on the document, if any."/>
+        <FIELD NAME="enable_owner_termination" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="When enabled, the document is closed for everyone when the owner closes the document."/>
+        <FIELD NAME="disable_print" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Disables printing the document."/>
+        <FIELD NAME="disable_export" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Disables exporting the document to different formats."/>
+        <FIELD NAME="disable_copy" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Disables copying text and other embedded elements from the document."/>
+        <FIELD NAME="enable_insert_remote_image" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Controls whether inserting remote images is allowed."/>
+        <FIELD NAME="disable_change_tracking_record" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Controls whether or not change-tracking is enabled."/>
+        <FIELD NAME="disable_change_tracking_show" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Controls whether or not change-tracking markers are visible."/>
+        <FIELD NAME="hide_change_tracking_controls" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Controls whether or not change-tracking controls (to enable/disable and show/hide change-tracking) are visible."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
