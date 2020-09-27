@@ -280,13 +280,21 @@ class collabora {
     private function get_discovery_xml() {
         $baseurl = trim(get_config('mod_collabora', 'url'));
         if (!$baseurl) {
-            throw new \moodle_exception('collaboraurlnotset', 'mod_collabora');
+            // Get the product name, if it's already cached.
+            $cache = \cache::make('mod_collabora', 'capabilities');
+            if (!$productname = $cache->get('productname')) {
+                $productname = get_string('default_server_name', 'mod_collabora');
+            }
+            throw new \moodle_exception('collaboraurlnotset', 'mod_collabora', '', $productname);
         }
         $cache = \cache::make('mod_collabora', 'discovery');
         if (!$xml = $cache->get($baseurl)) {
             $url = rtrim($baseurl, '/').'/hosting/discovery';
             $curl = new \curl();
             $xml = $curl->get($url);
+            if ($curl->get_errno()) {
+                return '';
+            }
             $cache->set($baseurl, $xml);
         }
         return $xml;
@@ -299,8 +307,11 @@ class collabora {
      * @return string
      */
     private function get_url_from_mimetype($discoveryxml, $mimetype) {
-        $xml = new \SimpleXMLElement($discoveryxml);
-        $app = $xml->xpath("//app[@name='{$mimetype}']");
+        $app = null;
+        if ($discoveryxml) {
+            $xml = new \SimpleXMLElement($discoveryxml);
+            $app = $xml->xpath("//app[@name='{$mimetype}']");
+        }
         if (!$app) {
             throw new \moodle_exception('unsupportedtype', 'mod_collabora', '', $mimetype);
         }
@@ -310,6 +321,75 @@ class collabora {
             throw new \moodle_exception('unsupportedtype', 'mod_collabora', '', $mimetype);
         }
         return (string)$url;
+    }
+
+    /**
+     * Get the capabilities JSON file from the collabora server.
+     * @return string
+     */
+    private function get_capabilities_json() {
+        $cache = \cache::make('mod_collabora', 'capabilities');
+        if (!$json = $cache->get('json')) {
+            // Pull it from the discovery.xml.
+            $app = null;
+            $discoveryxml = $this->get_discovery_xml();
+            if ($discoveryxml) {
+                $xml = new \SimpleXMLElement($discoveryxml);
+                $app = $xml->xpath("//app[@name='Capabilities']");
+            }
+            if (!$app) {
+                throw new \moodle_exception('discovery_error_no_caps_url', 'mod_collabora');
+            }
+            $action = $app[0]->action;
+            $url = isset($action['urlsrc']) ? $action['urlsrc'] : '';
+            if (!$url) {
+                throw new \moodle_exception('discovery_error_no_caps_url', 'mod_collabora');
+            }
+
+            $curl = new \curl();
+            $json = $curl->get($url);
+            if ($curl->get_errno()) {
+                return '';
+            }
+            $cache->set('json', $json); // Cache the Capabilities JSON file.
+        }
+
+        return $json;
+    }
+
+    /**
+     * Get the product name from the collabora server.
+     * @return string
+     */
+    public function get_product_name() {
+        $cache = \cache::make('mod_collabora', 'capabilities');
+        if (!$productname = $cache->get('productname')) {
+            $caps = $this->get_capabilities_json();
+            $json = json_decode($caps);
+            if (isset($json->{'productName'})) {
+                $productname = $json->{'productName'};
+                $cache->set('productname', $productname);
+            }
+        }
+
+        return $productname;
+    }
+
+    /**
+     * Resets the caches. Useful when the server is changed.
+     * @return string
+     */
+    public function reset_caches() {
+        $cache = \cache::make('mod_collabora', 'capabilities');
+        $cache->delete('json');
+        $cache->delete('productname');
+
+        // Clear the discovery.xml cache.
+        $baseurl = trim(get_config('mod_collabora', 'url'));
+        if ($baseurl) {
+            $cache = \cache::make('mod_collabora', 'discovery');
+            $cache->delete($baseurl);
+        }
     }
 
     /**

@@ -25,12 +25,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['cachedef_discovery'] = 'Collabora discovery XML file';
+$string['discovery_error_no_caps_url'] = 'The discovery.xml file does not contain the Capabilities URL';
+$string['cachedef_capabilities'] = 'Capabilities file and fields';
 $string['collabora:addinstance'] = 'Add collaborative document to a course';
 $string['collabora:editlocked'] = 'Edit a locked collaborative document';
 $string['collabora:lock'] = 'Lock/unlock a collaborative document';
 $string['collabora:view'] = 'View a collaborative document';
-$string['collaboraurl'] = 'Collabora URL';
-$string['collaboraurlnotset'] = 'Collabora URL is not configured for this site';
+$string['default_server_name'] = 'Collabora Online';
+$string['collaboraurl'] = '{$a} URL';
+$string['collaboraurlnotset'] = '{$a} URL is not configured for this site';
 $string['current'] = 'Current tab';
 $string['defaultdisplay'] = 'Default display';
 $string['defaultdisplaydescription'] = 'Default display description';

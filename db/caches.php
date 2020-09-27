@@ -28,4 +28,7 @@ $definitions = [
     'discovery' => [
         'mode' => cache_store::MODE_APPLICATION,
     ],
+    'capabilities' => [
+        'mode' => cache_store::MODE_APPLICATION,
+    ],
 ];
