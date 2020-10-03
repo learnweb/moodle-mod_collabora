@@ -113,7 +113,7 @@ class collabora {
         }
 
         // If we got here we check the system language as first fallback.
-        $systemlang = isset($CFG->lang) ?: 'en';
+        $systemlang = isset($CFG->lang) ?: self::FALLBACK_LANG;
         $controlstring = substr($systemlang, 0, 2);
         if (in_array($controlstring, $controllist)) {
             // Return the full langstring but with hyphen and not with underscore.
