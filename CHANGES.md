@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.9-r4
+
+* 2020-10-03 - add simple multi lang support (#24)
+
 ### v3.9-r3
 
 * 2020-08-11 - Fix getting groupmode from cm (PR #22)
