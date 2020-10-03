@@ -42,6 +42,10 @@ class collabora {
     const FILEAREA_INITIAL = 'initial';
     const FILEAREA_GROUP = 'group';
 
+    // This languages come from loolwsd.xml and are the default accepted languages.
+    const ACCEPTED_LANGS = 'de_DE,en_GB,en_US,es_ES,fr_FR,it,nl,pt_BR,pt_PT,ru';
+    const FALLBACK_LANG = 'en';
+
     /** @var object */
     private $collaborarec;
     /** @var \context */
@@ -80,6 +84,44 @@ class collabora {
             '.ppt', '.pptx', '.odp',
             '.odg',
         ];
+    }
+
+    /**
+     * Get a lang string which is supported by collabora.
+     * The loleaflet.html accepts a lang parameter but only with hyphen and not the underscore from moodle.
+     * This method first check whether the current lang is supported and replaces the underscore (_) by a hyphen (-).
+     *
+     * @return string The lang accepted parameter
+     */
+    public static function get_collabora_lang() {
+        global $CFG;
+
+        // Prepare the control array.
+        $controllist = explode(',', self::ACCEPTED_LANGS);
+        array_walk($controllist, function(&$value, $key) {
+            $value = substr($value, 0, 2);
+        });
+        array_unique($controllist);
+
+        // First check whether or not the current lang is accepted.
+        // For the check we only need the first two characters. That means e.g. "de_xyzabc" is accepted.
+        $currentlang = current_language();
+        $controlstring = substr($currentlang, 0, 2);
+        if (in_array($controlstring, $controllist)) {
+            // Return the full langstring but with hyphen and not with underscore.
+            return str_replace('_', '-', $currentlang);
+        }
+
+        // If we got here we check the system language as first fallback.
+        $systemlang = isset($CFG->lang) ?: self::FALLBACK_LANG;
+        $controlstring = substr($systemlang, 0, 2);
+        if (in_array($controlstring, $controllist)) {
+            // Return the full langstring but with hyphen and not with underscore.
+            return str_replace('_', '-', $systemlang);
+        }
+
+        // At this point we return the last fallback.
+        return self::FALLBACK_LANG;
     }
 
     public function __construct($collaborarec, $context, $groupid, $userid) {
@@ -314,12 +356,17 @@ class collabora {
 
     /**
      * Get the URL of the handler, base on the mimetype of the existing file.
-     * @return string
+     * @return \moodle_url
      */
     private function get_collabora_url() {
         $mimetype = $this->get_file_mimetype();
         $discoveryxml = $this->get_discovery_xml();
-        return $this->get_url_from_mimetype($discoveryxml, $mimetype);
+        return new \moodle_url(
+            $this->get_url_from_mimetype(
+                $discoveryxml,
+                $mimetype
+            )
+        );
     }
 
     /**
@@ -335,12 +382,24 @@ class collabora {
      * @return string
      */
     public function get_view_url() {
-        $collaboraurl = $this->get_collabora_url();
+        // Preparing the parameters.
         $callbackurl = new \moodle_url('/mod/collabora/callback.php');
         $fileid = $this->get_file_id();
+        $wopisrc = $callbackurl->out().'/wopi/files/'.$fileid;
         $token = $this->get_user_token();
+        // The loleaflet.html from $collaboraurl accepts a lang parameter but only with hyphen and not the underscore from moodle.
+        // This is prepared by get_collabora_lang().
+        $lang = self::get_collabora_lang();
 
-        return $collaboraurl.'WOPISrc='.$callbackurl->out().'/wopi/files/'.$fileid.'&access_token='.$token.'&closebutton=1';
+        $collaboraurl = $this->get_collabora_url();
+        $params = array(
+            'WOPISrc' => $wopisrc,
+            'access_token' => $token,
+            'lang' => $lang,
+            'closebutton' => 1,
+        );
+        $collaboraurl->params($params);
+        return $collaboraurl;
     }
 
     public function get_lock_icon() {
