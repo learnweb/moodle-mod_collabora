@@ -73,49 +73,28 @@ $PAGE->set_title($rec->name);
 $PAGE->set_heading($course->fullname);
 $closewindow = false;
 if ($rec->display === \mod_collabora\collabora::DISPLAY_NEW) {
-    $PAGE->set_pagelayout('popup');
+    $PAGE->set_pagelayout('embedded');
     $closewindow = true;
 }
 
-// Handle the width / height.
-$width = $rec->width ?: '100%';
-if ($rec->height) {
-    // Fixed height.
-    $height = $rec->height;
-} else {
-    // Automatic resize of the height.
-    $height = '600px';
-    $PAGE->requires->js_call_amd('mod_collabora/resizeiframe', 'init');
-}
 $opts = [
     'courseurl' => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(),
     'closewindow' => $closewindow,
 ];
 $PAGE->requires->js_call_amd('mod_collabora/monitorclose', 'init', [$opts]);
 
-// Start the output.
-echo $OUTPUT->header();
+$renderer = $PAGE->get_renderer('mod_collabora');
 
-if ($collabora->display_name()) {
-    echo $OUTPUT->heading(format_string($rec->name));
-}
-if ($collabora->display_description() && trim(strip_tags($rec->intro))) {
-    echo $OUTPUT->box(format_module_intro('collabora', $rec, $cm->id), 'generalbox', 'intro');
-}
+// Start the output.
+echo $renderer->header();
 
 // Main iframe (or warning message, if no groups available).
-if ($groupid >= 0) {
-    groups_print_activity_menu($cm, $PAGE->url, false, true);
+$widget = new \mod_collabora\output\content(
+    $cm,
+    $rec,
+    $collabora,
+    $groupid
+);
 
-    echo $collabora->get_lock_icon();
-    echo '<br class="clearer"/>';
-
-    $viewurl = $collabora->get_view_url();
-    echo '<iframe src="'.$viewurl.'" class="collabora-iframe" width="'.$width.'" height="'.$height.
-        '" allow="fullscreen" allowfullscreen="true"></iframe>';
-} else {
-    echo '<div class="alert alert-warning">'.get_string('nogroupaccess', 'mod_collabora').'</div>';
-}
-
-echo $OUTPUT->footer();
-
+echo $renderer->render($widget);
+echo $renderer->footer();
