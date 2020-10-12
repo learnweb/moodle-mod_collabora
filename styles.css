@@ -1,0 +1,70 @@
+/* collabora should be in fullscreen if it is opened in a modal dialog */
+.collaboramodal.modal.in {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    left: 0;
+    top: 0;
+}
+.collaboramodal.modal.in .modal-body {
+    position: absolute;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 100%;
+}
+.collaboramodal .modal-dialog {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+.collaboramodal .modal-header {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.collaboramodal .modal-content {
+    width: 100%;
+    height: auto;
+    min-height: 100%;
+    border-radius: 0;
+}
+.collaboramodal iframe {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.collabora-frame.embedded {
+    position: fixed;
+    height: auto;
+    min-height: 100%;
+}
+
+/* Some rules for non boost themes like clean */
+.collaboramodal.legacy iframe {
+    height: 99%;
+    width: 99%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.collaboramodal.legacy.modal.in {
+    top: 0;
+    z-index: 5000; /* The navbar in clean has z-index: 4030 */
+    height: 92%;
+    width: 100%;
+}
+.collaboramodal.legacy.modal.in .modal-body {
+    position: absolute;
+    width: 99%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 100%;
+}
