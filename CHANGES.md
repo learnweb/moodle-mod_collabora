@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.9-r5
+
+* 2020-10-12 - add support for fullscreen without using 'requestFullscreen' (#26)
+
 ### v3.9-r4
 
 * 2020-10-03 - add simple multi lang support (#24)
