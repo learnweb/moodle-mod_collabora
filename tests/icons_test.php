@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 class mod_collabora_icons_testcase extends advanced_testcase {
     private $course;
 
-    public function setUp() {
+    public function setUp() : void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->course = $this->getDataGenerator()->create_course();

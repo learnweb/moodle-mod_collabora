@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.10-r1
+
+* 2020-10-13 - adjust .travis.yml to check moodle 3.10 properly
+
 ### v3.9-r5
 
 * 2020-10-12 - add support for fullscreen without using 'requestFullscreen' (#26)
