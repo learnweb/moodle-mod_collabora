@@ -21,13 +21,11 @@ env:
   global:
    - IGNORE_PATHS="thirdparty,/^classes\/event\/document_(un)?locked\.php/" BEHAT=yes
   jobs:
-   - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
    - DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
    - DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
    - DB=pgsql MOODLE_BRANCH=MOODLE_39_STABLE
    - DB=pgsql MOODLE_BRANCH=MOODLE_310_STABLE
    - DB=pgsql MOODLE_BRANCH=master
-   - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
    - DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
    - DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
    - DB=mysqli MOODLE_BRANCH=MOODLE_39_STABLE
@@ -69,14 +67,6 @@ jobs:
       - moodle-plugin-ci phpunit --coverage-clover
       - moodle-plugin-ci behat
   exclude:
-    - php: 7.3
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
-    - php: 7.3
-      env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
-    - php: 7.4
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
-    - php: 7.4
-      env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
     - php: 7.4
       env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
     - php: 7.4
