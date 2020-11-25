@@ -4,6 +4,11 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.10-r2
+
+* 2020-11-25 - fix iframe height to show office status bar (#27)
+* 2020-11-25 - update README.md
+
 ### v3.10-r1
 
 * 2020-10-13 - adjust .travis.yml to check moodle 3.10 properly
