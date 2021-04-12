@@ -112,6 +112,13 @@ function collabora_delete_instance($id) {
  * @return array containing details of the files / types the mod can handle
  */
 function collabora_dndupload_register() {
+    global $DB;
+
+    // Prevent using this hook while disabled.
+    if (!$DB->get_field('modules', 'visible', array('name' => 'collabora'))) {
+        return false;
+    }
+
     $extensions = \mod_collabora\collabora::get_accepted_types();
     $strdnd = get_string('dnduploadcollabora', 'mod_collabora');
     $files = array();
@@ -128,6 +135,13 @@ function collabora_dndupload_register() {
  * @return int instance id of the newly created mod
  */
 function collabora_dndupload_handle($uploadinfo) {
+    global $DB;
+
+    // Prevent using this hook while disabled.
+    if (!$DB->get_field('modules', 'visible', array('name' => 'collabora'))) {
+        return false;
+    }
+
     // Gather the required info.
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;

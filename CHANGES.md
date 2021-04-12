@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.10-r3
+
+* 2021-04-12 - stop dnd-api (drag-and-drop) while deactivated
+
 ### v3.10-r2
 
 * 2020-11-25 - fix iframe height to show office status bar (#27)
