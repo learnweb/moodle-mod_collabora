@@ -329,6 +329,11 @@ class collabora {
             $url = rtrim($baseurl, '/').'/hosting/discovery';
             $curl = new \curl();
             $xml = $curl->get($url);
+            if ($curl->get_errno()) {
+                // $xml possibly contains some error message, which isn't a valid xml.
+                return ''; // TODO: throw exception to avoid causing secondary errors.
+            }
+
             $cache->set($baseurl, $xml);
         }
         return $xml;
@@ -341,8 +346,12 @@ class collabora {
      * @return string
      */
     private function get_url_from_mimetype($discoveryxml, $mimetype) {
-        $xml = new \SimpleXMLElement($discoveryxml);
-        $app = $xml->xpath("//app[@name='{$mimetype}']");
+        $app = null;
+        if ($discoveryxml) {
+            $xml = new \SimpleXMLElement($discoveryxml);
+            $app = $xml->xpath("//app[@name='{$mimetype}']");
+        }
+
         if (!$app) {
             throw new \moodle_exception('unsupportedtype', 'mod_collabora', '', $mimetype);
         }
