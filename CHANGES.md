@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### Unreleased
+
+* 2021-07-21 - Move Moodle Plugin CI from Travis CI to Github actions
+
 ### v3.10-r3
 
 * 2021-04-12 - stop dnd-api (drag-and-drop) while deactivated
