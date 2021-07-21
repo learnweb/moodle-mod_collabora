@@ -1,20 +1,20 @@
 # ![moodle-mod_collabora](pix/icon.png) Activity Module: Collabora Online integration for Moodle
 
-[![Build Status](https://travis-ci.org/learnweb/moodle-mod_collabora.svg?branch=master)](https://travis-ci.org/learnweb/moodle-mod_collabora)
+[![Moodle Plugin CI](https://github.com/learnweb/moodle-mod_collabora/workflows/Moodle%20Plugin%20CI/badge.svg?branch=master)](https://github.com/learnweb/moodle-mod_collabora/actions?query=workflow%3A%22Moodle+Plugin+CI%22+branch%3Amaster)
 
 This activity module enables Moodle users to create documents (simple text files, word, spreadsheet and presentation documents or upload a document) via a selfhosted Collabora Online Server i.e. [CODE](https://www.collaboraoffice.com/code/) using the so called WOPI protocol and work collaboratively on this documents.
 
-This plugin is originally written by [Davo Smith](https://github.com/davosmith) from Synergy Learning in 2019 and maintained by [Michael Wuttke](https://github.com/moodlebeuth) from the Beuth University of Applied Sciences in Berlin and [Andreas Grabs](https://github.com/grabs) from Grabs EDV-Beratung.
+This plugin is originally written by [Davo Smith](https://github.com/davosmith) from Synergy Learning in 2019 and maintained by [Michael Wuttke](https://github.com/moodle-mw) and [Andreas Grabs](https://github.com/grabs) from Grabs EDV-Beratung.
 
 ## Requirements
-- Collabora Online Server (Version 4.0.1 or later) and Moodle Server (Version 3.5 or later) with PHP 7.0 or later.
+- Collabora Online Server (Version 6.4.0 or later) and Moodle Server (Version 3.8 or later) with PHP 7.3 or later.
 
 ## Tested Versions
 - Collabora Online Server: 6.4.0
-- Moodle: 3.7.9
 - Moodle: 3.8.6
 - Moodle: 3.9.3
 - Moodle: 3.10
+- Moodle: 3.11
 
 ## Installation
 This plugin should go into mod/collabora. Upon installation, several default settings need to be defined for this activity (see Settings).
