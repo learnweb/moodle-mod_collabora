@@ -100,10 +100,10 @@ class api {
     private function parse_fileid($fileid) {
         global $DB;
         $parts = explode('_', $fileid);
-        if (count($parts) < 2) {
+        if (count($parts) < 3) {
             throw new \moodle_exception('invalidfileid', 'mod_collabora');
         }
-        list($contextid, $groupid) = $parts;
+        list($contextid, $groupid, $repaircount) = $parts;
 
         // Check the context.
         $this->context = \context::instance_by_id($contextid);
@@ -134,8 +134,16 @@ class api {
         }
 
         // Load the document metadata.
-        $this->docrecord = $DB->get_record('collabora_document', ['collaboraid' => $this->cm->instance, 'groupid' => $groupid],
-                                           '*', MUST_EXIST);
+        $this->docrecord = $DB->get_record(
+            'collabora_document',
+            [
+                'collaboraid' => $this->cm->instance,
+                'groupid' => $groupid,
+                'repaircount' => $repaircount,
+            ],
+            '*',
+            MUST_EXIST
+        );
     }
 
     /**

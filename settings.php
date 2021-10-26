@@ -25,6 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
+    $settings->add(new admin_setting_heading('mod_collabora_general_hdr',
+                                              get_string('general'),
+                                              ''));
+
     $settings->add(new admin_setting_configtext('mod_collabora/url',
                                                 new lang_string('collaboraurl', 'mod_collabora'), '', '', PARAM_URL));
 
@@ -46,4 +50,13 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configselect('mod_collabora/defaultdisplaydescription',
                                                   new lang_string('defaultdisplaydescription', 'mod_collabora'), '',
                                                   1, $yesno));
+
+    $settings->add(new admin_setting_heading('mod_collabora_security_hdr',
+                                              get_string('setting_header_security', 'mod_collabora'),
+                                              ''));
+
+    $settings->add(new admin_setting_configselect('mod_collabora/allowcollaboraserverexplicit',
+                                                  new lang_string('setting_allowcollaboraserverexplicit', 'mod_collabora'),
+                                                  new lang_string('setting_allowcollaboraserverexplicit_help', 'mod_collabora'),
+                                                  0, $yesno));
 }

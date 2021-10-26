@@ -4,6 +4,17 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.11-r1
+
+* 2021-10-26 - define NO_MOODLE_COOKIES in callback.php
+* 2021-10-26 - Add option to unblock discovery url (See: $CFG->curlsecurityblockedhosts)
+* 2021-10-26 - Load the discovery xml only into the cache if it is valid.
+* 2021-10-26 - Add download button outside the collabora iframe to be able to load the last document even if it's broken.
+* 2021-10-26 - Add a repair feature to connect the document with a new collabora process if it is broken.
+* 2021-10-26 - Add an icon for text documents (*.txt)
+* 2021-10-26 - Add png icons for installations without svg support.
+* 2021-10-26 - Optimize layout for open in new register.
+
 ### v3.10-r3
 
 * 2021-04-12 - stop dnd-api (drag-and-drop) while deactivated

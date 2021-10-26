@@ -28,6 +28,7 @@ $string['cachedef_discovery'] = 'Collabora discovery XML file';
 $string['collabora:addinstance'] = 'Add collaborative document to a course';
 $string['collabora:editlocked'] = 'Edit a locked collaborative document';
 $string['collabora:lock'] = 'Lock/unlock a collaborative document';
+$string['collabora:repair'] = 'Repair a broken document';
 $string['collabora:view'] = 'View a collaborative document';
 $string['collaboraurl'] = 'Collabora URL';
 $string['collaboraurlnotset'] = 'Collabora URL is not configured for this site';
@@ -41,6 +42,7 @@ $string['displaydescription'] = 'Display description';
 $string['displayname'] = 'Display name';
 $string['dnduploadcollabora'] = 'Create a Collabora document';
 $string['eventdocumentlocked'] = 'Collaborative document locked';
+$string['eventdocumentrepaired'] = 'Collaborative document repaired';
 $string['eventdocumentunlocked'] = 'Collaborative document unlocked';
 $string['format'] = 'Format';
 $string['fullscreen'] = 'Fullscreen';
@@ -74,3 +76,16 @@ $string['privacy:metadata:collabora_extsystem'] = 'File infos and content are sh
 $string['privacy:metadata:collabora_extsystem:username'] = 'The Username';
 $string['privacy:metadata:collabora_extsystem:lastmodified'] = 'The time when the file was last modified';
 $string['privacy:metadata:collabora_extsystem:filecontent'] = 'The content of the file';
+$string['repair'] = 'Repair';
+$string['repair_failed'] = 'The document could not be repaired.';
+$string['repair_succeeded'] = 'The document has been repaired.';
+$string['repairdocument'] = 'Repair document "{$a}"';
+$string['repairdocumentconfirm'] = 'Do you really want to try repairing the current document?';
+$string['repairdocumentconfirm_help'] = 'Sometimes the Collabora Server won\'t load the last document due to a version conflict or a deadlocked process.<br>
+Usually such a problem will resolve itself, but it may take a while and you will not be able to work with your document in the meantime.<br>
+If you try to use this repair function, a new process will be started on the Collabora server and assigned to the last document saved in Moodle.<br>
+<strong>Note: Make sure that the document is currently not used by other users. Otherwise they will get an error message if they try to save the document.</strong>';
+$string['setting_allowcollaboraserverexplicit'] = 'Explicitly allow Collabora url';
+$string['setting_allowcollaboraserverexplicit_help'] = '<strong>Note:</strong> This setting can be a security risk. You only should activate it if your Collabora server is running in a private net or on the same host as Moodle.<br>
+If your Collabora server is accessed by one of the in <strong>$CFG->curlsecurityblockedhosts</strong> defined hosts you have to enable this setting or remove the host from the blocked list.';
+$string['setting_header_security'] = 'Security';

@@ -26,21 +26,24 @@ require_once(__DIR__.'/../../config.php');
 global $PAGE, $DB, $USER;
 
 $cmid = required_param('id', PARAM_INT);
-$loadcurrentfile = optional_param('loadcurrentfile', false, PARAM_BOOL);
+$confirm = optional_param('confirm', false, true);
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'collabora');
-$rec = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
 
-$PAGE->set_url('/mod/collabora/view.php', ['id' => $cm->id]);
+$myurl = new \moodle_url($FULLME);
+$myurl->remove_all_params();
+$myurl->param('id', $cm->id);
+
+$context = \context_course::instance($course->id);
+$PAGE->set_url($myurl);
+$PAGE->set_pagelayout('admin');
+
 require_login($course, false, $cm);
-require_capability('mod/collabora:view', $PAGE->context);
+require_capability('mod/collabora:repair', $PAGE->context);
 
-// Trigger course_module_viewed event.
-\mod_collabora\event\course_module_viewed::trigger_from_course_cm($course, $cm, $rec);
-
-// Completion.
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+$rec = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
+$confirmurl = new \moodle_url($myurl, array('confirm' => true));
+$returnurl = new \moodle_url('/mod/collabora/view.php', array('id' => $cm->id));
 
 // Handle groups selection.
 $groupid = groups_get_activity_group($cm, true);
@@ -65,43 +68,35 @@ if ($groupid === false) {
     }
 }
 
-// Load the collabora details for this page.
-$collabora = new \mod_collabora\collabora($rec, $PAGE->context, $groupid, $USER->id);
-
-if ($loadcurrentfile) {
-    $collabora->send_groupfile();
-    die;
-}
-
-$collabora->process_lock_unlock();
-
-// Set up the page.
-$PAGE->set_title($rec->name);
-$PAGE->set_heading($course->fullname);
-$closewindow = false;
-if ($rec->display === \mod_collabora\collabora::DISPLAY_NEW) {
-    $PAGE->set_pagelayout('embedded');
-    $closewindow = true;
-}
-
-$opts = [
-    'courseurl' => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(),
-    'closewindow' => $closewindow,
-];
-$PAGE->requires->js_call_amd('mod_collabora/monitorclose', 'init', [$opts]);
-
 $renderer = $PAGE->get_renderer('mod_collabora');
+
+if ($confirm) {
+    require_sesskey();
+
+    // Load the collabora object related to the context, group and user.
+    $collabora = new \mod_collabora\collabora($rec, $PAGE->context, $groupid, $USER->id);
+    // Try to repair the document.
+    if ($collabora->process_repair()) {
+        $msg = get_string('repair_succeeded', 'mod_collabora');
+        $msgtype = \core\notification::SUCCESS;
+    } else {
+        $msg = get_string('repair_failed', 'mod_collabora');
+        $msgtype = \core\notification::ERROR;
+    }
+    redirect($returnurl, $msg, null, $msgtype);
+}
+
+$confirm = new \mod_collabora\output\confirmation(
+    $confirmurl,
+    $returnurl,
+    get_string('repairdocument', 'mod_collabora', $rec->name),  // The title string.
+    get_string('repairdocumentconfirm', 'mod_collabora'),       // The confirmation question.
+    get_string('repair', 'mod_collabora'),                      // The label of the confirm button.
+    null,
+    get_string('repairdocumentconfirm_help', 'mod_collabora')   // The moreinfo text to show additional infos.
+);
 
 // Start the output.
 echo $renderer->header();
-
-// Main iframe (or warning message, if no groups available).
-$widget = new \mod_collabora\output\content(
-    $cm,
-    $rec,
-    $collabora,
-    $groupid
-);
-
-echo $renderer->render($widget);
+echo $renderer->render($confirm);
 echo $renderer->footer();
