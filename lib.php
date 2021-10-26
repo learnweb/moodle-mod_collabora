@@ -219,3 +219,43 @@ function collabora_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 
     send_stored_file($file, null, 0, $forcedownload, $options);
 }
+
+/**
+ * Adds module specific settings to the settings block
+ *
+ * @param settings_navigation $settings The settings navigation object
+ * @param navigation_node $collaboranode The node to add module settings to
+ */
+function collabora_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $collaboranode) {
+    global $USER, $PAGE, $CFG;
+
+    if (empty($PAGE->cm->context)) {
+        $PAGE->cm->context = context_module::instance($PAGE->cm->instance);
+    }
+
+    if (has_capability('mod/collabora:repair', $PAGE->cm->context)) {
+        $repairurl = new \moodle_url('/mod/collabora/repair.php', array('id' => $PAGE->cm->id));
+        $repairicon = new \pix_icon('repair', get_string('repair', 'mod_collabora'), 'mod_collabora');
+
+        $collaboranode->add(
+            get_string('repair', 'mod_collabora'),
+            $repairurl,
+            navigation_node::TYPE_SETTING,
+            null,
+            null,
+            $repairicon
+        );
+    }
+}
+
+/**
+ * Get icon mapping for FontAwesome.
+ */
+function collabora_get_fontawesome_icon_map() {
+    // We build a map of some icons we use in pix_icon objects.
+    $iconmap = array(
+        'mod_collabora:repair' => 'fa-medkit',
+    );
+
+    return $iconmap;
+}

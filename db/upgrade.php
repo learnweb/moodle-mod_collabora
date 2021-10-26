@@ -24,5 +24,23 @@
 
 defined('MOODLE_INTERNAL') || die();
 function xmldb_collabora_upgrade($oldversion) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2021102400) {
+
+        // Define field repaircount to be added to collabora_document.
+        $table = new xmldb_table('collabora_document');
+        $field = new xmldb_field('repaircount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'locked');
+
+        // Conditionally launch add field repaircount.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Collabora savepoint reached.
+        upgrade_mod_savepoint(true, 2021102400, 'collabora');
+    }
     return true;
 }

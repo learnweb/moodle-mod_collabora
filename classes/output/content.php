@@ -60,6 +60,12 @@ class content implements \renderable, \templatable {
             $renderer = $PAGE->get_renderer('mod_collabora');
             $this->data->legacy = !$renderer->is_boost_based();
 
+            // Create a url to load the last state of the document without using collabora.
+            // This is very usefull if collabora is not working.
+            $loadfileurl = $PAGE->url;
+            $loadfileurl->param('loadcurrentfile', '1');
+            $this->data->loadfileurl = $loadfileurl->out(false);
+
         } else {
             $this->data->warning = get_string('nogroupaccess', 'mod_collabora');
         }

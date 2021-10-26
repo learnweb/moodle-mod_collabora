@@ -56,13 +56,20 @@
     {{/embedded}}
     {{{activitymenu}}}
     {{{lockicon}}}
+    {{#loadfileurl}}<div class="float-right mr-2{{^embedded}} mt-2{{/embedded}}">
+            <a href="{{{.}}}" title="{{#str}}download{{/str}}">
+                <i class="icon fa fa-download"></i>{{#str}}download{{/str}}
+            </a>
+        </div>{{/loadfileurl}}
     {{#legacy}}
         {{> mod_collabora/iframe_legacy}}
     {{/legacy}}
     {{^legacy}}
         {{> mod_collabora/iframe}}
     {{/legacy}}
+    {{^embedded}}
     {{> mod_collabora/modal}}
+    {{/embedded}}
 {{/warning}}
 
 {{#warning}}

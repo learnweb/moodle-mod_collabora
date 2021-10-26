@@ -26,6 +26,7 @@ namespace mod_collabora;
 
 use mod_collabora\event\document_locked;
 use mod_collabora\event\document_unlocked;
+use mod_collabora\event\document_repaired;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -58,6 +59,8 @@ class collabora {
     private $document;
     /** @var \stored_file */
     private $file;
+    /** @var \stdClass */
+    private $myconfig;
 
     public static function format_menu() {
         return [
@@ -124,11 +127,49 @@ class collabora {
         return self::FALLBACK_LANG;
     }
 
+    /**
+     * Get the discovery XML file from the collabora server.
+     * @param \stdClass $cfg The collabora configuration.
+     * @return string The xml string
+     */
+    public static function get_discovery_xml($cfg) {
+        $baseurl = trim($cfg->url);
+        if (!$baseurl) {
+            throw new \moodle_exception('collaboraurlnotset', 'mod_collabora');
+        }
+        $cache = \cache::make('mod_collabora', 'discovery');
+        if (!$xml = $cache->get($baseurl)) {
+            $url = rtrim($baseurl, '/').'/hosting/discovery';
+
+            // Do we explicitely allow the Collabora host?
+            $curlsettings = array();
+            if (!empty($cfg->allowcollaboraserverexplicit)) {
+                $curlsettings = array(
+                    'securityhelper' => new \mod_collabora\curl_security_helper($url),
+                );
+            }
+            $curl = new \curl($curlsettings);
+            $xml = $curl->get($url);
+            // Check whether or not the xml is valid.
+            try {
+                new \SimpleXMLElement($xml);
+            } catch (\Exception $e) {
+                $xmlerror = true;
+            }
+            if (!empty($xmlerror)) {
+                throw new \moodle_exception('XML-Error: '.$xml);
+            }
+            $cache->set($baseurl, $xml);
+        }
+        return $xml;
+    }
+
     public function __construct($collaborarec, $context, $groupid, $userid) {
         $this->collaborarec = $collaborarec;
         $this->context = $context;
         $this->groupid = (int)$groupid;
         $this->userid = (int)$userid;
+        $this->myconfig = get_config('mod_collabora');
 
         if ($this->groupid >= 0) {
             $this->create_retrieve_document_record();
@@ -184,6 +225,27 @@ class collabora {
     }
 
     /**
+     * This method increments the repaircount value of the document record.
+     * The new value extends the fileid sent to the collabora server.
+     * By incrementing the value "repaircount" we are able to create a new process in collabora for broken documents.
+     *
+     * @return bool
+     */
+    public function process_repair() {
+        global $DB;
+
+        $this->document->repaircount = intval($this->document->repaircount) + 1;
+
+        $return = $DB->set_field('collabora_document', 'repaircount', $this->document->repaircount, ['id' => $this->document->id]);
+        document_repaired::trigger_from_document($this->context->instanceid, $this->document);
+        return $return;
+    }
+
+    public function send_groupfile() {
+        send_stored_file($this->file, null, 0, true); // Force download.
+    }
+
+    /**
      * Retrieve the existing unique user token, or generate a new one.
      * @return string
      */
@@ -222,6 +284,7 @@ class collabora {
                 'collaboraid' => $this->collaborarec->id,
                 'groupid' => $this->groupid,
                 'locked' => 0,
+                'repaircount' => 0,
             ];
             $this->document->id = $DB->insert_record('collabora_document', $this->document);
         }
@@ -316,22 +379,11 @@ class collabora {
     }
 
     /**
-     * Get the discovery XML file from the collabora server.
+     * Load the discovery XML file from the collabora server into the cache.
      * @return string
      */
-    private function get_discovery_xml() {
-        $baseurl = trim(get_config('mod_collabora', 'url'));
-        if (!$baseurl) {
-            throw new \moodle_exception('collaboraurlnotset', 'mod_collabora');
-        }
-        $cache = \cache::make('mod_collabora', 'discovery');
-        if (!$xml = $cache->get($baseurl)) {
-            $url = rtrim($baseurl, '/').'/hosting/discovery';
-            $curl = new \curl();
-            $xml = $curl->get($url);
-            $cache->set($baseurl, $xml);
-        }
-        return $xml;
+    private function load_discovery_xml() {
+        return self::get_discovery_xml($this->myconfig);
     }
 
     /**
@@ -360,7 +412,7 @@ class collabora {
      */
     private function get_collabora_url() {
         $mimetype = $this->get_file_mimetype();
-        $discoveryxml = $this->get_discovery_xml();
+        $discoveryxml = $this->load_discovery_xml();
         return new \moodle_url(
             $this->get_url_from_mimetype(
                 $discoveryxml,
@@ -374,7 +426,8 @@ class collabora {
      * @return string
      */
     private function get_file_id() {
-        return "{$this->context->id}_{$this->groupid}";
+        // By using an additional element "repaircount" we are able to create a new process in collabora for broken documents.
+        return "{$this->context->id}_{$this->groupid}_{$this->document->repaircount}";
     }
 
     /**
@@ -444,6 +497,8 @@ class collabora {
             case 'application/vnd.ms-powerpoint': // PPT.
             case 'application/vnd.openxmlformats-officedocument.presentationml.presentation': // PPTX.
                 return 'mod/collabora/odp';
+            case 'text/plain': // Text.
+                return 'mod/collabora/txt';
         }
         return false;
     }

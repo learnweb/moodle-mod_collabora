@@ -45,6 +45,15 @@ $capabilities = [
         ],
     ],
 
+    'mod/collabora:repair' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+
     'mod/collabora:editlocked' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

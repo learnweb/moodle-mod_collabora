@@ -41,6 +41,10 @@
     left: 0;
 }
 
+#page-mod-collabora-view.pagelayout-embedded #page {
+    padding-left: 0;
+}
+
 .collabora-frame.embedded {
     position: fixed;
     height: auto;

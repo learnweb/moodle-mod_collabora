@@ -22,6 +22,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// This script is called by the Collabora server and does not need cookies!
+define('NO_MOODLE_COOKIES', true);
+
 require_once(__DIR__.'/../../config.php');
 require_once($CFG->libdir.'/filelib.php');
 

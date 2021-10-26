@@ -32,6 +32,7 @@
         <FIELD NAME="collaboraid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The collabora instance this relates to"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The group this document relates to"/>
         <FIELD NAME="locked" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Has this document been locked as read-only?"/>
+        <FIELD NAME="repaircount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="An incremental number to repair a broken document"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
