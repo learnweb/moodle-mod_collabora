@@ -28,8 +28,6 @@ use mod_collabora\event\document_locked;
 use mod_collabora\event\document_unlocked;
 use mod_collabora\event\document_repaired;
 
-defined('MOODLE_INTERNAL') || die();
-
 class collabora {
     const FORMAT_UPLOAD = 'upload';
     const FORMAT_TEXT = 'text';
@@ -432,7 +430,7 @@ class collabora {
 
     /**
      * Get the URL of the iframe in which to display the collabora document.
-     * @return string
+     * @return \moodle_url
      */
     public function get_view_url() {
         // Preparing the parameters.

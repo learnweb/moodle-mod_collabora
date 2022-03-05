@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
+namespace mod_collabora;
 
 /**
  * Test ensuring that module icons depend on the content of the module.
@@ -23,7 +23,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2019 Jan Dageförde, WWU Münster
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_collabora_icons_testcase extends advanced_testcase {
+class icons_test extends \advanced_testcase {
     private $course;
 
     public function setUp() : void {
@@ -40,9 +40,9 @@ class mod_collabora_icons_testcase extends advanced_testcase {
                 'initialtext' => 'Test text',
             ]
         );
-        $c = new \mod_collabora\collabora($collabora, context_module::instance($collabora->cmid), 0, 0);
+        $c = new \mod_collabora\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertFalse($c->get_module_icon());
+        $this->assertEquals('mod/collabora/txt', $c->get_module_icon());
     }
 
     public function test_wordprocessor_module_icon() {
@@ -52,7 +52,7 @@ class mod_collabora_icons_testcase extends advanced_testcase {
                 'format' => 'wordprocessor',
             ]
         );
-        $c = new \mod_collabora\collabora($collabora, context_module::instance($collabora->cmid), 0, 0);
+        $c = new \mod_collabora\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
         $this->assertEquals('mod/collabora/odt', $c->get_module_icon());
     }
@@ -64,7 +64,7 @@ class mod_collabora_icons_testcase extends advanced_testcase {
                 'format' => 'spreadsheet',
             ]
         );
-        $c = new \mod_collabora\collabora($collabora, context_module::instance($collabora->cmid), 0, 0);
+        $c = new \mod_collabora\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
         $this->assertEquals('mod/collabora/ods', $c->get_module_icon());
     }
@@ -76,7 +76,7 @@ class mod_collabora_icons_testcase extends advanced_testcase {
                 'format' => 'presentation',
             ]
         );
-        $c = new \mod_collabora\collabora($collabora, context_module::instance($collabora->cmid), 0, 0);
+        $c = new \mod_collabora\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
         $this->assertEquals('mod/collabora/odp', $c->get_module_icon());
     }

@@ -24,8 +24,6 @@
 
 namespace mod_collabora\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 class renderer extends \plugin_renderer_base {
     public function is_boost_based() {
         if (strcmp($this->page->theme->name, 'boost') === 0) {

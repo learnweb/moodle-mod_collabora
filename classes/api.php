@@ -24,8 +24,6 @@
 
 namespace mod_collabora;
 
-defined('MOODLE_INTERNAL') || die();
-
 class api {
     /** @var int */
     private $userid;
