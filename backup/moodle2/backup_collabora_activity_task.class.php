@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/mod/collabora/backup/moodle2/backup_collabora_stepslib.php');
-require_once($CFG->dirroot.'/mod/collabora/backup/moodle2/backup_collabora_settingslib.php');
 
 /**
  * Provides the steps to perform one complete backup of the collabora instance
