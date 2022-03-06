@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.11-r3
+
+* 2022-03-06 - removed wrong reference in backup
+
 ### v3.11-r2
 
 * 2022-03-05 - replace travis by github actions and apply coding style
