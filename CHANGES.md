@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.9-r10
+
+* 2022-03-06 - removed wrong reference in backup
+
 ### v3.9-r9
 
 * 2022-03-05 - switch releases to Moodle version dependend releases. v3.9 can be used in Moodle 3.9 and 3.10
