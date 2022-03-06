@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.9-r9
+
+* 2022-03-05 - switch releases to Moodle version dependend releases. v3.9 can be used in Moodle 3.9 and 3.10
+
 ### v3.11-r1
 
 * 2021-10-26 - define NO_MOODLE_COOKIES in callback.php
