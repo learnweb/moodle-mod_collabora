@@ -24,8 +24,6 @@
 
 namespace mod_collabora\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_collabora document locked event class.
  *

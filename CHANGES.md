@@ -4,6 +4,11 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.11-r2
+
+* 2022-03-05 - replace travis by github actions and apply coding style
+* 2022-03-05 - switch to Moodle version based releases. v3.11 is for Moodle 3.11.
+
 ### v3.11-r1
 
 * 2021-10-26 - define NO_MOODLE_COOKIES in callback.php

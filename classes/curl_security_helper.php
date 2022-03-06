@@ -26,8 +26,6 @@
 
 namespace mod_collabora;
 
-defined('MOODLE_INTERNAL') || die();
-
 class curl_security_helper extends \core\files\curl_security_helper {
     private $url;
 

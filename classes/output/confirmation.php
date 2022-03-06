@@ -24,8 +24,6 @@
 
 namespace mod_collabora\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 class confirmation implements \renderable, \templatable {
     /** @var \stdClass $data */
     private $data;
