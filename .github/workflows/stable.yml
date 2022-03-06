@@ -1,4 +1,4 @@
-name: master branch test
+name: stable branch test
 
 on: [push, pull_request]
 
