@@ -230,6 +230,8 @@ class api {
      * Handle checkfileinfo requests.
      */
     private function handle_checkfileinfo() {
+        $tz = date_default_timezone_get();
+        date_default_timezone_set('UTC');
         $file = $this->get_stored_file();
         $ret = (object)[
             'BaseFileName' => clean_filename($file->get_filename()),
@@ -241,6 +243,7 @@ class api {
             'UserCanNotWriteRelative' => true,
             'LastModifiedTime' => date('c', $file->get_timemodified()),
         ];
+        date_default_timezone_set($tz);
         die(json_encode($ret));
     }
 }
