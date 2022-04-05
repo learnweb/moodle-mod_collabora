@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v3.11-r4
+
+* 2022-04-04 -  Ensure LastModifiedTime is in UTC (#32)
+
 ### v3.11-r3
 
 * 2022-03-06 - removed wrong reference in backup
