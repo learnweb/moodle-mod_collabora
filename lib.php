@@ -43,7 +43,9 @@ function collabora_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION:
             return true;
-        default:
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_COLLABORATION;
+            default:
             return null;
     }
 }

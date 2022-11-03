@@ -4,6 +4,11 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.0-r1
+
+* 2022-11-03 -  Open in new tab not working (#36)
+* 2022-11-03 -  Add monologo icon
+
 ### v4.0-beta-3
 
 * 2022-04-04 -  Ensure LastModifiedTime is in UTC (#32)
