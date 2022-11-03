@@ -69,6 +69,7 @@ if ($groupid === false) {
 $collabora = new \mod_collabora\collabora($rec, $PAGE->context, $groupid, $USER->id);
 
 if ($loadcurrentfile) {
+    require_capability('mod/collabora:directdownload', $PAGE->content);
     $collabora->send_groupfile();
     die;
 }

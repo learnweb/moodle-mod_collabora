@@ -60,9 +60,11 @@ class content implements \renderable, \templatable {
 
             // Create a url to load the last state of the document without using collabora.
             // This is very usefull if collabora is not working.
-            $loadfileurl = $PAGE->url;
-            $loadfileurl->param('loadcurrentfile', '1');
-            $this->data->loadfileurl = $loadfileurl->out(false);
+            if (has_capability('mod/collabora:directdownload', $cm->context)) {
+                $loadfileurl = $PAGE->url;
+                $loadfileurl->param('loadcurrentfile', '1');
+                $this->data->loadfileurl = $loadfileurl->out(false);
+            }
 
         } else {
             $this->data->warning = get_string('nogroupaccess', 'mod_collabora');

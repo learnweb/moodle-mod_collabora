@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['cachedef_discovery'] = 'Collabora discovery XML file';
 $string['collabora:addinstance'] = 'Add collaborative document to a course';
+$string['collabora:directdownload'] = 'Directly download the document';
 $string['collabora:editlocked'] = 'Edit a locked collaborative document';
 $string['collabora:lock'] = 'Lock/unlock a collaborative document';
 $string['collabora:repair'] = 'Repair a broken document';

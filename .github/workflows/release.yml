@@ -42,20 +42,20 @@ jobs:
           - php: '7.3'
             moodle-branch: 'MOODLE_400_STABLE'
             database: 'mariadb'
-            node: '14.15'
+            node: '16.16'
           - php: '7.3'
             moodle-branch: 'MOODLE_400_STABLE'
             database: 'pgsql'
-            node: '14.15'
+            node: '16.16'
 
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: plugin
 
       - name: Install node  ${{ matrix.node }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
 

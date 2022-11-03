@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.0-r2
+
+* 2022-11-03 -  Add new capability for direct downloading (#34)
+
 ### v4.0-r1
 
 * 2022-11-03 -  Open in new tab not working (#36)
