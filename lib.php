@@ -173,7 +173,7 @@ function collabora_get_coursemodule_info($coursemodule) {
     if ($collabora->display === \mod_collabora\collabora::DISPLAY_NEW) {
         // Use javascript to open the link in a new tab.
         $url = new moodle_url('/mod/collabora/view.php', ['id' => $coursemodule->id]);
-        $info->onclick = 'event.preventDefault();window.open("'.$url->out(false).'", "_blank").focus();';
+        $info->onclick = "event.preventDefault();window.open('".$url->out(false)."', '_blank').focus();";
     }
     if ($coursemodule->showdescription) {
         $info->content = format_module_intro('collabora', $collabora, $coursemodule->id, false);
