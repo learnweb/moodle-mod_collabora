@@ -38,21 +38,7 @@ namespace mod_collabora\event;
  * @copyright  2021 Andreas Grabs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class document_repaired extends \core\event\base {
-
-    public static function trigger_from_document($cmid, $document) {
-        $params = [
-            'context' => \context_module::instance($cmid),
-            'objectid' => $document->id,
-            'other' => [
-                'groupid' => $document->groupid,
-                'collaboraid' => $document->collaboraid,
-            ],
-        ];
-        $event = self::create($params);
-        $event->add_record_snapshot('collabora_document', $document);
-        $event->trigger();
-    }
+class document_repaired extends document_action_base {
 
     /**
      * Init method.
@@ -60,9 +46,8 @@ class document_repaired extends \core\event\base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'u';
+        parent::init();
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'collabora_document';
     }
 
     /**
@@ -84,46 +69,4 @@ class document_repaired extends \core\event\base {
         return get_string('eventdocumentrepaired', 'mod_collabora');
     }
 
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/collabora/view.php', ['id' => $this->contextinstanceid, 'group' => $this->other['groupid']]);
-    }
-
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        parent::validate_data();
-
-        if (!isset($this->other['groupid'])) {
-            throw new \coding_exception('The \'groupid\' value must be set in other.');
-        }
-
-        if (!isset($this->other['collaboraid'])) {
-            throw new \coding_exception('The \'collaboraid\' value must be set in other.');
-        }
-
-        if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context level must be CONTEXT_MODULE.');
-        }
-    }
-
-    public static function get_objectid_mapping() {
-        return array('db' => 'collabora_document', 'restore' => 'collabora_document');
-    }
-
-    public static function get_other_mapping() {
-        $othermapped = array();
-        $othermapped['collaboraid'] = array('db' => 'collabora', 'restore' => 'collabora');
-        $othermapped['groupid'] = array('db' => 'group', 'restore' => 'group');
-
-        return $othermapped;
-    }
 }
