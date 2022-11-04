@@ -26,12 +26,21 @@ namespace mod_collabora;
 class icons_test extends \advanced_testcase {
     private $course;
 
+    /**
+     * Setup function to create a course we can test with.
+     */
     public function setUp() : void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->course = $this->getDataGenerator()->create_course();
     }
 
+    /**
+     * Test for default icon.
+     *
+     * @covers \mod_collabora\collabora
+     * @return void
+     */
     public function test_default_module_icon() {
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [
@@ -45,6 +54,12 @@ class icons_test extends \advanced_testcase {
         $this->assertEquals('mod/collabora/txt', $c->get_module_icon());
     }
 
+    /**
+     * Test for wordprocessor icon.
+     *
+     * @covers \mod_collabora\collabora
+     * @return void
+     */
     public function test_wordprocessor_module_icon() {
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [
@@ -57,6 +72,12 @@ class icons_test extends \advanced_testcase {
         $this->assertEquals('mod/collabora/odt', $c->get_module_icon());
     }
 
+    /**
+     * Test for spreadsheet icon.
+     *
+     * @covers \mod_collabora\collabora
+     * @return void
+     */
     public function test_spreadsheet_module_icon() {
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [
@@ -69,6 +90,12 @@ class icons_test extends \advanced_testcase {
         $this->assertEquals('mod/collabora/ods', $c->get_module_icon());
     }
 
+    /**
+     * Test for presentation icon.
+     *
+     * @covers \mod_collabora\collabora
+     * @return void
+     */
     public function test_presentation_module_icon() {
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [

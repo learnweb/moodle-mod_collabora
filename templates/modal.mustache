@@ -21,9 +21,10 @@
 
     Example context (json):
     {
-        "id" : 1,
-        "legacy" : 1,
-        "name" : "Test pad"
+        "id":          1,
+        "legacy":      1,
+        "name":        "Test pad",
+        "loadfileurl": 1
     }
 
 }}
@@ -36,7 +37,7 @@
       <div class="modal-header">
         <h3 class="my-0 py-0">
             <button type="button" class="btn btn-primary" data-dismiss="modal" title="{{#str}}restorewindowsize, mod_collabora{{/str}}" >
-                <i class="fa fa-compress fa-lg" aria-hidden="true"></i>
+                <i class="fa fa-compress fa-lg" aria-hidden="true"> </i>
             </button>
         </h3>
         {{#loadfileurl}}<div class="float-right mt-2"><a href="{{{.}}}" title="{{#str}}download{{/str}}"><i class="icon fa fa-download"></i>{{#str}}download{{/str}}</a></div>{{/loadfileurl}}
