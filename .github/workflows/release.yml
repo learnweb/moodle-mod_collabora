@@ -39,11 +39,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '7.3'
+          - php: '7.4'
             moodle-branch: 'MOODLE_400_STABLE'
             database: 'mariadb'
             node: '16.16'
-          - php: '7.3'
+          - php: '7.4'
+            moodle-branch: 'MOODLE_400_STABLE'
+            database: 'pgsql'
+            node: '16.16'
+          - php: '8.0'
+            moodle-branch: 'MOODLE_400_STABLE'
+            database: 'mariadb'
+            node: '16.16'
+          - php: '8.0'
             moodle-branch: 'MOODLE_400_STABLE'
             database: 'pgsql'
             node: '16.16'
