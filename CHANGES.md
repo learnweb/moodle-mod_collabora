@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.0-r3
+
+* 2022-11-06 -  Optimize code and add more phpdoc documentations.
+
 ### v4.0-r2
 
 * 2022-11-03 -  Add new capability for direct downloading (#34)

@@ -14,27 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_collabora\output;
+
 /**
+ * Output class to render a confirmation page.
+ *
  * @package    mod_collabora
  *
  * @author     Andreas Grabs <moodle@grabs-edv.de>
  * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_collabora\output;
-
 class confirmation implements \renderable, \templatable {
     /** @var \stdClass $data */
     private $data;
 
     /**
-     * Constructor of confirmation class.
+     * Constructor
      *
      * @param \moodle_url $confirmurl
      * @param \moodle_url $cancelurl
      * @param string $title
      * @param string $confirmquestion
+     * @param string|null $confirmlabel
+     * @param string|null $cancellabel
      * @param string|null $moreinfos
      */
     public function __construct(\moodle_url $confirmurl, \moodle_url $cancelurl,
@@ -54,6 +57,15 @@ class confirmation implements \renderable, \templatable {
         $this->data->moreinfos = $moreinfos;
     }
 
+    /**
+     * Function to export the renderer data in a format that is suitable for a
+     * mustache template. This means:
+     * 1. No complex types - only stdClass, array, int, string, float, bool
+     * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
+     *
+     * @param \renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @return \stdClass|array
+     */
     public function export_for_template(\renderer_base $output) {
         return $this->data;
     }

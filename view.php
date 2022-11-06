@@ -74,7 +74,9 @@ if ($loadcurrentfile) {
     die;
 }
 
-$collabora->process_lock_unlock();
+if ($collabora->process_lock_unlock()) {
+    redirect($PAGE->url); // If the locking is changed we have to reload the page.
+}
 
 // Set up the page.
 $PAGE->set_title($rec->name);

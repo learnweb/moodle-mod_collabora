@@ -33,6 +33,14 @@ namespace mod_collabora\event;
  */
 class course_module_viewed extends \core\event\course_module_viewed {
 
+    /**
+     * Trigger the event
+     *
+     * @param \stdClass $course
+     * @param \stdClass $cm
+     * @param \stdClass $collabora
+     * @return void
+     */
     public static function trigger_from_course_cm($course, $cm, $collabora) {
         $params = array(
             'context' => \context_module::instance($cm->id),
@@ -56,6 +64,11 @@ class course_module_viewed extends \core\event\course_module_viewed {
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
+    /**
+     * Get the object mapping
+     *
+     * @return array
+     */
     public static function get_objectid_mapping() {
         return array('db' => 'collabora', 'restore' => 'collabora');
     }

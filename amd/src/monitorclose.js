@@ -12,11 +12,21 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Closes the collabora window.
+ *
+ * @module     mod_collabora/monitorclose
+ * @author     Andreas Grabs <moodle@grabs-edv.de>
+ * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 define([], function() {
     var courseURL;
     var closeWindow;
 
     /**
+     * Listener function for the event 'message'
      * @param {Event} e
      */
     function checkMessage(e) {

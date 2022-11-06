@@ -23,6 +23,13 @@
  */
 class mod_collabora_generator extends testing_module_generator {
 
+    /**
+     * Create a collabora activity instance
+     *
+     * @param array|\stdClass|null $record
+     * @param array|null $options
+     * @return \stdClass
+     */
     public function create_instance($record = null, array $options = null) {
 
         return parent::create_instance($record, (array)$options);

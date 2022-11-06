@@ -15,20 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Define all the backup steps that will be used by the backup_collabora_activity_task
+ *
  * @package    mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
- * Define all the backup steps that will be used by the backup_collabora_activity_task
- */
-
-/**
- * Define the complete collabora structure for backup, with file and id annotations
- */
 class backup_collabora_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * Define the structure for the collabora activity
+     * @return backup_nested_element
+     */
     protected function define_structure() {
 
         // To know if we are including userinfo.

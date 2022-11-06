@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+defined('MOODLE_INTERNAL') || die();
+global $CFG;
+require_once($CFG->dirroot.'/course/moodleform_mod.php');
+
 /**
  * Create instance form
  *
@@ -21,12 +25,12 @@
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
-
 class mod_collabora_mod_form extends moodleform_mod {
+    /**
+     * Get options for the filemanger
+     *
+     * @return array
+     */
     public static function get_filemanager_opts() {
         return [
             'subdirs' => 0,
@@ -36,6 +40,11 @@ class mod_collabora_mod_form extends moodleform_mod {
         ];
     }
 
+    /**
+     * Get the file link to the document as an html fragment
+     *
+     * @return string
+     */
     private function get_file_link() {
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_collabora', \mod_collabora\collabora::FILEAREA_INITIAL,
@@ -49,6 +58,11 @@ class mod_collabora_mod_form extends moodleform_mod {
         return html_writer::link($url, $file->get_filename());
     }
 
+    /**
+     * Defines the mform items
+     *
+     * @return void
+     */
     protected function definition() {
         $mform = $this->_form;
         $config = get_config('mod_collabora');
@@ -113,6 +127,13 @@ class mod_collabora_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    /**
+     * Validates the send mform params
+     *
+     * @param array $data
+     * @param array $files
+     * @return array The elements with the related error message.
+     */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!$this->_instance) {

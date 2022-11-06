@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_collabora;
+
+use mod_collabora\event\document_locked;
+use mod_collabora\event\document_unlocked;
+use mod_collabora\event\document_repaired;
+
 /**
  * Main support functions
  *
@@ -21,28 +27,31 @@
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_collabora;
-
-use mod_collabora\event\document_locked;
-use mod_collabora\event\document_unlocked;
-use mod_collabora\event\document_repaired;
-
 class collabora {
+    /** Define the collabora file format for individual files */
     const FORMAT_UPLOAD = 'upload';
+    /** Define the collabora file format as simple text */
     const FORMAT_TEXT = 'text';
+    /** Define the collabora file format as spreadsheet */
     const FORMAT_SPREADSHEET = 'spreadsheet';
+    /** Define the collabora file format as wordprocessor */
     const FORMAT_WORDPROCESSOR = 'wordprocessor';
+    /** Define the collabora file format as presentation */
     const FORMAT_PRESENTATION = 'presentation';
 
+    /** Define the display in the current tab/window */
     const DISPLAY_CURRENT = 'current';
+    /** Define the display in a new tab/Window */
     const DISPLAY_NEW = 'new';
 
+    /** Define the filearea for initial stored files */
     const FILEAREA_INITIAL = 'initial';
+    /** Define the filearea for files a group of users is working at */
     const FILEAREA_GROUP = 'group';
 
-    // This languages come from loolwsd.xml and are the default accepted languages.
+    /** Define accepted languages for WOPI server. This languages come from loolwsd.xml and are the default accepted languages. */
     const ACCEPTED_LANGS = 'de_DE,en_GB,en_US,es_ES,fr_FR,it,nl,pt_BR,pt_PT,ru';
+    /** The default language if nothing is defined */
     const FALLBACK_LANG = 'en';
 
     /** @var object */
@@ -60,6 +69,11 @@ class collabora {
     /** @var \stdClass */
     private $myconfig;
 
+    /**
+     * Get an array for the activity format settings menu
+     *
+     * @return array
+     */
     public static function format_menu() {
         return [
             self::FORMAT_UPLOAD => get_string(self::FORMAT_UPLOAD, 'mod_collabora'),
@@ -70,6 +84,11 @@ class collabora {
         ];
     }
 
+    /**
+     * Get an array for the activity display settings menu
+     *
+     * @return array
+     */
     public static function display_menu() {
         return [
             self::DISPLAY_CURRENT => get_string(self::DISPLAY_CURRENT, 'mod_collabora'),
@@ -77,12 +96,28 @@ class collabora {
         ];
     }
 
+    /**
+     * Get an array which defines all accepted file types, this activity can handle
+     *
+     * @return array
+     */
     public static function get_accepted_types() {
         return [
-            '.txt', '.rtf',
-            '.doc', '.docx', '.odt',
-            '.xls', '.xlsx', '.ods',
-            '.ppt', '.pptx', '.odp',
+            // Plain text.
+            '.txt',
+            // Textprocesser files.
+            '.rtf',
+            '.doc',
+            '.docx',
+            '.odt',
+            // Spreadsheet files.
+            '.xls',
+            '.xlsx',
+            '.ods',
+            // Presentation files.
+            '.ppt',
+            '.pptx',
+            '.odp',
             '.odg',
         ];
     }
@@ -162,6 +197,14 @@ class collabora {
         return $xml;
     }
 
+    /**
+     * Constructor
+     *
+     * @param \stdClass $collaborarec
+     * @param \context $context
+     * @param int $groupid
+     * @param int $userid
+     */
     public function __construct($collaborarec, $context, $groupid, $userid) {
         $this->collaborarec = $collaborarec;
         $this->context = $context;
@@ -175,18 +218,38 @@ class collabora {
         }
     }
 
+    /**
+     * Get the display name of the current document.
+     *
+     * @return string
+     */
     public function display_name() {
         return (bool)$this->collaborarec->displayname;
     }
 
+    /**
+     * Get the display desciption of the current document.
+     *
+     * @return string
+     */
     public function display_description() {
         return (bool)$this->collaborarec->displaydescription;
     }
 
+    /**
+     * Info whether or not the current document is locked
+     *
+     * @return boolean
+     */
     public function is_locked() {
         return (bool)$this->document->locked;
     }
 
+    /**
+     * Info whether or not the current document can be unlocked
+     *
+     * @return boolean
+     */
     public function can_lock_unlock() {
         if (!$this->document) {
             return false;
@@ -194,11 +257,20 @@ class collabora {
         return has_capability('mod/collabora:lock', $this->context);
     }
 
+    /**
+     * Lock or unlock the current document if allowed
+     *
+     * @return boolean
+     */
     public function process_lock_unlock() {
         global $DB, $PAGE;
+        require_sesskey();
+
         if (!$this->can_lock_unlock()) {
-            return;
+            return false; // Nothing done.
         }
+
+        // Check whether or not "lock" or "unlock" is given.
         $lock = optional_param('lock', null, PARAM_INT);
         if ($lock !== $this->groupid) {
             $lock = null;
@@ -208,9 +280,9 @@ class collabora {
             $unlock = null;
         }
         if ($lock === null && $unlock === null) {
-            return;
+            return false; // Nothing done.
         }
-        require_sesskey();
+
         $locked = ($lock !== null) ? 1 : 0;
         $this->document->locked = $locked;
         $DB->set_field('collabora_document', 'locked', $locked, ['id' => $this->document->id]);
@@ -219,7 +291,7 @@ class collabora {
         } else {
             document_unlocked::trigger_from_document($this->context->instanceid, $this->document);
         }
-        redirect($PAGE->url);
+        return true; // Locking/unlocking is done.
     }
 
     /**
@@ -239,12 +311,19 @@ class collabora {
         return $return;
     }
 
+    /**
+     * Send the file from the moodle file api.
+     * This function implicitly calls a "die"!
+     *
+     * @return void
+     */
     public function send_groupfile() {
         send_stored_file($this->file, null, 0, true); // Force download.
     }
 
     /**
      * Retrieve the existing unique user token, or generate a new one.
+     *
      * @return string
      */
     private function get_user_token() {
@@ -270,6 +349,8 @@ class collabora {
     /**
      * Create the document record, if it doesn't already exist for this collabora + group.
      * Store the document record in $this->document.
+     *
+     * @return void
      */
     private function create_retrieve_document_record() {
         global $DB;
@@ -292,6 +373,8 @@ class collabora {
      * Retrieve the current file for this collabora instance + group - create a new file, based
      * on the initial settings, if none exists.
      * Store the file in $this->>file.
+     *
+     * @return void
      */
     private function create_retrieve_file() {
         $fs = get_file_storage();
@@ -305,6 +388,8 @@ class collabora {
 
     /**
      * For activities with format 'upload', retrieve the file that was uploaded.
+     *
+     * @throws \moodle_exception
      * @return \stored_file
      */
     private function get_initial_file() {
@@ -319,6 +404,9 @@ class collabora {
 
     /**
      * Create a new file for this group, based on the 'format' setting for the activity.
+     *
+     * @throws \coding_exception
+     * @return \stored_file
      */
     private function create_file() {
         global $CFG;
@@ -370,6 +458,7 @@ class collabora {
 
     /**
      * Get the mime type for the current file.
+     *
      * @return string
      */
     private function get_file_mimetype() {
@@ -378,6 +467,7 @@ class collabora {
 
     /**
      * Load the discovery XML file from the collabora server into the cache.
+     *
      * @return string
      */
     private function load_discovery_xml() {
@@ -385,9 +475,11 @@ class collabora {
     }
 
     /**
-     * Get the URL for editing the given mimetype.
+     * Get the URL for editing built from the given mimetype.
+     *
      * @param string $discoveryxml
      * @param string $mimetype
+     * @throws \moodle_exception
      * @return string
      */
     private function get_url_from_mimetype($discoveryxml, $mimetype) {
@@ -405,7 +497,8 @@ class collabora {
     }
 
     /**
-     * Get the URL of the handler, base on the mimetype of the existing file.
+     * Get the URL of the handler, based on the mimetype of the existing file.
+     *
      * @return \moodle_url
      */
     private function get_collabora_url() {
@@ -421,6 +514,7 @@ class collabora {
 
     /**
      * Get the fileid that will be returned to retrieve the correct file.
+     *
      * @return string
      */
     private function get_file_id() {
@@ -429,7 +523,8 @@ class collabora {
     }
 
     /**
-     * Get the URL of the iframe in which to display the collabora document.
+     * Get the URL for the iframe in which to display the collabora document.
+     *
      * @return \moodle_url
      */
     public function get_view_url() {
@@ -453,6 +548,11 @@ class collabora {
         return $collaboraurl;
     }
 
+    /**
+     * Get the lock icon depending on the locking state of the current document
+     *
+     * @return string The html fragment of the icon presentation.
+     */
     public function get_lock_icon() {
         global $PAGE, $OUTPUT;
         $canupdate = $this->can_lock_unlock();
@@ -477,6 +577,7 @@ class collabora {
 
     /**
      * Choose an appropriate filetype icon based on the mimetype.
+     *
      * @return string|false Icon URL to be used in `cached_cm_info` or false if there is no appropriate icon.
      */
     public function get_module_icon() {

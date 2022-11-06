@@ -32,6 +32,13 @@ namespace mod_collabora\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
+
+    /**
+     * Trigger the event
+     *
+     * @param \stdClass $course
+     * @return void
+     */
     public static function trigger_from_course($course) {
         $params = array(
             'context' => \context_course::instance($course->id)

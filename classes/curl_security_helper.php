@@ -14,8 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_collabora;
+
 /**
  * Security check for curl access.
+ *
  * It allowes curl access to the collabora server even if the url is blocked by core moodle.
  * See $CFG->curlsecurityblockedhosts
  *
@@ -23,12 +26,15 @@
  * @copyright 2021 Andreas Grabs
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_collabora;
-
 class curl_security_helper extends \core\files\curl_security_helper {
+    /** @var string */
     private $url;
 
+    /**
+     * Constructor
+     *
+     * @param string $url
+     */
     public function __construct($url) {
         $this->url = $url;
     }

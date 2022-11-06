@@ -15,20 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Define all the restore steps that will be used by the restore_collabora_activity_task
+ *
  * @package    mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
- * Define all the restore steps that will be used by the restore_collabora_activity_task
- */
-
-/**
- * Structure step to restore one collabora activity
- */
 class restore_collabora_activity_structure_step extends restore_activity_structure_step {
 
+    /**
+     * Define the structure of the restore workflow.
+     *
+     * @return restore_path_element[]
+     */
     protected function define_structure() {
 
         $paths = array();
@@ -43,6 +42,12 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Process a collabora restore.
+     *
+     * @param object $data The data in object form
+     * @return void
+     */
     protected function process_collabora($data) {
         global $DB;
 
@@ -56,6 +61,12 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Process a collabora document restore.
+     *
+     * @param object $data The data in object form
+     * @return void
+     */
     protected function process_collabora_document($data) {
         global $DB;
 
@@ -72,6 +83,10 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
         $this->set_mapping('collabora_group', $oldgroupid, $data->groupid, true);
     }
 
+    /**
+     * Restore the related files after the database structure is ready.
+     * @return void
+     */
     protected function after_execute() {
         // Add collabora related files.
         $this->add_related_files('mod_collabora', 'intro', null);

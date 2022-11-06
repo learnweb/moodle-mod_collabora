@@ -24,6 +24,7 @@ namespace mod_collabora;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class icons_test extends \advanced_testcase {
+    /** @var \stdClass */
     private $course;
 
     /**

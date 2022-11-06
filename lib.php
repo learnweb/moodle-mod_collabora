@@ -25,6 +25,12 @@
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__.'/mod_form.php');
 
+/**
+ * Checks whether or not a feature is supported
+ *
+ * @param string $feature
+ * @return boolean
+ */
 function collabora_supports($feature) {
     switch ($feature) {
         case FEATURE_GROUPS:
@@ -46,12 +52,14 @@ function collabora_supports($feature) {
         case FEATURE_MOD_PURPOSE:
             return MOD_PURPOSE_COLLABORATION;
         default:
-            return null;
+            return false;
     }
 }
 
 /**
- * @param $collabora
+ * Create a new collabora instance.
+ *
+ * @param \stdClass $collabora
  * @param mod_collabora_mod_form $mform
  * @return int
  */
@@ -76,6 +84,12 @@ function collabora_add_instance($collabora, $mform) {
 
 }
 
+/**
+ * Update a collabora instance.
+ *
+ * @param \stdClass $collabora
+ * @return boolean
+ */
 function collabora_update_instance($collabora) {
     global $DB;
 
@@ -93,6 +107,12 @@ function collabora_update_instance($collabora) {
     return true;
 }
 
+/**
+ * Delete an existing collabora instance
+ *
+ * @param int $id
+ * @return boolean
+ */
 function collabora_delete_instance($id) {
     global $DB;
 
@@ -111,6 +131,7 @@ function collabora_delete_instance($id) {
 
 /**
  * Register the ability to handle drag and drop file uploads
+ *
  * @return array containing details of the files / types the mod can handle
  */
 function collabora_dndupload_register() {
@@ -133,6 +154,7 @@ function collabora_dndupload_register() {
 
 /**
  * Handle a file that has been uploaded
+ *
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
@@ -165,6 +187,12 @@ function collabora_dndupload_handle($uploadinfo) {
     return collabora_add_instance($data, null);
 }
 
+/**
+ * Get a coursemodule info object with infos about its presentation on the course page.
+ *
+ * @param \stdClass $coursemodule
+ * @return \cached_cm_info
+ */
 function collabora_get_coursemodule_info($coursemodule) {
     global $DB, $USER;
     if (!$collabora = $DB->get_record('collabora', ['id' => $coursemodule->instance])) {
@@ -188,6 +216,18 @@ function collabora_get_coursemodule_info($coursemodule) {
     return $info;
 }
 
+/**
+ * Send a stored_file to the browser
+ *
+ * @param \stdClass|int $course
+ * @param \stdClass|null $cm
+ * @param \context $context
+ * @param string $filearea
+ * @param array $args
+ * @param boolean $forcedownload
+ * @param array $options
+ * @return void
+ */
 function collabora_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     if ($context->contextlevel != CONTEXT_MODULE) {
         return;
@@ -225,8 +265,9 @@ function collabora_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 /**
  * Adds module specific settings to the settings block
  *
- * @param settings_navigation $settings The settings navigation object
+ * @param settings_navigation $settingsnav The settings navigation object
  * @param navigation_node $collaboranode The node to add module settings to
+ * @return void
  */
 function collabora_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $collaboranode) {
     global $USER, $PAGE, $CFG;

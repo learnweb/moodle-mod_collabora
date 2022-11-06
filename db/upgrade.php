@@ -22,6 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Upgrade function for mod_collabora.
+ *
+ * @param string $oldversion the version we are upgrading from.
+ */
 function xmldb_collabora_upgrade($oldversion) {
     global $DB;
 

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_collabora;
+
 /**
  * Class to handle callbacks from Collabora
  *
@@ -21,9 +23,6 @@
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace mod_collabora;
-
 class api {
     /** @var int */
     private $userid;
@@ -43,10 +42,20 @@ class api {
     /** @var bool */
     private $isgroupmember;
 
+    /** Request to get the document from us */
     const REQUEST_GETFILE = 'getfile';
+    /** Request to put the document to us */
     const REQUEST_PUTFILE = 'putfile';
+    /** Request to get infos about the document */
     const REQUEST_CHECKFILEINFO = 'checkfileinfo';
 
+    /**
+     * Constructor
+     *
+     * @param string $relativepath
+     * @param string $accesstoken
+     * @param bool|null $postdata
+     */
     public function __construct($relativepath, $accesstoken, $postdata = null) {
         $this->postdata = $postdata;
         $this->userid = $this->get_userid_from_token($accesstoken);
@@ -54,23 +63,47 @@ class api {
         $this->parse_fileid($fileid);
     }
 
+    /**
+     * Handle request from WOPI server
+     *
+     * @return void
+     */
     public function handle_request() {
-        $fnname = "handle_{$this->requesttype}";
-        $this->$fnname();
+        switch ($this->requesttype) {
+            case self::REQUEST_GETFILE:
+                $this->handle_getfile();
+                break;
+            case self::REQUEST_PUTFILE:
+                $this->handle_putfile();
+                break;
+            case self::REQUEST_CHECKFILEINFO:
+                $this->handle_checkfileinfo();
+                break;
+            default:
+                send_header_404();
+                die('unknown request');
+        }
     }
 
-    private function get_userid_from_token($accesstoken) {
+    /**
+     * Get the moodle user id from the collabora_token table
+     *
+     * @param string $accesstoken
+     * @return int
+     */
+    protected function get_userid_from_token($accesstoken) {
         global $DB;
         return (int)$DB->get_field('collabora_token', 'userid', ['token' => $accesstoken], MUST_EXIST);
     }
 
     /**
      * Extract the request type (to $this->requesttype) and the fileid (returned)
+     *
      * @param string $relativepath
      * @param bool $haspostdata
      * @return string
      */
-    private function parse_request($relativepath, $haspostdata) {
+    protected function parse_request($relativepath, $haspostdata) {
         if (!preg_match('|/wopi/files/([^/]*)(/contents)?|', $relativepath, $matches)) {
             throw new \moodle_exception('invalidrequest', 'mod_collabora');
         }
@@ -95,7 +128,7 @@ class api {
      *
      * @param string $fileid
      */
-    private function parse_fileid($fileid) {
+    protected function parse_fileid($fileid) {
         global $DB;
         $parts = explode('_', $fileid);
         if (count($parts) < 3) {
@@ -146,9 +179,10 @@ class api {
 
     /**
      * Is the file read-only?
+     *
      * @return bool
      */
-    private function is_readonly() {
+    protected function is_readonly() {
         if (!$this->isgroupmember && !has_capability('moodle/site:accessallgroups', $this->context, $this->userid)) {
             return true; // Not a member of the relevant group => definitely has no access.
         }
@@ -160,9 +194,11 @@ class api {
     }
 
     /**
+     * Get the file from moodle file storage.
+     *
      * @return \stored_file
      */
-    private function get_stored_file() {
+    protected function get_stored_file() {
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_collabora', collabora::FILEAREA_GROUP,
                                      $this->docrecord->groupid, '', false, 0, 0, 1);
@@ -177,7 +213,7 @@ class api {
     /**
      * Unique identifier for the owner of the document.
      */
-    private function get_ownerid() {
+    protected function get_ownerid() {
         global $CFG;
         // I think all the files should have the same owner, so just using the Moodle site id?
         return $CFG->siteidentifier;
@@ -186,20 +222,25 @@ class api {
     /**
      * Unique identifier for the current user accessing the document.
      */
-    private function get_user_identifier() {
+    protected function get_user_identifier() {
         global $CFG;
         $identifier = $CFG->siteidentifier.'_user_'.$this->userid;
         return sha1($identifier);
     }
 
-    private function get_user() {
+    /**
+     * Get a user object
+     *
+     * @return \stdClass|null
+     */
+    protected function get_user() {
         return \core_user::get_user($this->userid);
     }
 
     /**
      * Handle getfile requests.
      */
-    private function handle_getfile() {
+    protected function handle_getfile() {
         $file = $this->get_stored_file();
         send_stored_file($file);
     }
@@ -207,7 +248,7 @@ class api {
     /**
      * Handle putfile requests.
      */
-    private function handle_putfile() {
+    protected function handle_putfile() {
         if ($this->is_readonly()) {
             throw new \moodle_exception('readonly', 'mod_collabora');
         }
@@ -229,7 +270,7 @@ class api {
     /**
      * Handle checkfileinfo requests.
      */
-    private function handle_checkfileinfo() {
+    protected function handle_checkfileinfo() {
         $tz = date_default_timezone_get();
         date_default_timezone_set('UTC');
         $file = $this->get_stored_file();

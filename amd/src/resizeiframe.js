@@ -12,7 +12,19 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Change the iframe size relative to the window size.
+ *
+ * @module     mod_collabora/resizeiframe
+ * @author     Andreas Grabs <moodle@grabs-edv.de>
+ * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 define(['jquery'], function($) {
+    /**
+     * Callback for 'resize' and changes the size of the iframe.
+     */
     function resizeIframe() {
         var $iframe = $('iframe.collabora-iframe');
         if (!$iframe.length) {

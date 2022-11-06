@@ -40,6 +40,13 @@ namespace mod_collabora\event;
  */
 abstract class document_action_base extends \core\event\base {
 
+    /**
+     * Trigger the event
+     *
+     * @param int $cmid
+     * @param \stdClass $document
+     * @return void
+     */
     public static function trigger_from_document($cmid, $document) {
         $params = [
             'context' => \context_module::instance($cmid),
@@ -110,10 +117,20 @@ abstract class document_action_base extends \core\event\base {
         }
     }
 
+    /**
+     * Get the object mapping
+     *
+     * @return array
+     */
     public static function get_objectid_mapping() {
         return array('db' => 'collabora_document', 'restore' => 'collabora_document');
     }
 
+    /**
+     * Get the mapping for the other elements
+     *
+     * @return array
+     */
     public static function get_other_mapping() {
         $othermapped = array();
         $othermapped['collaboraid'] = array('db' => 'collabora', 'restore' => 'collabora');
