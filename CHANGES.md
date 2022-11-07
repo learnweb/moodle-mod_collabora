@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.0-r4
+
+* 2022-11-07 -  Fix wrongfully called require_sesskey (#37).
+
 ### v4.0-r3
 
 * 2022-11-06 -  Optimize code and add more phpdoc documentations.

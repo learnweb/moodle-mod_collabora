@@ -264,7 +264,6 @@ class collabora {
      */
     public function process_lock_unlock() {
         global $DB, $PAGE;
-        require_sesskey();
 
         if (!$this->can_lock_unlock()) {
             return false; // Nothing done.
@@ -282,6 +281,7 @@ class collabora {
         if ($lock === null && $unlock === null) {
             return false; // Nothing done.
         }
+        require_sesskey();
 
         $locked = ($lock !== null) ? 1 : 0;
         $this->document->locked = $locked;
