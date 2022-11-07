@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.0-r5
+
+* 2022-11-07 -  Fix event classes abstraction.
+
 ### v4.0-r4
 
 * 2022-11-07 -  Fix wrongfully called require_sesskey (#37).

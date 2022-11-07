@@ -73,20 +73,6 @@ abstract class document_action_base extends \core\event\base {
     }
 
     /**
-     * Returns description of what happened.
-     *
-     * @return string
-     */
-    abstract public function get_description();
-
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    abstract public static function get_name();
-
-    /**
      * Get URL related to the action
      *
      * @return \moodle_url
