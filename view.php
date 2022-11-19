@@ -29,14 +29,10 @@ $cmid = required_param('id', PARAM_INT);
 $loadcurrentfile = optional_param('loadcurrentfile', false, PARAM_BOOL);
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'collabora');
-$rec = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
 
 $PAGE->set_url('/mod/collabora/view.php', ['id' => $cm->id]);
 require_login($course, false, $cm);
 require_capability('mod/collabora:view', $PAGE->context);
-
-// Trigger course_module_viewed event.
-\mod_collabora\event\course_module_viewed::trigger_from_course_cm($course, $cm, $rec);
 
 // Completion.
 $completion = new completion_info($course);
@@ -65,11 +61,15 @@ if ($groupid === false) {
     }
 }
 
+$rec = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
+// Trigger course_module_viewed event.
+\mod_collabora\event\course_module_viewed::trigger_from_course_cm($course, $cm, $rec);
+
 // Load the collabora details for this page.
-$collabora = new \mod_collabora\collabora($rec, $PAGE->context, $groupid, $USER->id);
+$collabora = new \mod_collabora\api\collabora($rec, $PAGE->context, $groupid, $USER->id);
 
 if ($loadcurrentfile) {
-    require_capability('mod/collabora:directdownload', $PAGE->content);
+    require_capability('mod/collabora:directdownload', $PAGE->context);
     $collabora->send_groupfile();
     die;
 }
@@ -82,7 +82,7 @@ if ($collabora->process_lock_unlock()) {
 $PAGE->set_title($rec->name);
 $PAGE->set_heading($course->fullname);
 $closewindow = false;
-if ($rec->display === \mod_collabora\collabora::DISPLAY_NEW) {
+if ($rec->display === \mod_collabora\api\collabora::DISPLAY_NEW) {
     $PAGE->set_pagelayout('embedded');
     $closewindow = true;
 }

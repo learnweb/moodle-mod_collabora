@@ -14,28 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_collabora\task;
+
 /**
- * Endpoint for callback from Collabora
+ * Clean up task
  *
  * @package   mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @copyright 2022 Andreas Grabs <moodle@grabs-edv.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class cleanup extends \core\task\scheduled_task {
 
-use \mod_collabora\api\api;
-use \mod_collabora\api\collabora;
+    /**
+     * Returns localized name of this task.
+     *
+     * @return string
+     * @throws \coding_exception
+     */
+    public function get_name() {
 
-// This script is called by the Collabora server and does not need cookies!
-define('NO_MOODLE_COOKIES', true);
+        return get_string('task_cleanup', 'mod_collabora');
+    }
 
-require_once(__DIR__.'/../../config.php');
-require_once($CFG->libdir.'/filelib.php');
+    public function execute() {
+        global $DB;
 
-$relativepath = get_file_argument();
-$accesstoken = required_param('access_token', PARAM_ALPHANUMEXT);
-$postdata = file_get_contents('php://input');
-
-list($requesttyp, $fileid) = api::get_request_and_fileid_from_path($relativepath, $postdata);
-$collabora = collabora::get_instance_by_fileid($fileid, $accesstoken);
-$api = new api($requesttyp, $collabora, $postdata);
-$api->handle_request();
+        \mod_collabora\api\collabora::remove_unused_tokens();
+    }
+}

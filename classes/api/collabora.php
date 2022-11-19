@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_collabora;
+namespace mod_collabora\api;
 
 use mod_collabora\event\document_locked;
 use mod_collabora\event\document_unlocked;
@@ -27,7 +27,7 @@ use mod_collabora\event\document_repaired;
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class collabora {
+class collabora implements i_filesystem {
     /** Define the collabora file format for individual files */
     const FORMAT_UPLOAD = 'upload';
     /** Define the collabora file format as simple text */
@@ -68,6 +68,50 @@ class collabora {
     private $file;
     /** @var \stdClass */
     private $myconfig;
+    /** @var bool */
+    private $isgroupmember;
+
+    /**
+     * Get the moodle user id from the collabora_token table
+     *
+     * @param string $token
+     * @return int
+     */
+    public static function get_userid_from_token($token) {
+        global $DB;
+        $sql = 'SELECT ct.id, ct.userid from {collabora_token} ct
+                JOIN {sessions} s ON s.userid = ct.userid AND s.sid = ct.sid
+                WHERE ct.token = :token
+        ';
+
+        $tokenrec = $DB->get_record_sql($sql, array('token' => $token));
+
+        if (empty($tokenrec->userid)) {
+            return false;
+        }
+        return $tokenrec->userid;
+    }
+
+    /**
+     * Remove unused tokens
+     *
+     * @return int
+     */
+    public static function remove_unused_tokens() {
+        /** @var \moodle_database $DB */
+        global $DB;
+
+        $recordset = $DB->get_recordset('collabora_token');
+
+        $select = 'sid = :sid AND userid > 0';
+        foreach ($recordset as $tokenrec) {
+            $params = array('sid' => $tokenrec->sid);
+            if (!$DB->record_exists_select('sessions', $select, $params)) {
+                $DB->delete_records('collabora_token', array('id' => $tokenrec->id));
+            }
+        }
+        return true;
+    }
 
     /**
      * Get an array for the activity format settings menu
@@ -172,17 +216,21 @@ class collabora {
         }
         $cache = \cache::make('mod_collabora', 'discovery');
         if (!$xml = $cache->get($baseurl)) {
-            $url = rtrim($baseurl, '/').'/hosting/discovery';
+            if (static::is_testing()) {
+                $xml = static::get_fixture_discovery_xml();
+            } else {
+                $url = rtrim($baseurl, '/').'/hosting/discovery';
 
-            // Do we explicitely allow the Collabora host?
-            $curlsettings = array();
-            if (!empty($cfg->allowcollaboraserverexplicit)) {
-                $curlsettings = array(
-                    'securityhelper' => new \mod_collabora\curl_security_helper($url),
-                );
+                // Do we explicitely allow the Collabora host?
+                $curlsettings = array();
+                if (!empty($cfg->allowcollaboraserverexplicit)) {
+                    $curlsettings = array(
+                        'securityhelper' => new curl_security_helper($url),
+                    );
+                }
+                $curl = new \curl($curlsettings);
+                $xml = $curl->get($url);
             }
-            $curl = new \curl($curlsettings);
-            $xml = $curl->get($url);
             // Check whether or not the xml is valid.
             try {
                 new \SimpleXMLElement($xml);
@@ -198,6 +246,77 @@ class collabora {
     }
 
     /**
+     * Checks whether or not the current site is running a test (behat or unit test).
+     *
+     * @return boolean
+     */
+    public static function is_testing() {
+        if (defined('BEHAT_SITE_RUNNING')) {
+            return true;
+        }
+        if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function get_fixture_discovery_xml() {
+        global $CFG;
+
+        $search = 'https://example.com/browser/randomid/cool.html';
+        $replace = new \moodle_url('/mod/collabora/tests/fixtures/dummyoutput.html');
+        $xmlpath = $CFG->dirroot.'/mod/collabora/tests/fixtures/discovery.xml';
+        $xml = file_get_contents($xmlpath);
+        $xml = str_replace($search, $replace->out(), $xml);
+        return $xml;
+    }
+
+    public static function get_instance_by_fileid($fileid, $accesstoken) {
+        global $DB;
+
+        $userid = static::get_userid_from_token($accesstoken);
+
+        $parts = explode('_', $fileid);
+        if (count($parts) < 3) {
+            throw new \moodle_exception('invalidfileid', 'mod_collabora');
+        }
+        list($contextid, $groupid, $repaircount) = $parts;
+
+        // Check the context.
+        $context = \context::instance_by_id($contextid);
+        if ($context->contextlevel !== CONTEXT_MODULE) {
+            throw new \moodle_exception('invalidcontextlevel', 'mod_collabora');
+        }
+        require_capability('mod/collabora:view', $context, $userid);
+
+        // Check the group access.
+        $isgroupmember = true;
+        list($course, $cm) = get_course_and_cm_from_cmid($context->instanceid, 'collabora');
+        $rec = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
+
+        $groupmode = groups_get_activity_groupmode($cm);
+        if ($groupmode == NOGROUPS) {
+            if ($groupid != 0) {
+                throw new \moodle_exception('invalidgroupid', 'mod_collabora');
+            }
+        } else {
+            if ($groupid == 0) {
+                throw new \moodle_exception('invalidgroupid', 'mod_collabora');
+            }
+            if (!$DB->record_exists('groups', ['id' => $groupid, 'courseid' => $course->id])) {
+                throw new \moodle_exception('invalidgroupid', 'mod_collabora');
+            }
+            $isgroupmember = groups_is_member($groupid, $userid);
+            if ($groupmode == SEPARATEGROUPS && !$isgroupmember) {
+                require_capability('moodle/site:accessallgroups', $context, $userid);
+            }
+        }
+
+        return new static($rec, $context, $groupid, $userid);
+
+    }
+
+    /**
      * Constructor
      *
      * @param \stdClass $collaborarec
@@ -206,11 +325,17 @@ class collabora {
      * @param int $userid
      */
     public function __construct($collaborarec, $context, $groupid, $userid) {
+        global $DB;
         $this->collaborarec = $collaborarec;
         $this->context = $context;
         $this->groupid = (int)$groupid;
-        $this->userid = (int)$userid;
+        $this->user = $DB->get_record('user', array('id' => $userid));
         $this->myconfig = get_config('mod_collabora');
+
+        $this->isgroupmember = true;
+        if ($this->groupid > 0) {
+            $this->isgroupmember = groups_is_member($groupid, $userid);
+        }
 
         if ($this->groupid >= 0) {
             $this->create_retrieve_document_record();
@@ -312,38 +437,45 @@ class collabora {
     }
 
     /**
-     * Send the file from the moodle file api.
-     * This function implicitly calls a "die"!
-     *
-     * @return void
-     */
-    public function send_groupfile() {
-        send_stored_file($this->file, null, 0, true); // Force download.
-    }
-
-    /**
      * Retrieve the existing unique user token, or generate a new one.
      *
      * @return string
      */
     private function get_user_token() {
         global $DB;
-        if ($token = $DB->get_field('collabora_token', 'token', ['userid' => $this->userid])) {
-            return $token;
+
+        $params = array(
+            'userid' => $this->user->id,
+            'sid' => session_id(),
+        );
+        $sql = 'SELECT ct.id, ct.token from {collabora_token} ct
+                JOIN {sessions} s ON s.userid = ct.userid AND s.sid = ct.sid
+                WHERE ct.userid = :userid AND ct.sid = :sid
+        ';
+
+        $tokenrec = $DB->get_record_sql($sql, $params);
+
+        // if ($token = $DB->get_field('collabora_token', 'token', ['userid' => $this->userid])) {
+        //     return $token;
+        // }
+        if (!empty($tokenrec->token)) {
+            return $tokenrec->token;
         }
-        while (1) {
-            $btyes = random_bytes(60);
-            $token = substr(sha1($btyes), 0, 12);
-            $ins = (object)[
-                'userid' => $this->userid,
-                'token' => $token,
-            ];
-            if (!$DB->record_exists('collabora_token', ['token' => $token])) {
-                $DB->insert_record('collabora_token', $ins, false);
+        // Create a new token record.
+        $tokenrec = new \stdClass();
+        $tokenrec->userid = $this->user->id;
+        $tokenrec->token = random_string(12);
+        $tokenrec->sid = session_id();
+
+        $params = array('token' => $tokenrec->token);
+        while (true) {
+            if (!$DB->record_exists('collabora_token', $params)) {
+                $DB->insert_record('collabora_token', $tokenrec, false);
                 break;
             }
         }
-        return $token;
+
+        return $tokenrec->token;
     }
 
     /**
@@ -601,4 +733,95 @@ class collabora {
         }
         return false;
     }
+
+    /* Methods from interface i_filesystem
+     * ##################################### */
+
+     /**
+     * Send the file from the moodle file api.
+     * This function implicitly calls a "die"!
+     *
+     * @param bool $forcedownload
+     * @return void
+     */
+    public function send_groupfile($forcedownload = true) {
+        send_stored_file($this->file, null, 0, $forcedownload); // Force download.
+    }
+
+    /**
+     * Is the file read-only?
+     *
+     * @return bool
+     */
+    public function is_readonly() {
+        if (!$this->isgroupmember && !has_capability('moodle/site:accessallgroups', $this->context, $this->user->id)) {
+            return true; // Not a member of the relevant group => definitely has no access.
+        }
+        if ($this->document->locked) {
+            // Locked - only users with the ability to edit locked documents can edit.
+            return !has_capability('mod/collabora:editlocked', $this->context, $this->user->id);
+        }
+        return false;
+    }
+
+    /**
+     * Update the stored file
+     *
+     * @param string $content
+     * @return void
+     */
+    public function update_file($content) {
+        $fs = get_file_storage();
+        $filerecord = (object)[
+            'contextid' => $this->file->get_contextid(),
+            'component' => $this->file->get_component(),
+            'filearea' => $this->file->get_filearea(),
+            'itemid' => $this->file->get_itemid(),
+            'filepath' => $this->file->get_filepath(),
+            'filename' => $this->file->get_filename(),
+            'timecreated' => $this->file->get_timecreated(),
+        ];
+        $this->file->delete(); // Remove the old file.
+        $fs->create_file_from_string($filerecord, $content); // Store the new file.
+    }
+
+    /**
+     * Get the file from this instance
+     *
+     * @return \stored_file
+     */
+    public function get_file() {
+        return $this->file;
+    }
+
+    /**
+     * Get the user name who is working on this document
+     *
+     * @return string
+     */
+    public function get_username() {
+        return fullname($this->user);
+    }
+
+    /**
+     * Unique identifier for the owner of the document.
+     *
+     * @return string
+     */
+    public function get_ownerid() {
+        global $CFG;
+        // I think all the files should have the same owner, so just using the Moodle site id?
+        return $CFG->siteidentifier;
+    }
+
+    /**
+     * Unique identifier for the current user accessing the document.
+     *
+     * @return string
+     */
+    public function get_user_identifier() {
+        $identifier = $this->get_ownerid().'_user_'.$this->user->id;
+        return sha1($identifier);
+    }
+
 }

@@ -78,7 +78,7 @@ function collabora_add_instance($collabora, $mform) {
     // Save the 'initial file'.
     $context = context_module::instance($collabora->coursemodule);
     file_postupdate_standard_filemanager($collabora, 'initialfile', mod_collabora_mod_form::get_filemanager_opts(),
-                                         $context, 'mod_collabora', \mod_collabora\collabora::FILEAREA_INITIAL, 0);
+                                         $context, 'mod_collabora', \mod_collabora\api\collabora::FILEAREA_INITIAL, 0);
 
     return $collabora->id;
 
@@ -142,7 +142,7 @@ function collabora_dndupload_register() {
         return false;
     }
 
-    $extensions = \mod_collabora\collabora::get_accepted_types();
+    $extensions = \mod_collabora\api\collabora::get_accepted_types();
     $strdnd = get_string('dnduploadcollabora', 'mod_collabora');
     $files = array();
     foreach ($extensions as $extn) {
@@ -174,7 +174,7 @@ function collabora_dndupload_handle($uploadinfo) {
     $data->introformat = FORMAT_HTML;
     $data->coursemodule = $uploadinfo->coursemodule;
     $data->initialfile_filemanager = $uploadinfo->draftitemid;
-    $data->format = \mod_collabora\collabora::FORMAT_UPLOAD;
+    $data->format = \mod_collabora\api\collabora::FORMAT_UPLOAD;
 
     // Set the display options to the site defaults.
     $config = get_config('mod_collabora');
@@ -200,7 +200,7 @@ function collabora_get_coursemodule_info($coursemodule) {
     }
 
     $info = new cached_cm_info();
-    if ($collabora->display === \mod_collabora\collabora::DISPLAY_NEW) {
+    if ($collabora->display === \mod_collabora\api\collabora::DISPLAY_NEW) {
         // Use javascript to open the link in a new tab.
         $url = new moodle_url('/mod/collabora/view.php', ['id' => $coursemodule->id]);
         $info->onclick = "event.preventDefault();window.open('".$url->out(false)."', '_blank').focus();";
@@ -209,7 +209,7 @@ function collabora_get_coursemodule_info($coursemodule) {
         $info->content = format_module_intro('collabora', $collabora, $coursemodule->id, false);
     }
 
-    $instance = new \mod_collabora\collabora($collabora, context_module::instance($coursemodule->id), 0, $USER->id);
+    $instance = new \mod_collabora\api\collabora($collabora, context_module::instance($coursemodule->id), 0, $USER->id);
     if ($specificicon = $instance->get_module_icon()) {
         $info->icon = $specificicon;
     }
@@ -238,7 +238,7 @@ function collabora_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
         return;
     }
 
-    if ($filearea !== \mod_collabora\collabora::FILEAREA_INITIAL) {
+    if ($filearea !== \mod_collabora\api\collabora::FILEAREA_INITIAL) {
         return;
     }
 

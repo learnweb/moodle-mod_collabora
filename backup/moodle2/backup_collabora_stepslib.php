@@ -62,8 +62,8 @@ class backup_collabora_activity_structure_step extends backup_activity_structure
 
         // Define file annotations.
         $collabora->annotate_files('mod_collabora', 'intro', null); // This file area hasn't itemid.
-        $collabora->annotate_files('mod_collabora', \mod_collabora\collabora::FILEAREA_INITIAL, null);
-        $document->annotate_files('mod_collabora', \mod_collabora\collabora::FILEAREA_GROUP, 'groupid');
+        $collabora->annotate_files('mod_collabora', \mod_collabora\api\collabora::FILEAREA_INITIAL, null);
+        $document->annotate_files('mod_collabora', \mod_collabora\api\collabora::FILEAREA_GROUP, 'groupid');
 
         // Return the root element (collabora), wrapped into standard activity structure.
         return $this->prepare_activity_structure($collabora);

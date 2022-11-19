@@ -90,3 +90,4 @@ $string['setting_allowcollaboraserverexplicit'] = 'Explicitly allow Collabora ur
 $string['setting_allowcollaboraserverexplicit_help'] = '<strong>Note:</strong> This setting can be a security risk. You only should activate it if your Collabora server is running in a private net or on the same host as Moodle.<br>
 If your Collabora server is accessed by one of the in <strong>$CFG->curlsecurityblockedhosts</strong> defined hosts you have to enable this setting or remove the host from the blocked list.';
 $string['setting_header_security'] = 'Security';
+$string['task_cleanup'] = 'Cleanup';

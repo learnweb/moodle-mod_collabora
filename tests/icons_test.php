@@ -39,7 +39,7 @@ class icons_test extends \advanced_testcase {
     /**
      * Test for default icon.
      *
-     * @covers \mod_collabora\collabora
+     * @covers \mod_collabora\api\collabora
      * @return void
      */
     public function test_default_module_icon() {
@@ -50,7 +50,7 @@ class icons_test extends \advanced_testcase {
                 'initialtext' => 'Test text',
             ]
         );
-        $c = new \mod_collabora\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $c = new \mod_collabora\api\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
         $this->assertEquals('mod/collabora/txt', $c->get_module_icon());
     }
@@ -58,7 +58,7 @@ class icons_test extends \advanced_testcase {
     /**
      * Test for wordprocessor icon.
      *
-     * @covers \mod_collabora\collabora
+     * @covers \mod_collabora\api\collabora
      * @return void
      */
     public function test_wordprocessor_module_icon() {
@@ -68,7 +68,7 @@ class icons_test extends \advanced_testcase {
                 'format' => 'wordprocessor',
             ]
         );
-        $c = new \mod_collabora\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $c = new \mod_collabora\api\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
         $this->assertEquals('mod/collabora/odt', $c->get_module_icon());
     }
@@ -76,7 +76,7 @@ class icons_test extends \advanced_testcase {
     /**
      * Test for spreadsheet icon.
      *
-     * @covers \mod_collabora\collabora
+     * @covers \mod_collabora\api\collabora
      * @return void
      */
     public function test_spreadsheet_module_icon() {
@@ -86,7 +86,7 @@ class icons_test extends \advanced_testcase {
                 'format' => 'spreadsheet',
             ]
         );
-        $c = new \mod_collabora\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $c = new \mod_collabora\api\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
         $this->assertEquals('mod/collabora/ods', $c->get_module_icon());
     }
@@ -94,7 +94,7 @@ class icons_test extends \advanced_testcase {
     /**
      * Test for presentation icon.
      *
-     * @covers \mod_collabora\collabora
+     * @covers \mod_collabora\api\collabora
      * @return void
      */
     public function test_presentation_module_icon() {
@@ -104,7 +104,7 @@ class icons_test extends \advanced_testcase {
                 'format' => 'presentation',
             ]
         );
-        $c = new \mod_collabora\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $c = new \mod_collabora\api\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
         $this->assertEquals('mod/collabora/odp', $c->get_module_icon());
     }

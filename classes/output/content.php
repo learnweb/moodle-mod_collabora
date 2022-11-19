@@ -34,10 +34,10 @@ class content implements \renderable, \templatable {
      *
      * @param \cm_info $cm
      * @param \stdClass $instance
-     * @param \mod_collabora\collabora $collabora
+     * @param \mod_collabora\api\collabora $collabora
      * @param int $groupid
      */
-    public function __construct(\cm_info $cm, \stdClass $instance, \mod_collabora\collabora $collabora, int $groupid) {
+    public function __construct(\cm_info $cm, \stdClass $instance, \mod_collabora\api\collabora $collabora, int $groupid) {
         global $PAGE;
 
         $this->data = new \stdClass();

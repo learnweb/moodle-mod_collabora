@@ -46,5 +46,22 @@ function xmldb_collabora_upgrade($oldversion) {
         // Collabora savepoint reached.
         upgrade_mod_savepoint(true, 2021102400, 'collabora');
     }
+
+    if ($oldversion < 2022041905) {
+
+        // Define field sid to be added to collabora_token.
+        $table = new xmldb_table('collabora_token');
+        $field = new xmldb_field('sid', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'token');
+
+        // Conditionally launch add field sid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        \mod_collabora\api\collabora::remove_unused_tokens();
+
+        // Collabora savepoint reached.
+        upgrade_mod_savepoint(true, 2022041905, 'collabora');
+    }
+
     return true;
 }

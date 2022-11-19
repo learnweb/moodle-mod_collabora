@@ -45,10 +45,10 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The user in question"/>
         <FIELD NAME="token" TYPE="char" LENGTH="254" NOTNULL="true" SEQUENCE="false" COMMENT="The user's access token"/>
+        <FIELD NAME="sid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="session id"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="userid" TYPE="foreign-unique" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="token" UNIQUE="true" FIELDS="token"/>

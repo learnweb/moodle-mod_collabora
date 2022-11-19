@@ -15,27 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Endpoint for callback from Collabora
+ * Plugin scheduling
  *
  * @package   mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @copyright 2022 Andreas Grabs <moodle@grabs-edv.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use \mod_collabora\api\api;
-use \mod_collabora\api\collabora;
+defined('MOODLE_INTERNAL') OR die();
 
-// This script is called by the Collabora server and does not need cookies!
-define('NO_MOODLE_COOKIES', true);
-
-require_once(__DIR__.'/../../config.php');
-require_once($CFG->libdir.'/filelib.php');
-
-$relativepath = get_file_argument();
-$accesstoken = required_param('access_token', PARAM_ALPHANUMEXT);
-$postdata = file_get_contents('php://input');
-
-list($requesttyp, $fileid) = api::get_request_and_fileid_from_path($relativepath, $postdata);
-$collabora = collabora::get_instance_by_fileid($fileid, $accesstoken);
-$api = new api($requesttyp, $collabora, $postdata);
-$api->handle_request();
+$tasks = [
+    [
+        'classname' => 'mod_collabora\task\cleanup',
+        'blocking' => 0,
+        'minute' => '10',
+        'hour' => '2',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];

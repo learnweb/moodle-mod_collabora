@@ -36,7 +36,7 @@ class mod_collabora_mod_form extends moodleform_mod {
             'subdirs' => 0,
             'maxbytes' => 0,
             'maxfiles' => 1,
-            'accepted_types' => \mod_collabora\collabora::get_accepted_types(),
+            'accepted_types' => \mod_collabora\api\collabora::get_accepted_types(),
         ];
     }
 
@@ -47,7 +47,7 @@ class mod_collabora_mod_form extends moodleform_mod {
      */
     private function get_file_link() {
         $fs = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'mod_collabora', \mod_collabora\collabora::FILEAREA_INITIAL,
+        $files = $fs->get_area_files($this->context->id, 'mod_collabora', \mod_collabora\api\collabora::FILEAREA_INITIAL,
                                      false, '', false, 0, 0, 1);
         $file = reset($files);
         if (!$file) {
@@ -75,7 +75,7 @@ class mod_collabora_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         // Format section.
-        $mform->addElement('select', 'format', get_string('format', 'mod_collabora'), \mod_collabora\collabora::format_menu());
+        $mform->addElement('select', 'format', get_string('format', 'mod_collabora'), \mod_collabora\api\collabora::format_menu());
         $mform->setDefault('format', $config->defaultformat);
         if ($this->_instance) {
             $mform->freeze('format');
@@ -84,21 +84,21 @@ class mod_collabora_mod_form extends moodleform_mod {
         if (!$this->_instance) {
             $mform->addElement('filemanager', 'initialfile_filemanager', get_string('initialfile', 'mod_collabora'),
                                null, $this->get_filemanager_opts());
-            $mform->hideIf('initialfile_filemanager', 'format', 'neq', \mod_collabora\collabora::FORMAT_UPLOAD);
-        } else if ($this->current->format === \mod_collabora\collabora::FORMAT_UPLOAD) {
+            $mform->hideIf('initialfile_filemanager', 'format', 'neq', \mod_collabora\api\collabora::FORMAT_UPLOAD);
+        } else if ($this->current->format === \mod_collabora\api\collabora::FORMAT_UPLOAD) {
             $mform->addElement('static', 'initialfile', get_string('initialfile', 'mod_collabora'), $this->get_file_link());
         }
 
-        if (!$this->_instance || $this->current->format === \mod_collabora\collabora::FORMAT_TEXT) {
+        if (!$this->_instance || $this->current->format === \mod_collabora\api\collabora::FORMAT_TEXT) {
             $mform->addElement('textarea', 'initialtext', get_string('initialtext', 'mod_collabora'));
-            $mform->hideIf('initialtext', 'format', 'neq', \mod_collabora\collabora::FORMAT_TEXT);
+            $mform->hideIf('initialtext', 'format', 'neq', \mod_collabora\api\collabora::FORMAT_TEXT);
             if ($this->_instance) {
                 $mform->freeze('initialtext');
             }
         }
 
         // Display section.
-        $mform->addElement('select', 'display', get_string('display', 'mod_collabora'), \mod_collabora\collabora::display_menu());
+        $mform->addElement('select', 'display', get_string('display', 'mod_collabora'), \mod_collabora\api\collabora::display_menu());
         $mform->setDefault('display', $config->defaultdisplay);
 
         // Width.
@@ -137,7 +137,7 @@ class mod_collabora_mod_form extends moodleform_mod {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!$this->_instance) {
-            if ($data['format'] === \mod_collabora\collabora::FORMAT_UPLOAD) {
+            if ($data['format'] === \mod_collabora\api\collabora::FORMAT_UPLOAD) {
                 if (empty($data['initialfile_filemanager'])) {
                     $errors['initialfile_filemanager'] = get_string('requiredforupload', 'mod_collabora');
                 } else {
@@ -146,7 +146,7 @@ class mod_collabora_mod_form extends moodleform_mod {
                         $errors['initialfile_filemanager'] = get_string('requiredforupload', 'mod_collabora');
                     }
                 }
-            } else if ($data['format'] === \mod_collabora\collabora::FORMAT_TEXT) {
+            } else if ($data['format'] === \mod_collabora\api\collabora::FORMAT_TEXT) {
                 if (!isset($data['initialtext']) || !trim($data['initialtext'])) {
                     $errors['initialtext'] = get_string('requiredfortext', 'mod_collabora');
                 }
