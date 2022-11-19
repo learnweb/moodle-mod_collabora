@@ -34,30 +34,30 @@ class content implements \renderable, \templatable {
      *
      * @param \cm_info $cm
      * @param \stdClass $instance
-     * @param \mod_collabora\api\collabora $collabora
+     * @param \mod_collabora\api\collabora_fs $collaborafs
      * @param int $groupid
      */
-    public function __construct(\cm_info $cm, \stdClass $instance, \mod_collabora\api\collabora $collabora, int $groupid) {
+    public function __construct(\cm_info $cm, \stdClass $instance, \mod_collabora\api\collabora_fs $collaborafs, int $groupid) {
         global $PAGE;
 
         $this->data = new \stdClass();
         $this->data->id = $instance->id;
-        $this->data->name = $collabora->display_name() ? format_string($instance->name) : '';
+        $this->data->name = $collaborafs->display_name() ? format_string($instance->name) : '';
 
         if ($PAGE->pagelayout == 'embedded') {
             $this->data->embedded = true;
         } else {
             // Description should only be shown in non embedded pages.
-            if ($collabora->display_description() && trim(strip_tags($instance->intro))) {
+            if ($collaborafs->display_description() && trim(strip_tags($instance->intro))) {
                 $this->data->description = format_module_intro('collabora', $instance, $cm->id);
             }
         }
 
         if ($groupid >= 0) {
             $this->data->activitymenu = groups_print_activity_menu($cm, $PAGE->url, true, true);
-            $this->data->lockicon = $collabora->get_lock_icon();
+            $this->data->lockicon = $collaborafs->get_lock_icon();
 
-            $viewurl = $collabora->get_view_url();
+            $viewurl = $collaborafs->get_view_url(true);
             $this->data->viewurl = $viewurl->out(false);
 
             $this->data->framewidth = $instance->width ? $instance->width . 'px' : '100%';

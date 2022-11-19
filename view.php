@@ -66,15 +66,15 @@ $rec = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
 \mod_collabora\event\course_module_viewed::trigger_from_course_cm($course, $cm, $rec);
 
 // Load the collabora details for this page.
-$collabora = new \mod_collabora\api\collabora($rec, $PAGE->context, $groupid, $USER->id);
+$collaborafs = new \mod_collabora\api\collabora_fs($rec, $PAGE->context, $groupid, $USER->id);
 
 if ($loadcurrentfile) {
     require_capability('mod/collabora:directdownload', $PAGE->context);
-    $collabora->send_groupfile();
+    $collaborafs->send_groupfile();
     die;
 }
 
-if ($collabora->process_lock_unlock()) {
+if ($collaborafs->process_lock_unlock()) {
     redirect($PAGE->url); // If the locking is changed we have to reload the page.
 }
 
@@ -82,7 +82,7 @@ if ($collabora->process_lock_unlock()) {
 $PAGE->set_title($rec->name);
 $PAGE->set_heading($course->fullname);
 $closewindow = false;
-if ($rec->display === \mod_collabora\api\collabora::DISPLAY_NEW) {
+if ($rec->display === \mod_collabora\api\collabora_fs::DISPLAY_NEW) {
     $PAGE->set_pagelayout('embedded');
     $closewindow = true;
 }
@@ -102,7 +102,7 @@ echo $renderer->header();
 $widget = new \mod_collabora\output\content(
     $cm,
     $rec,
-    $collabora,
+    $collaborafs,
     $groupid
 );
 

@@ -39,6 +39,6 @@ class cleanup extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
 
-        \mod_collabora\api\collabora::remove_unused_tokens();
+        \mod_collabora\api\collabora_fs::remove_unused_tokens();
     }
 }

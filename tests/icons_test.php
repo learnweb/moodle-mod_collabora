@@ -50,9 +50,9 @@ class icons_test extends \advanced_testcase {
                 'initialtext' => 'Test text',
             ]
         );
-        $c = new \mod_collabora\api\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertEquals('mod/collabora/txt', $c->get_module_icon());
+        $this->assertEquals('mod/collabora/txt', $collaborafs->get_module_icon());
     }
 
     /**
@@ -68,9 +68,9 @@ class icons_test extends \advanced_testcase {
                 'format' => 'wordprocessor',
             ]
         );
-        $c = new \mod_collabora\api\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertEquals('mod/collabora/odt', $c->get_module_icon());
+        $this->assertEquals('mod/collabora/odt', $collaborafs->get_module_icon());
     }
 
     /**
@@ -86,9 +86,9 @@ class icons_test extends \advanced_testcase {
                 'format' => 'spreadsheet',
             ]
         );
-        $c = new \mod_collabora\api\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertEquals('mod/collabora/ods', $c->get_module_icon());
+        $this->assertEquals('mod/collabora/ods', $collaborafs->get_module_icon());
     }
 
     /**
@@ -104,8 +104,8 @@ class icons_test extends \advanced_testcase {
                 'format' => 'presentation',
             ]
         );
-        $c = new \mod_collabora\api\collabora($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertEquals('mod/collabora/odp', $c->get_module_icon());
+        $this->assertEquals('mod/collabora/odp', $collaborafs->get_module_icon());
     }
 }

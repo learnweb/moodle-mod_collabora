@@ -57,7 +57,7 @@ function xmldb_collabora_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        \mod_collabora\api\collabora::remove_unused_tokens();
+        \mod_collabora\api\collabora_fs::remove_unused_tokens();
 
         // Collabora savepoint reached.
         upgrade_mod_savepoint(true, 2022041905, 'collabora');

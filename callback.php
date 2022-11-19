@@ -23,7 +23,7 @@
  */
 
 use \mod_collabora\api\api;
-use \mod_collabora\api\collabora;
+use \mod_collabora\api\collabora_fs;
 
 // This script is called by the Collabora server and does not need cookies!
 define('NO_MOODLE_COOKIES', true);
@@ -36,6 +36,6 @@ $accesstoken = required_param('access_token', PARAM_ALPHANUMEXT);
 $postdata = file_get_contents('php://input');
 
 list($requesttyp, $fileid) = api::get_request_and_fileid_from_path($relativepath, $postdata);
-$collabora = collabora::get_instance_by_fileid($fileid, $accesstoken);
-$api = new api($requesttyp, $collabora, $postdata);
+$collaborafs = collabora_fs::get_instance_by_fileid($fileid, $accesstoken);
+$api = new api($requesttyp, $collaborafs, $postdata);
 $api->handle_request();

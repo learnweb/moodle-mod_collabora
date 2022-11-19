@@ -30,7 +30,7 @@ class api {
     /** @var string */
     private $postdata;
 
-    /** @var i_filesystem */
+    /** @var base_filesystem */
     private $filesystem;
 
     /** Request to get the document from us */
@@ -65,7 +65,7 @@ class api {
      * Constructor
      *
      * @param string $relativepath
-     * @param i_filesystem $filesystem
+     * @param base_filesystem $filesystem
      * @param string|null $postdata
      */
     public function __construct($requesttype, $filesystem, $postdata = null) {
@@ -129,6 +129,7 @@ class api {
             'UserId' => $this->filesystem->get_user_identifier(),
             'UserFriendlyName' => $this->filesystem->get_username(),
             'UserCanWrite' => !$this->filesystem->is_readonly(),
+            'UserCanRename' => false,
             'UserCanNotWriteRelative' => true,
             'LastModifiedTime' => date('c', $file->get_timemodified()),
         ];

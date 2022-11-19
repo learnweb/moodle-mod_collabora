@@ -34,13 +34,13 @@ if ($hassiteconfig) {
 
     $settings->add(new admin_setting_configselect('mod_collabora/defaultformat',
                                                   new lang_string('defaultformat', 'mod_collabora'), '',
-                                                  \mod_collabora\api\collabora::FORMAT_WORDPROCESSOR,
-                                                  \mod_collabora\api\collabora::format_menu()));
+                                                  \mod_collabora\api\collabora_fs::FORMAT_WORDPROCESSOR,
+                                                  \mod_collabora\api\collabora_fs::format_menu()));
 
     $settings->add(new admin_setting_configselect('mod_collabora/defaultdisplay',
                                                   new lang_string('defaultdisplay', 'mod_collabora'), '',
-                                                  \mod_collabora\api\collabora::DISPLAY_CURRENT,
-                                                  \mod_collabora\api\collabora::display_menu()));
+                                                  \mod_collabora\api\collabora_fs::DISPLAY_CURRENT,
+                                                  \mod_collabora\api\collabora_fs::display_menu()));
 
     $yesno = [1 => new lang_string('yes'), 0 => new lang_string('no')];
     $settings->add(new admin_setting_configselect('mod_collabora/defaultdisplayname',

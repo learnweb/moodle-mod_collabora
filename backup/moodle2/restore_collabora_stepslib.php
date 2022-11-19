@@ -90,7 +90,7 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
     protected function after_execute() {
         // Add collabora related files.
         $this->add_related_files('mod_collabora', 'intro', null);
-        $this->add_related_files('mod_collabora', \mod_collabora\api\collabora::FILEAREA_INITIAL, null);
-        $this->add_related_files('mod_collabora', \mod_collabora\api\collabora::FILEAREA_GROUP, 'collabora_group');
+        $this->add_related_files('mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_INITIAL, null);
+        $this->add_related_files('mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_GROUP, 'collabora_group');
     }
 }

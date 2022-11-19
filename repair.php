@@ -74,9 +74,9 @@ if ($confirm) {
     require_sesskey();
 
     // Load the collabora object related to the context, group and user.
-    $collabora = new \mod_collabora\api\collabora($rec, $PAGE->context, $groupid, $USER->id);
+    $collaborafs = new \mod_collabora\api\collabora_fs($rec, $PAGE->context, $groupid, $USER->id);
     // Try to repair the document.
-    if ($collabora->process_repair()) {
+    if ($collaborafs->process_repair()) {
         $msg = get_string('repair_succeeded', 'mod_collabora');
         $msgtype = \core\notification::SUCCESS;
     } else {
