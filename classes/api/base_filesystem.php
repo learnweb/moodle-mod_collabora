@@ -89,7 +89,11 @@ abstract class base_filesystem {
     public static function get_discovery_xml($cfg) {
         $baseurl = trim($cfg->url);
         if (!$baseurl) {
-            throw new \moodle_exception('collaboraurlnotset', 'mod_collabora');
+            // throw new \moodle_exception('collaboraurlnotset', 'mod_collabora');
+            \core\notification::add(
+                get_string('collaboraurlnotset', 'mod_collabora'),
+                \core\notification::WARNING
+            );
         }
         $cache = \cache::make('mod_collabora', 'discovery');
         if (!$xml = $cache->get($baseurl)) {
@@ -166,6 +170,12 @@ abstract class base_filesystem {
      * @return boolean
      */
     public static function is_testing() {
+        $mycfg = get_config('mod_collabora');
+        // If no url to a collabora server is defined we can behave like we are testing.
+        if (empty($mycfg->url)) {
+            return true;
+        }
+        // Check for test environment.
         if (defined('BEHAT_SITE_RUNNING')) {
             return true;
         }

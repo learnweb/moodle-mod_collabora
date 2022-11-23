@@ -77,18 +77,19 @@ class api {
     /**
      * Handle request from WOPI server
      *
-     * @return void
+     * @param bool $return If true the result is returned instead throwed through the output.
+     * @return void|string If $return is true a string is returned
      */
-    public function handle_request() {
+    public function handle_request($return = false) {
         switch ($this->requesttype) {
             case self::REQUEST_GETFILE:
-                $this->handle_getfile();
+                return $this->handle_getfile($return);
                 break;
             case self::REQUEST_PUTFILE:
-                $this->handle_putfile();
+                return $this->handle_putfile($return);
                 break;
             case self::REQUEST_CHECKFILEINFO:
-                $this->handle_checkfileinfo();
+                return $this->handle_checkfileinfo($return);
                 break;
             default:
                 send_header_404();
@@ -98,25 +99,41 @@ class api {
 
     /**
      * Handle getfile requests.
+     *
+     * @param bool $return If true the result is returned instead throwed through the output.
+     * @return void|string If $return is true a string is returned
      */
-    protected function handle_getfile() {
-        $this->filesystem->send_groupfile(false);
+    protected function handle_getfile($return = false) {
+        if ($return) {
+            return $this->filesystem->get_file()->get_content();
+        } else {
+            $this->filesystem->send_groupfile(false);
+        }
     }
 
     /**
      * Handle putfile requests.
+     *
+     * @param bool $return If true the result is returned instead throwed through the output.
+     * @return void|bool
      */
-    protected function handle_putfile() {
+    protected function handle_putfile($return = false) {
         if ($this->filesystem->is_readonly()) {
             throw new \moodle_exception('readonly', 'mod_collabora');
         }
         $this->filesystem->update_file($this->postdata);
+        if ($return) {
+            return true;
+        }
     }
 
     /**
      * Handle checkfileinfo requests.
+     *
+     * @param bool $return If true the result is returned instead throwed through the output.
+     * @return void|string If $return is true a string is returned
      */
-    protected function handle_checkfileinfo() {
+    protected function handle_checkfileinfo($return = false) {
         $file = $this->filesystem->get_file();
 
         $tz = date_default_timezone_get();
@@ -135,6 +152,10 @@ class api {
         ];
 
         date_default_timezone_set($tz);
-        die(json_encode($ret));
+        if ($return) {
+            return json_encode($ret);
+        } else {
+            die(json_encode($ret));
+        }
     }
 }

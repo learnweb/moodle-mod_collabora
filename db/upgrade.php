@@ -47,7 +47,7 @@ function xmldb_collabora_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021102400, 'collabora');
     }
 
-    if ($oldversion < 2022041905) {
+    if ($oldversion < 2022042002) {
 
         // Define field sid to be added to collabora_token.
         $table = new xmldb_table('collabora_token');
@@ -57,10 +57,18 @@ function xmldb_collabora_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+
+        // Now we combine sid with userid so we remove the unique userid index.
+        $table = new xmldb_table('collabora_token');
+        $index = new xmldb_index('userid', XMLDB_INDEX_UNIQUE, array('userid'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
         \mod_collabora\api\collabora_fs::remove_unused_tokens();
 
         // Collabora savepoint reached.
-        upgrade_mod_savepoint(true, 2022041905, 'collabora');
+        upgrade_mod_savepoint(true, 2022042002, 'collabora');
     }
 
     return true;
