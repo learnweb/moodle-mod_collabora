@@ -28,14 +28,20 @@ class cleanup extends \core\task\scheduled_task {
     /**
      * Returns localized name of this task.
      *
-     * @return string
      * @throws \coding_exception
+     * @return string
      */
     public function get_name() {
 
         return get_string('task_cleanup', 'mod_collabora');
     }
 
+    /**
+     * Do the job.
+     * Throw exceptions on errors (the job will be retried).
+     *
+     * @return void
+     */
     public function execute() {
         global $DB;
 

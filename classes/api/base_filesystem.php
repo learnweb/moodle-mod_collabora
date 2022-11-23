@@ -89,7 +89,6 @@ abstract class base_filesystem {
     public static function get_discovery_xml($cfg) {
         $baseurl = trim($cfg->url);
         if (!$baseurl) {
-            // throw new \moodle_exception('collaboraurlnotset', 'mod_collabora');
             \core\notification::add(
                 get_string('collaboraurlnotset', 'mod_collabora'),
                 \core\notification::WARNING
@@ -185,6 +184,12 @@ abstract class base_filesystem {
         return false;
     }
 
+    /**
+     * Get a dummy discovery xml from the fixtures folder. This is used if the Moodle instance is in testing mode
+     * or the "url" setting is empty. {@see static::is_testing}
+     *
+     * @return void
+     */
     public static function get_fixture_discovery_xml() {
         global $CFG;
 
@@ -255,7 +260,6 @@ abstract class base_filesystem {
      * @param \stdClass $user
      * @param \stored_file $file
      * @param \moodle_url $callbackurl
-     * @param int $userpermission
      */
     public function __construct($user, $file, $callbackurl) {
         $this->myconfig = get_config('mod_collabora');
@@ -320,6 +324,7 @@ abstract class base_filesystem {
     /**
      * Get the URL for the iframe in which to display the collabora document.
      *
+     * @param bool $showclosebutton If true a close button is shown inside the collabora working space.
      * @return \moodle_url
      */
     public function get_view_url($showclosebutton = false) {
@@ -369,7 +374,7 @@ abstract class base_filesystem {
      * @param string $content
      * @return void
      */
-    public function update_file($postdata) {
+    public function update_file($content) {
         if ($this->is_readonly()) {
             throw new \moodle_exception('docreadonly', 'assignsubmission_collabora');
         }
@@ -389,7 +394,7 @@ abstract class base_filesystem {
         ];
         $this->file->delete(); // Remove the old file.
         // Store the new file - This will change the ID and automtically unlock it.
-        $this->file = $fs->create_file_from_string($filerecord, $postdata);
+        $this->file = $fs->create_file_from_string($filerecord, $content);
     }
 
     /**

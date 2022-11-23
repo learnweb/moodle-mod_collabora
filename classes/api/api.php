@@ -40,6 +40,13 @@ class api {
     /** Request to get infos about the document */
     const REQUEST_CHECKFILEINFO = 'checkfileinfo';
 
+    /**
+     * Get the request type and the fileid by using the relativepath and checking the postdata.
+     *
+     * @param string $relativepath
+     * @param string $postdata
+     * @return array The request type and the fileid as array($requesttype, $fileid)
+     */
     public static function get_request_and_fileid_from_path($relativepath, $postdata) {
         if (!preg_match('|/wopi/files/([^/]*)(/contents)?|', $relativepath, $matches)) {
             throw new \moodle_exception('invalidrequest', 'mod_collabora');
@@ -64,7 +71,7 @@ class api {
     /**
      * Constructor
      *
-     * @param string $relativepath
+     * @param string $requesttype
      * @param base_filesystem $filesystem
      * @param string|null $postdata
      */

@@ -81,6 +81,13 @@ class collabora_fs extends base_filesystem {
         return true;
     }
 
+    /**
+     * Get an instance of this class by using the fileid and the accesstoken comming from the request (collabora server).
+     *
+     * @param string $fileid
+     * @param string $accesstoken
+     * @return static
+     */
     public static function get_instance_by_fileid($fileid, $accesstoken) {
         global $DB;
 
