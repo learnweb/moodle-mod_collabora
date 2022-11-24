@@ -4,6 +4,13 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.1-r1
+
+* 2022-11-23 -  Optimize github actions workflow
+* 2022-11-23 -  API has now an option to return result instead of throwing it through the output. This makes testing easier.
+* 2022-11-19 -  Better access check. A logged out user can not share the iframe url anymore.
+* 2022-11-19 -  New abstraction for filesystem which makes it easier to share the API code between mod_collabora and this plugin.
+
 ### v4.0-r5
 
 * 2022-11-07 -  Fix event classes abstraction.
