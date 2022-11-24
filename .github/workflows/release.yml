@@ -99,6 +99,16 @@ jobs:
         if: ${{ always() }}
         run: moodle-plugin-ci mustache
 
+      - name: Run grunt
+        continue-on-error: true # This step will show errors but will not fail
+        if: ${{ always() }}
+        run: moodle-plugin-ci grunt
+
+      - name: Run phpdoc
+        continue-on-error: true # This step will show errors but will not fail
+        if: ${{ always() }}
+        run: moodle-plugin-ci phpdoc
+
       - name: Run phpunit
         if: ${{ always() }}
         run: moodle-plugin-ci phpunit
