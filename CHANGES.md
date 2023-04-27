@@ -4,6 +4,12 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.2-r1
+
+* 2023-04-27 -  Optimize monologo for document depending icons
+* 2023-04-27 -  Fix syntax of new \single_button(...) call.
+* 2023-04-27 -  Optimize testing mode.
+
 ### v4.1-r1
 
 * 2022-11-23 -  Optimize github actions workflow

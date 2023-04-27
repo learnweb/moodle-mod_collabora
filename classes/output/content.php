@@ -78,6 +78,13 @@ class content implements \renderable, \templatable {
         } else {
             $this->data->warning = get_string('nogroupaccess', 'mod_collabora');
         }
+
+        // Add a warning notice.
+        if (\mod_collabora\api\collabora_fs::is_testing()) {
+            $this->data->hasnotice = true;
+            $this->data->noticetype = \core\notification::WARNING;
+            $this->data->notice = get_string('collaboraurlnotset', 'mod_collabora');
+        }
     }
 
     /**

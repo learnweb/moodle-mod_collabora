@@ -31,7 +31,10 @@
         "viewurl" : "https://nodomain.local",
         "framewidth" : "900px",
         "frameheight" : "500px",
-        "warning" : ""
+        "warning" : "",
+        "hasnotice" : 1,
+        "noticetype" : "warning",
+        "notice" : "Collabora URL is not configured for this site"
     }
 
 }}
@@ -48,6 +51,12 @@
         </div>
     </div>
 {{/description}}
+
+{{#hasnotice}}
+<div class="alert alert-{{noticetype}} alert-block " role="alert">
+    {{notice}}
+</div>
+{{/hasnotice}}
 
 {{^warning}}
     {{^embedded}}

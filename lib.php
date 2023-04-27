@@ -194,7 +194,7 @@ function collabora_dndupload_handle($uploadinfo) {
  * @return \cached_cm_info
  */
 function collabora_get_coursemodule_info($coursemodule) {
-    global $DB, $USER;
+    global $DB, $USER, $OUTPUT;
     if (!$collabora = $DB->get_record('collabora', ['id' => $coursemodule->instance])) {
         return null;
     }
@@ -211,7 +211,9 @@ function collabora_get_coursemodule_info($coursemodule) {
 
     $collaborafs = new \mod_collabora\api\collabora_fs($collabora, context_module::instance($coursemodule->id), 0, $USER->id);
     if ($specificicon = $collaborafs->get_module_icon()) {
-        $info->icon = $specificicon;
+        $url = $OUTPUT->image_url($specificicon, 'mod_collabora');
+        $url->param('filtericon', 1);
+        $info->iconurl = $url;
     }
     return $info;
 }
@@ -273,7 +275,7 @@ function collabora_extend_settings_navigation(settings_navigation $settingsnav, 
     global $USER, $PAGE, $CFG;
 
     if (empty($PAGE->cm->context)) {
-        $PAGE->cm->context = context_module::instance($PAGE->cm->instance);
+        return; // $PAGE->cm->context = context_module::instance($PAGE->cm->instance);
     }
 
     if (has_capability('mod/collabora:repair', $PAGE->cm->context)) {

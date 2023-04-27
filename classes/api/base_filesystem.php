@@ -88,12 +88,7 @@ abstract class base_filesystem {
      */
     public static function get_discovery_xml($cfg) {
         $baseurl = trim($cfg->url);
-        if (!$baseurl) {
-            \core\notification::add(
-                get_string('collaboraurlnotset', 'mod_collabora'),
-                \core\notification::WARNING
-            );
-        }
+
         $cache = \cache::make('mod_collabora', 'discovery');
         if (!$xml = $cache->get($baseurl)) {
             if (static::is_testing()) {

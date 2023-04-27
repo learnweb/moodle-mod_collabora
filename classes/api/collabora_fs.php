@@ -403,17 +403,17 @@ class collabora_fs extends base_filesystem {
             case 'application/msword': // DOC.
             case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': // DOCX.
             case 'text/rtf': // RTF.
-                return 'mod/collabora/odt';
+                return 'odt';
             case 'application/vnd.oasis.opendocument.spreadsheet': // ODS.
             case 'application/vnd.ms-excel': // XLS.
             case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': // XLSX.
-                return 'mod/collabora/ods';
+                return 'ods';
             case 'application/vnd.oasis.opendocument.presentation': // ODP.
             case 'application/vnd.ms-powerpoint': // PPT.
             case 'application/vnd.openxmlformats-officedocument.presentationml.presentation': // PPTX.
-                return 'mod/collabora/odp';
+                return 'odp';
             case 'text/plain': // Text.
-                return 'mod/collabora/txt';
+                return 'txt';
         }
         return false;
     }
