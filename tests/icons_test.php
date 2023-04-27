@@ -52,7 +52,7 @@ class icons_test extends \advanced_testcase {
         );
         $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertEquals('mod/collabora/txt', $collaborafs->get_module_icon());
+        $this->assertEquals('txt', $collaborafs->get_module_icon());
     }
 
     /**
@@ -70,7 +70,7 @@ class icons_test extends \advanced_testcase {
         );
         $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertEquals('mod/collabora/odt', $collaborafs->get_module_icon());
+        $this->assertEquals('odt', $collaborafs->get_module_icon());
     }
 
     /**
@@ -88,7 +88,7 @@ class icons_test extends \advanced_testcase {
         );
         $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertEquals('mod/collabora/ods', $collaborafs->get_module_icon());
+        $this->assertEquals('ods', $collaborafs->get_module_icon());
     }
 
     /**
@@ -106,6 +106,6 @@ class icons_test extends \advanced_testcase {
         );
         $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
 
-        $this->assertEquals('mod/collabora/odp', $collaborafs->get_module_icon());
+        $this->assertEquals('odp', $collaborafs->get_module_icon());
     }
 }
