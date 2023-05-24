@@ -93,6 +93,12 @@ $opts = [
 ];
 $PAGE->requires->js_call_amd('mod_collabora/monitorclose', 'init', [$opts]);
 
+// Decide whether or not we show the description.
+if ($PAGE->pagelayout == 'embedded' || !$collaborafs->display_description() || !trim(strip_tags($rec->intro))) {
+    $PAGE->activityheader->set_attrs(array('description' => ''));
+}
+
+/** @var \mod_collabora\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_collabora');
 
 // Start the output.

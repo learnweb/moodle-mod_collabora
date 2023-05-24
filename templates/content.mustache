@@ -23,9 +23,8 @@
     {
         "id" : 46,
         "legacy" : 1,
-        "name" : "Test pad",
+        "filename" : "Test document",
         "loadfileurl": 1,
-        "description" : "...",
         "activitymenu" : "<select><option>1</option><option>2</option></select>",
         "lockicon" : "<img alt=\"icon\" src=\"icon.png\">",
         "viewurl" : "https://nodomain.local",
@@ -38,25 +37,20 @@
     }
 
 }}
-{{^embedded}}
-    <h2>
-        {{name}}
-    </h2>
-{{/embedded}}
-
-{{#description}}
-    <div class="box generalbox mod_introbox py-3">
-        <div class="no-overflow">
-            {{{description}}}
-        </div>
-    </div>
-{{/description}}
 
 {{#hasnotice}}
 <div class="alert alert-{{noticetype}} alert-block " role="alert">
     {{notice}}
 </div>
 {{/hasnotice}}
+
+{{^embedded}}
+    {{# filename}}
+    <h5>
+        {{#str}}file{{/str}}: {{.}}
+    </h5>
+    {{/ filename}}
+{{/embedded}}
 
 {{^warning}}
     {{^embedded}}

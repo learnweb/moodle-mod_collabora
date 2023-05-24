@@ -42,15 +42,10 @@ class content implements \renderable, \templatable {
 
         $this->data = new \stdClass();
         $this->data->id = $instance->id;
-        $this->data->name = $collaborafs->display_name() ? format_string($instance->name) : '';
+        $this->data->filename = $collaborafs->display_name() ? format_string($collaborafs->get_file()->get_filename()) : '';
 
         if ($PAGE->pagelayout == 'embedded') {
             $this->data->embedded = true;
-        } else {
-            // Description should only be shown in non embedded pages.
-            if ($collaborafs->display_description() && trim(strip_tags($instance->intro))) {
-                $this->data->description = format_module_intro('collabora', $instance, $cm->id);
-            }
         }
 
         if ($groupid >= 0) {

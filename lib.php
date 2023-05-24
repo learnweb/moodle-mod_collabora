@@ -275,7 +275,7 @@ function collabora_extend_settings_navigation(settings_navigation $settingsnav, 
     global $USER, $PAGE, $CFG;
 
     if (empty($PAGE->cm->context)) {
-        return; // $PAGE->cm->context = context_module::instance($PAGE->cm->instance);
+        return;
     }
 
     if (has_capability('mod/collabora:repair', $PAGE->cm->context)) {

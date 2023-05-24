@@ -4,6 +4,11 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.2-r2
+
+* 2023-05-25 -  Optimize output and settings
+* 2023-05-25 -  Now showing the file name above the document instead of the title (#39)
+
 ### v4.2-r1
 
 * 2023-04-27 -  Optimize monologo for document depending icons

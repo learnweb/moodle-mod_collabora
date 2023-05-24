@@ -102,26 +102,32 @@ class mod_collabora_mod_form extends moodleform_mod {
         // Display section.
         $mform->addElement('select', 'display', get_string('display', 'mod_collabora'), collabora_fs::display_menu());
         $mform->setDefault('display', $config->defaultdisplay);
+        $mform->addHelpButton('display', 'display', 'mod_collabora');
 
         // Width.
         $mform->addElement('text', 'width', get_string('width', 'mod_collabora'));
         $mform->setDefault('width', 0);
         $mform->setType('width', PARAM_INT);
         $mform->setAdvanced('width');
+        $mform->disabledIf('width', 'display', 'eq', collabora_fs::DISPLAY_NEW);
 
         // Height.
         $mform->addElement('text', 'height', get_string('height', 'mod_collabora'));
         $mform->setDefault('height', 0);
         $mform->setType('height', PARAM_INT);
         $mform->setAdvanced('height');
+        $mform->disabledIf('height', 'display', 'eq', collabora_fs::DISPLAY_NEW);
 
         // Display activity name.
         $mform->addElement('selectyesno', 'displayname', get_string('displayname', 'mod_collabora'));
         $mform->setDefault('displayname', $config->defaultdisplayname);
+        $mform->addHelpButton('displayname', 'displayname', 'mod_collabora');
+        $mform->disabledIf('displayname', 'display', 'eq', collabora_fs::DISPLAY_NEW);
 
         // Display description.
         $mform->addElement('selectyesno', 'displaydescription', get_string('displaydescription', 'mod_collabora'));
         $mform->setDefault('displaydescription', $config->defaultdisplaydescription);
+        $mform->disabledIf('displaydescription', 'display', 'eq', collabora_fs::DISPLAY_NEW);
 
         // Standard sections.
         $this->standard_coursemodule_elements();
