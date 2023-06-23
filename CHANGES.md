@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.3
+
+* 2023-06-23 -  Fix error in "collabora_get_coursemodule_info" throwing error in some situations (#40).
+
 ### v4.2-r2
 
 * 2023-05-25 -  Optimize output and settings

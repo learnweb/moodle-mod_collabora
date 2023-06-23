@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023052400;
-$plugin->release   = 'v4.2-r2 (2023-05-24)';
+$plugin->version   = 2023062300;
+$plugin->release   = 'v4.3 (2023-06-23)';
 $plugin->requires  = 2022041200; // Moodle 4.0.
 $plugin->component = 'mod_collabora';
 $plugin->maturity  = MATURITY_STABLE;

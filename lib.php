@@ -194,7 +194,7 @@ function collabora_dndupload_handle($uploadinfo) {
  * @return \cached_cm_info
  */
 function collabora_get_coursemodule_info($coursemodule) {
-    global $DB, $USER, $OUTPUT;
+    global $DB, $USER;
     if (!$collabora = $DB->get_record('collabora', ['id' => $coursemodule->instance])) {
         return null;
     }
@@ -211,9 +211,8 @@ function collabora_get_coursemodule_info($coursemodule) {
 
     $collaborafs = new \mod_collabora\api\collabora_fs($collabora, context_module::instance($coursemodule->id), 0, $USER->id);
     if ($specificicon = $collaborafs->get_module_icon()) {
-        $url = $OUTPUT->image_url($specificicon, 'mod_collabora');
-        $url->param('filtericon', 1);
-        $info->iconurl = $url;
+        $info->icon = 'mod/collabora/' . $specificicon;
+        $info->customdata['filtericon'] = 1; // Apply the monologo filter to the icon.
     }
     return $info;
 }
