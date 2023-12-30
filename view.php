@@ -81,17 +81,19 @@ if ($collaborafs->process_lock_unlock()) {
 // Set up the page.
 $PAGE->set_title($rec->name);
 $PAGE->set_heading($course->fullname);
-$closewindow = false;
+$aspopup = false;
 if ($rec->display === \mod_collabora\api\collabora_fs::DISPLAY_NEW) {
     $PAGE->set_pagelayout('embedded');
-    $closewindow = true;
+    $aspopup = true;
 }
 
 $opts = [
+    'collaboraurl' => $collaborafs->get_collabora_url(),
     'courseurl' => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(),
-    'closewindow' => $closewindow,
+    'aspopup' => $aspopup,
+    'iframeid' => 'collaboraiframe_' . $rec->id,
 ];
-$PAGE->requires->js_call_amd('mod_collabora/monitorclose', 'init', [$opts]);
+$PAGE->requires->js_call_amd('mod_collabora/postmessage', 'init', [$opts]);
 
 // Decide whether or not we show the description.
 if ($PAGE->pagelayout == 'embedded' || !$collaborafs->display_description() || !trim(strip_tags($rec->intro))) {

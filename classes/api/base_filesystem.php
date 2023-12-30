@@ -305,7 +305,7 @@ abstract class base_filesystem {
      *
      * @return \moodle_url
      */
-    protected function get_collabora_url() {
+    public function get_collabora_url() {
         $mimetype = $this->get_file_mimetype();
         $discoveryxml = $this->load_discovery_xml();
         return new \moodle_url(
