@@ -94,10 +94,10 @@ class collabora_fs extends base_filesystem {
         $userid = static::get_userid_from_token($accesstoken);
 
         $parts = explode('_', $fileid);
-        if (count($parts) < 3) {
+        if (count($parts) < 4) {
             throw new \moodle_exception('invalidfileid', 'mod_collabora');
         }
-        list($contextid, $groupid, $repaircount) = $parts;
+        list($contextid, $groupid, $repaircount, $version) = $parts;
 
         // Check the context.
         $context = \context::instance_by_id($contextid);
@@ -129,7 +129,7 @@ class collabora_fs extends base_filesystem {
             }
         }
 
-        return new static($rec, $context, $groupid, $userid);
+        return new static($rec, $context, $groupid, $userid, $version);
 
     }
 
@@ -140,8 +140,9 @@ class collabora_fs extends base_filesystem {
      * @param \context $context
      * @param int $groupid
      * @param int $userid
+     * @param int $version
      */
-    public function __construct($collaborarec, $context, $groupid, $userid) {
+    public function __construct($collaborarec, $context, $groupid, $userid, $version = 0) {
         global $DB;
 
         $this->collaborarec = $collaborarec;
@@ -157,7 +158,7 @@ class collabora_fs extends base_filesystem {
         $file = $this->create_retrieve_file();
         $user = $DB->get_record('user', array('id' => $userid));
         $callbackurl = new \moodle_url('/mod/collabora/callback.php');
-        parent::__construct($user, $file, $callbackurl);
+        parent::__construct($user, $file, $callbackurl, $version);
     }
 
     /**
@@ -286,7 +287,7 @@ class collabora_fs extends base_filesystem {
     private function create_retrieve_file() {
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_collabora', self::FILEAREA_GROUP, $this->groupid,
-                                     '', false, 0, 0, 1);
+                                     'filepath', false, 0, 0, 1);
         $file = reset($files);
         if (!$file) {
             $file = $this->create_file();
@@ -444,7 +445,13 @@ class collabora_fs extends base_filesystem {
      */
     public function get_file_id() {
         // By using an additional element "repaircount" we are able to create a new process in collabora for broken documents.
-        return "{$this->context->id}_{$this->groupid}_{$this->document->repaircount}";
+        $elements = [
+            $this->context->id,
+            $this->groupid,
+            $this->document->repaircount,
+            $this->version, // On main files the version always is "0".
+        ];
+        return implode('_', $elements);
     }
 
     /**

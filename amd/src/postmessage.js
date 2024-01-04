@@ -21,11 +21,38 @@
  * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([], function() {
-    var collaboraUrl;
+
+import $ from 'jquery';
+import fragment from 'core/fragment';
+import templates from 'core/templates';
+import notification from 'core/notification';
+import log from 'core/log';
+
+export const init = (opts) => {
     var courseURL;
+    var collaboraUrl;
+    var destinationOrigin;
     var asPopup;
-    var iframe;
+    var iframeid;
+    var versionviewer;
+    var id;
+    var contextid;
+    var version;
+
+    courseURL = opts.courseurl;
+    collaboraUrl = opts.collaboraurl;
+    destinationOrigin = opts.destinationorigin;
+    asPopup = opts.aspopup;
+    iframeid = opts.iframeid;
+    id = opts.id;
+    contextid = opts.contextid;
+    // version = 1704188035;
+    version = 0;
+    setFrameData(collaboraUrl);
+
+    initModal();
+    versionviewer = document.getElementById(opts.versionviewerid);
+    window.addEventListener('message', receiveMessage);
 
     /**
      * Listener function for the event 'message'
@@ -34,7 +61,10 @@ define([], function() {
     function receiveMessage(event) {
         var msg, msgId;
 
-        console.log('ReceiveMessage: ' + event.data);
+        log.debug('ReceiveMessage from ' + event.origin + ': ' + event.data);
+        if (typeof event.data !== 'string' && !(event.data instanceof String)) {
+            return;
+        }
 
         msg = JSON.parse(event.data);
         if (!msg) {
@@ -50,9 +80,21 @@ define([], function() {
             case 'App_LoadingStatus':
                 tellPostmessageReady(msg);
                 break;
+            case 'UI_FileVersions':
+                showVersionView();
+                break;
+            case 'UI_Save':
+                invokeSave();
+                break;
+            case 'SET_VERSION':
+                version = msg.Values.version;
+                setFrameData(collaboraUrl);
         }
     }
 
+    /**
+     * Clode the document or go back to the course page, depending on the current view.
+     */
     function closeDoc() {
         if (asPopup) {
             window.close();
@@ -61,33 +103,149 @@ define([], function() {
         }
     }
 
+    /**
+     * Show the version_view page with all current versions.
+     */
+    function showVersionView() {
+        var serviceparams = {
+            'function' : 'version_viewer_content',
+            'id': id
+        };
+        fragment.loadFragment('mod_collabora', 'get_html', contextid, serviceparams).then(
+            function(html, js) {
+                $('#' + versionviewer.id).collapse('show');
+                let contentcontainer = document.querySelector('#' + versionviewer.id + ' .card-body');
+                contentcontainer.innerHTML = html;
+                if (js) {
+                    templates.runTemplateJS(js);
+                }
+            }
+        ).fail(notification.exception);
+
+    }
+
+    /**
+     * Invoke the save command.
+     * This is different to the default save action because we can prevent saving of unmodified documents
+     * which prevents creating new versions of the same document.
+     */
+    function invokeSave() {
+        var postObject = {
+            'MessageId': 'Action_Save',
+            'Values': {
+                'DontTerminateEdit': true,
+                'DontSaveIfUnmodified': true
+            }
+        };
+        postMessage(postObject);
+    }
+
+    /**
+     * Post the first message to collabora when the document is ready.
+     * @param {object} msg The received message object from the collabora editor.
+     */
     function tellPostmessageReady(msg) {
         if (msg.Values) {
             if (msg.Values.Status == 'Document_Loaded') {
+
                 // Send the Host_PostMessageReady  before other posts (Mandatory)
                 var postObject = {
-                    'MessageId': 'Host_PostmessageReady',
-                    'SendTime': Date.now()
+                    'MessageId': 'Host_PostmessageReady'
+                };
+                postMessage(postObject);
+
+                // Disable the default save command to activate our own.
+                var postObject = {
+                    'MessageId': 'Disable_Default_UIAction',
+                    'Values': {
+                        'action': 'UI_Save',
+                        'disable': true
+                    }
                 };
                 postMessage(postObject);
             }
         }
     }
 
+    /**
+     * Send a message to the collabora editor
+     * @param {object} postObject The object we want to post.
+     */
     function postMessage(postObject) {
+        postObject.SendTime = Date.now();
         var message = JSON.stringify(postObject);
-        console.log('Post message to collabora: ' + message);
-        iframe.postMessage(message, collaboraUrl);
+        log.debug('Post message to collabora: ' + message);
+
+        var iframe = document.getElementById(iframeid);
+        iframe = iframe.contentWindow || (iframe.contentDocument.document || iframe.contentDocument);
+
+        iframe.postMessage(message, destinationOrigin);
     }
 
-    return {
-        init: function(opts) {
-            collaboraUrl = opts.collaboraurl;
-            courseURL = opts.courseurl;
-            asPopup = opts.aspopup;
-            iframe = document.getElementById(opts.iframeid);
-            iframe = iframe.contentWindow || (iframe.contentDocument.document || iframe.contentDocument);
-            window.addEventListener('message', receiveMessage);
-        }
-    };
-});
+    function initModal() {
+        // Get the elements between which the iframe is moved back and forth.
+        const inlineelement = document.querySelector('#collabora-inline_' + id);
+        const modalelement = document.querySelector('#collaboramodal-body_' + id);
+        // Get the iframe container we move to one of the above defined elements.
+        const iframecontainer = document.querySelector('#iframe-container_' + id);
+
+        // Move the iframe to the modal element.
+        $("#collaboramodal_" + id).on("show.bs.modal", function() {
+            modalelement.append(iframecontainer);
+            $("body").addClass("modal-open");
+
+            setFrameData(collaboraUrl);
+        });
+
+        // Move the iframe to the inline element.
+        $("#collaboramodal_" + id).on("hide.bs.modal", function() {
+            inlineelement.append(iframecontainer);
+            $("body").removeClass("modal-open");
+            setFrameData(collaboraUrl);
+        });
+
+    }
+
+    function setFrameData() {
+        log.debug('Set iframe source: ' + collaboraUrl);
+
+        // Load the wopi_src params.
+        var serviceparams = {
+            'function' : 'wopi_src',
+            'id': id,
+            'version': version
+        };
+        fragment.loadFragment('mod_collabora', 'get_html', contextid, serviceparams).then(
+            function(strparams) {
+                var params = JSON.parse(strparams);
+
+                var form = document.createElement("form");
+                form.method = "get";
+                form.action = collaboraUrl;
+                form.target = iframeid;
+                for (const [key, value] of Object.entries(params)) {
+                    var element = document.createElement("input");
+                    element.type = "hidden";
+                    element.name = key;
+                    element.value = value;
+                    form.appendChild(element);
+                    log.debug('Add element ' + key + ': ' + value);
+                }
+                if (version > 0) {
+                    var element = document.createElement("input");
+                    element.type = "hidden";
+                    element.name = 'permission';
+                    element.value = 'readonly';
+                    form.appendChild(element);
+                    log.debug('Add readonly element');
+                }
+                document.body.appendChild(form);
+
+                form.submit();
+                // form.remove();
+            }
+        ).fail(notification.exception);
+
+        return;
+    }
+};

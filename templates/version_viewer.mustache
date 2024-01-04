@@ -15,24 +15,22 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_collabora/iframe_legacy
+    @template mod_collabora/version_viewer
 
-    Displays collabora iframe in legacy mode (pre boost based themes)
+    Displays collabora iframe
 
     Example context (json):
     {
-        "id" : 1,
-        "embedded" : 1,
-        "frameheight" : "400px",
-        "framehwidth" : "800px"
+        "id" : 1
     }
 
 }}
 
-<iframe
-    class="collaboraiframe"
-    id="collaboraiframe_{{id}}"
-    src="about:blank"
-    {{#embedded}}style="height:100vh;width:100%"{{/embedded}}
-    {{^embedded}}style="height:{{frameheight}};width:{{framewidth}}"{{/embedded}}
-></iframe>
+<div id="version_viewer_{{id}}" class="collapse card w-100">
+    <button type="button" data-toggle="collapse" data-target="#version_viewer_{{id}}" class="btn btn-secondary btn-sm border-bottom">
+        <i class="fa fa-chevron-down fa-lg" aria-hidden="true"> </i>
+    </button>
+    <div class="card-body">
+        <!-- The content comes later -->
+    </div>
+</div>

@@ -15,25 +15,19 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_collabora/iframe
+    @template mod_collabora/inline
 
-    Displays collabora iframe
+    Displays collabora iframe as activity page.
 
     Example context (json):
     {
-        "id" : 1
+        "id" : 1,
+        "frameheight" : "400px"
     }
 
 }}
 
-<div id="iframe-container_{{id}}" class="h-100">
-    {{> mod_collabora/version_viewer }}
-    <div class="collabora-frame h-100">
-        <iframe
-            class="collabora-iframe border w-100 h-100"
-            id="collaboraiframe_{{id}}"
-            name="collaboraiframe_{{id}}"
-            src="about:blank" allowFullscreen>
-        </iframe>
-    </div>
+<div id="collabora-inline_{{id}}" class="collabora-inline-container" style="{{#frameheight}} height:{{.}}px {{/frameheight}}">
+    <!-- The iframe starts here. Later it is moved between the modal and inline view. -->
+    {{> mod_collabora/iframe}}
 </div>

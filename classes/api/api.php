@@ -147,6 +147,11 @@ class api {
         date_default_timezone_set('UTC');
 
         $ret = (object)[
+            // 'Version' => '1',
+            'SupportsRename' => false,
+            'UserCanRename' => false,
+            'EnableShare' => false,
+            // 'FileVersionPostMessage' => true,
             'BaseFileName' => clean_filename($file->get_filename()),
             'OwnerId' => $this->filesystem->get_ownerid(),
             'Size' => $file->get_filesize(),
@@ -156,6 +161,7 @@ class api {
             'UserCanRename' => false,
             'UserCanNotWriteRelative' => true,
             'LastModifiedTime' => date('c', $file->get_timemodified()),
+            'PostMessageOrigin' => 'https://test.grabs-edv.com',
         ];
 
         date_default_timezone_set($tz);

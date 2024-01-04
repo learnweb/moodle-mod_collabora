@@ -58,6 +58,10 @@ abstract class base_filesystem {
     protected $file;
     /** @var \moodle_url */
     protected $callbackurl;
+    /** @var bool */
+    protected $useversions;
+    /** @var int */
+    protected $version;
 
     /**
      * Get the URL for editing built from the given mimetype.
@@ -255,12 +259,19 @@ abstract class base_filesystem {
      * @param \stdClass $user
      * @param \stored_file $file
      * @param \moodle_url $callbackurl
+     * @param int $version
      */
-    public function __construct($user, $file, $callbackurl) {
+    public function __construct($user, $file, $callbackurl, $version = 0) {
         $this->myconfig = get_config('mod_collabora');
         $this->user = $user;
         $this->file = $file;
         $this->callbackurl = $callbackurl;
+        $this->version = $version;
+
+        // TODO: Make it configurable!
+        // TODO: Make it configurable!
+        // TODO: Make it configurable!
+        $this->useversions = true;
     }
 
     /**
@@ -317,14 +328,25 @@ abstract class base_filesystem {
     }
 
     /**
+     * Get the origin of the handler, based on the collabora url.
+     *
+     * @return string
+     */
+    public function get_collabora_origin() {
+        $url = $this->get_collabora_url();
+        $scheme = $url->get_scheme();
+        $host = $url->get_host();
+        return $scheme . '://' . $host;
+    }
+
+    /**
      * Get the URL for the iframe in which to display the collabora document.
      *
      * @param bool $showclosebutton If true a close button is shown inside the collabora working space.
      * @return \moodle_url
      */
-    public function get_view_url($showclosebutton = false) {
+    public function get_view_url() {
         // Preparing the parameters.
-
         $fileid = $this->get_file_id();
         $wopisrc = $this->callbackurl->out().'/wopi/files/'.$fileid;
         $token = $this->get_user_token();
@@ -337,10 +359,37 @@ abstract class base_filesystem {
             'WOPISrc' => $wopisrc,
             'access_token' => $token,
             'lang' => $lang,
-            'closebutton' => $showclosebutton,
+            'revisionhistory' => 1,
+            'closebutton' => 1,
         );
         $collaboraurl->params($params);
         return $collaboraurl;
+    }
+
+    /**
+     * Get the URL for the iframe in which to display the collabora document.
+     *
+     * @return \moodle_url
+     */
+    public function get_view_params() {
+        // Preparing the parameters.
+        $fileid = $this->get_file_id();
+        $wopisrc = $this->callbackurl->out().'/wopi/files/'.$fileid;
+        $token = $this->get_user_token();
+        // The loleaflet.html from $collaboraurl accepts a lang parameter but only with hyphen and not the underscore from moodle.
+        // This is prepared by get_collabora_lang().
+        $lang = static::get_collabora_lang();
+
+        $params = array(
+            // 'WOPISrc' => urlencode($wopisrc),
+            'WOPISrc' => $wopisrc,
+            'access_token' => $token,
+            'lang' => $lang,
+            'revisionhistory' => 1,
+            'closebutton' => 1,
+        );
+
+        return $params;
     }
 
     /**
@@ -360,11 +409,29 @@ abstract class base_filesystem {
      * @return void
      */
     public function send_groupfile($forcedownload = true) {
+        if (!empty($this->version)) {
+            $this->send_version_file($this->version);
+        }
         send_stored_file($this->file, null, 0, $forcedownload); // Force download.
     }
 
     /**
-     * Update the stored file
+     * Send a version of our file from the moodle file api.
+     * This function implicitly calls a "die"!
+     *
+     * @param string $version
+     * @param bool $forcedownload
+     * @return void
+     */
+    public function send_version_file(string $version, bool $forcedownload = true) {
+        if ($file = $this->get_version_file($version)) {
+            send_stored_file($file, null, 0, $forcedownload); // Force download.
+        }
+        throw new \moodle_exception('missing_file');
+    }
+
+    /**
+     * Update the stored file and create a new version if activated.
      *
      * @param string $content
      * @return void
@@ -374,7 +441,26 @@ abstract class base_filesystem {
             throw new \moodle_exception('docreadonly', 'assignsubmission_collabora');
         }
 
+        // If the new content is the same as the old one, we don't update the file.
+        if ($this->file->compare_to_string($content)) {
+            return;
+        }
+
         $fs = get_file_storage();
+
+        if ($this->use_versions()) {
+            // Don't delete the old file but move it into a subdirectory.
+            $versionrecord = (object) [
+                'contextid' => $this->file->get_contextid(),
+                'component' => $this->file->get_component(),
+                'filearea' => $this->file->get_filearea(),
+                'itemid' => $this->file->get_itemid(),
+                'filepath' => '/' . $this->file->get_timemodified() . '/',
+                'filename' => $this->file->get_filename(),
+                'timecreated' => $this->file->get_timecreated(),
+            ];
+            $fs->create_file_from_storedfile($versionrecord, $this->file);
+        }
 
         // Now we get to save the file - STOLEN CODE.
         $filerecord = (object)[
@@ -398,7 +484,61 @@ abstract class base_filesystem {
      * @return \stored_file
      */
     public function get_file() {
+        if (!empty($this->version)) {
+            return $this->get_version_file($this->version);
+        }
         return $this->file;
+    }
+
+    /**
+     * Get the file versions from this instance
+     *
+     * @return \stored_file[]
+     */
+    public function get_version_files() {
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(
+            $this->file->get_contextid(),
+            $this->file->get_component(),
+            $this->file->get_filearea(),
+            $this->file->get_itemid(),
+            "filepath",
+            false
+        );
+        $result = [];
+        foreach ($files as $file) {
+            if ($file->get_filepath() == '/') {
+                continue;
+            }
+            $result[] = $file;
+        }
+        return $result;
+    }
+
+    /**
+     * Get a version of our file from this instance
+     *
+     * @return \stored_file
+     */
+    public function get_version_file(string $version) {
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(
+            $this->file->get_contextid(),
+            $this->file->get_component(),
+            $this->file->get_filearea(),
+            $this->file->get_itemid(),
+            "filepath",
+            false
+        );
+
+        foreach ($files as $file) {
+            $fileversion = $file->get_filepath();
+            $fileversion = trim($fileversion, '/');
+            if ($fileversion == $version) {
+                return $file;
+            }
+        }
+        return null;
     }
 
     /**
@@ -421,4 +561,12 @@ abstract class base_filesystem {
         return $CFG->siteidentifier;
     }
 
+    /**
+     * Are we using versions?
+     *
+     * @return bool
+     */
+    public function use_versions() {
+        return $this->useversions;
+    }
 }

@@ -303,3 +303,13 @@ function collabora_get_fontawesome_icon_map() {
 
     return $iconmap;
 }
+
+/**
+ * Get a html fragment.
+ *
+ * @param mixed $args An array or object with context and parameters needed to get the data.
+ * @return string The html fragment we want to use by ajax
+ */
+function mod_collabora_output_fragment_get_html($args) {
+    return \mod_collabora\fragment\util::get_html($args);
+}

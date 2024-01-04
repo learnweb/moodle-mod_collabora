@@ -29,6 +29,7 @@ $string['collabora:addinstance'] = 'Add collaborative document to a course';
 $string['collabora:directdownload'] = 'Directly download the document';
 $string['collabora:editlocked'] = 'Edit a locked collaborative document';
 $string['collabora:lock'] = 'Lock/unlock a collaborative document';
+$string['collabora:manageversions'] = 'Manage versions of a collaborative document';
 $string['collabora:repair'] = 'Repair a broken document';
 $string['collabora:view'] = 'View a collaborative document';
 $string['collaboraurl'] = 'Collabora URL';

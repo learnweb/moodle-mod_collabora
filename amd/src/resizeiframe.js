@@ -21,28 +21,26 @@
  * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery'], function($) {
+
+import $ from 'jquery';
+import log from 'core/log';
+
+export const init = () => {
+    $(window).on('resize', resizeIframe);
+    resizeIframe();
+
     /**
      * Callback for 'resize' and changes the size of the iframe.
      */
     function resizeIframe() {
-        var $iframe = $('iframe.collabora-iframe');
-        if (!$iframe.length) {
-            return;
+        var inlineContainer = document.querySelector('.collabora-inline-container');
+        var currentTop = inlineContainer.getBoundingClientRect().top;
+        var myHeight = parseInt(window.innerHeight - currentTop);
+        myHeight = myHeight - 5; // Decrease the height a little.
+        if (myHeight < 300) { // Don't shrink below 300!
+            myHeight = 300;
         }
-        var viewheight = $(window).height();
-        var frametop = $iframe.offset().top;
-        var height = viewheight - frametop - 30;
-        if (height < 300) {
-            height = 300;
-        }
-        $iframe.attr('height', height);
+        log.debug('change iframe height to: ' + myHeight);
+        inlineContainer.style.height = myHeight + 'px';
     }
-
-    return {
-        init: function() {
-            $(window).on('resize', resizeIframe);
-            resizeIframe();
-        }
-    };
-});
+};

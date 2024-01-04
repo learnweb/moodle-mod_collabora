@@ -17,35 +17,32 @@
 {{!
     @template mod_collabora/modal
 
-    Displays the modal dialog with the collabora iframe
+    Displays the iframe in a modal dialog.
 
     Example context (json):
     {
         "id":          1,
-        "legacy":      1,
-        "name":        "Test pad",
-        "loadfileurl": 1
+        "loadfileurl": "http://example.com"
     }
 
 }}
 
-<div class="collaboramodal modal fade{{#legacy}} legacy{{/legacy}}" id="collaboramodal_{{id}}">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+<div class="collaboramodal modal fade" id="collaboramodal_{{id}}">
+    <div class="modal-dialog mw-100 h-100 m-0">
+        <div class="modal-content h-100">
 
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal" title="{{#str}}restorewindowsize, mod_collabora{{/str}}" >
-            <i class="fa fa-compress fa-lg" aria-hidden="true"> </i>
-        </button>
-        {{#loadfileurl}}<div class="float-right mt-2"><a href="{{{.}}}" title="{{#str}}download{{/str}}"><i class="icon fa fa-download"></i>{{#str}}download{{/str}}</a></div>{{/loadfileurl}}
-      </div>
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal" title="{{#str}}restorewindowsize, mod_collabora{{/str}}" >
+                    <i class="fa fa-compress fa-lg" aria-hidden="true"> </i>
+                </button>
+                {{#loadfileurl}}<div class="float-right mt-2"><a href="{{{.}}}" title="{{#str}}download{{/str}}"><i class="icon fa fa-download"></i>{{#str}}download{{/str}}</a></div>{{/loadfileurl}}
+            </div>
 
-      <!-- Modal body -->
-      <div class="modal-body">
-        <iframe class="border" id="collaboraiframe2_{{id}}" src="about:blank" allowFullscreen></iframe>
-      </div>
-
+            <!-- Modal body -->
+            <div id="collaboramodal-body_{{id}}" class="modal-body">
+                <!-- The iframe is moved here when the modal is shown. -->
+            </div>
+        </div>
     </div>
-  </div>
 </div>

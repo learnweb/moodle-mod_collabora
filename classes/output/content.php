@@ -52,15 +52,12 @@ class content implements \renderable, \templatable {
             $this->data->activitymenu = groups_print_activity_menu($cm, $PAGE->url, true, true);
             $this->data->lockicon = $collaborafs->get_lock_icon();
 
-            $viewurl = $collaborafs->get_view_url(true);
+            $viewurl = $collaborafs->get_view_url();
             $this->data->viewurl = $viewurl->out(false);
 
-            $this->data->framewidth = $instance->width ? $instance->width . 'px' : '100%';
-            $this->data->frameheight = $instance->height ? $instance->height . 'px' : '60vh';
-
-            /** @var \mod_collabora\output\renderer $renderer */
-            $renderer = $PAGE->get_renderer('mod_collabora');
-            $this->data->legacy = !$renderer->is_boost_based();
+            if (empty($this->data->embedded)) {
+                $this->data->frameheight = $instance->height ?? false;
+            }
 
             // Create a url to load the last state of the document without using collabora.
             // This is very usefull if collabora is not working.
