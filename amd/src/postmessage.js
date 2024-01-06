@@ -25,6 +25,7 @@
 import $ from 'jquery';
 import fragment from 'core/fragment';
 import templates from 'core/templates';
+import ajax from 'core/ajax';
 import notification from 'core/notification';
 import log from 'core/log';
 
@@ -38,6 +39,11 @@ export const init = (opts) => {
     var id;
     var contextid;
     var version;
+    var strBack;
+    var imgBackUrl;
+    var uiMode;
+    var newVersion;
+    var versionManager;
 
     courseURL = opts.courseurl;
     collaboraUrl = opts.collaboraurl;
@@ -46,8 +52,14 @@ export const init = (opts) => {
     iframeid = opts.iframeid;
     id = opts.id;
     contextid = opts.contextid;
-    // version = 1704188035;
+    strBack = opts.strback;
+    imgBackUrl = opts.imgbackurl;
+    uiMode = opts.uimode;
+    versionManager = opts.versionmanager;
+
+    // The version is "0" by default.
     version = 0;
+    newVersion = 0;
     setFrameData(collaboraUrl);
 
     initModal();
@@ -74,6 +86,7 @@ export const init = (opts) => {
         msgId = msg.MessageId;
 
         switch (msgId) {
+            // Messages sent by collabora editor.
             case 'UI_Close':
                 closeDoc();
                 break;
@@ -86,14 +99,27 @@ export const init = (opts) => {
             case 'UI_Save':
                 invokeSave();
                 break;
+            case 'Clicked_Button':
+                handleCustomButton(msg);
+                break;
+            case 'App_VersionRestore':
+                restoreVersion(msg);
+                break;
+
+            // Messages sent by version viewer.
             case 'SET_VERSION':
                 version = msg.Values.version;
                 setFrameData(collaboraUrl);
+                showVersionView();
+                break;
+            case 'RESTORE_VERSION':
+                prepareRestoreVersion(msg.Values.version);
+                break;
         }
     }
 
     /**
-     * Clode the document or go back to the course page, depending on the current view.
+     * Close the document or go back to the course page, depending on the current view.
      */
     function closeDoc() {
         if (asPopup) {
@@ -109,7 +135,8 @@ export const init = (opts) => {
     function showVersionView() {
         var serviceparams = {
             'function' : 'version_viewer_content',
-            'id': id
+            'id': id,
+            'version': version
         };
         fragment.loadFragment('mod_collabora', 'get_html', contextid, serviceparams).then(
             function(html, js) {
@@ -154,6 +181,18 @@ export const init = (opts) => {
                 };
                 postMessage(postObject);
 
+                // If newVersion is set, we have to tell the editor we want to restore to it.
+                if (newVersion != 0) {
+                    var postObject = {
+                        'MessageId': 'Host_VersionRestore',
+                        'Values': {
+                        'Status': 'Pre_Restore'
+                        }
+                    };
+                    postMessage(postObject);
+                    return;
+                }
+
                 // Disable the default save command to activate our own.
                 var postObject = {
                     'MessageId': 'Disable_Default_UIAction',
@@ -163,8 +202,44 @@ export const init = (opts) => {
                     }
                 };
                 postMessage(postObject);
+
+                // Disable the default save command to activate our own.
+                var postObject = {
+                    'MessageId': 'Action_ChangeUIMode',
+                    'Values': {
+                        'Mode': uiMode
+                    }
+                };
+                postMessage(postObject);
+
+                if (version > 0) {
+                    addBackButton();
+                }
             }
         }
+    }
+
+    function handleCustomButton(msg) {
+        if (msg.Values) {
+            if (msg.Values.Id == 'moodle_go_back') {
+                version = 0;
+                setFrameData(collaboraUrl);
+            }
+        }
+
+    }
+
+    function addBackButton() {
+        var postObject = {
+            'MessageId': 'Insert_Button',
+            'Values': {
+                'id': 'moodle_go_back',
+                'imgurl': imgBackUrl,
+                'label': strBack,
+                'hint': strBack
+            }
+        };
+        postMessage(postObject);
     }
 
     /**
@@ -231,14 +306,6 @@ export const init = (opts) => {
                     form.appendChild(element);
                     log.debug('Add element ' + key + ': ' + value);
                 }
-                if (version > 0) {
-                    var element = document.createElement("input");
-                    element.type = "hidden";
-                    element.name = 'permission';
-                    element.value = 'readonly';
-                    form.appendChild(element);
-                    log.debug('Add readonly element');
-                }
                 document.body.appendChild(form);
 
                 form.submit();
@@ -247,5 +314,43 @@ export const init = (opts) => {
         ).fail(notification.exception);
 
         return;
+    }
+
+    function prepareRestoreVersion(theNewVersion) {
+        version = 0; // Set version to the current document, so we can tell other users using this document.
+        newVersion = theNewVersion;
+        setFrameData(collaboraUrl);
+    }
+
+    function restoreVersion(msg) {
+        if (!versionManager) {
+            return;
+        }
+        if (msg.Values.Status == 'Pre_Restore_Ack') {
+            // Now we call the webservice with "ajax.call" and get an array of promises.
+            // Because we call only one service we only get one promise inside this array.
+            var myPromises = ajax.call([{ // Note: there is a Square bracket!
+                // The parameter methodname is the webservice we want to call.
+                methodname: 'mod_collabora_restore_version',
+                // The second one is a json object with all in the webservice defined parameters.
+                // The submitaction is needed to set the right action url in the mform.
+                args:{ id: id, version: newVersion }
+            }]);
+
+            // We only have one promise because we call only one webservice. More would be possible.
+            // So we just use promises[0].
+            myPromises[0].done(function(data) {
+                if (data.success == 1) {
+                    version = 0;
+                    newVersion = 0;
+                    setFrameData(collaboraUrl);
+
+                    showVersionView();
+                } else {
+                    notification.exception({message: data.failuremsg});
+                }
+            }).fail(notification.exception); // If any went wrong we let the user know.
+        }
+
     }
 };

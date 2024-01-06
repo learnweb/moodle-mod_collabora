@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Service definition
  *
  * @package   mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @copyright 2024 Andreas Grabs
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2024010500;
-$plugin->release   = 'v4.3 (2023-06-23)';
-$plugin->requires  = 2022041200; // Moodle 4.0.
-$plugin->component = 'mod_collabora';
-$plugin->maturity  = MATURITY_STABLE;
+defined('MOODLE_INTERNAL') || die;
+$functions = [
+    // Restore version.
+    'mod_collabora_restore_version' => [
+        'classname'    => 'mod_collabora\external\services',
+        'methodname'   => 'restore_version',
+        'classpath'    => '',
+        'description'  => 'Restore a document version.',
+        'type'         => 'write',
+        'capabilities' => 'mod/collabora:manageversions',
+        'ajax'         => true,
+    ],
+];

@@ -33,8 +33,9 @@ class version_viewer_content implements \renderable, \templatable {
      * Constructor
      *
      * @param \cm_info $cm
+     * @param int $displayedversion // The version actually displayed but not necessarily the current version.
      */
-    public function __construct(\cm_info $cm) {
+    public function __construct(\cm_info $cm, int $displayedversion) {
         global $USER, $DB;
 
         $this->data = new \stdClass();
@@ -46,11 +47,12 @@ class version_viewer_content implements \renderable, \templatable {
         $collaborafs = new \mod_collabora\api\collabora_fs($collabora, $cm->context, $groupid, $USER->id);
         $currentfile = $collaborafs->get_file();
         $versions = $collaborafs->get_version_files();
-        $currentfileinfo = $this->get_file_infos($currentfile, $cm);
+        $versions = array_reverse($versions);
+        $currentfileinfo = $this->get_file_infos($currentfile, $cm, $displayedversion);
 
         $versioninfos = [];
         foreach ($versions as $version) {
-            $versioninfos[] = $this->get_file_infos($version, $cm);
+            $versioninfos[] = $this->get_file_infos($version, $cm, $displayedversion);
         }
 
         $this->data->currentfileinfo = $currentfileinfo;
@@ -75,13 +77,21 @@ class version_viewer_content implements \renderable, \templatable {
      * Get an info object to a given stored_file.
      *
      * @param \stored_file $file
+     * @param int $displayedversion
      * @return \stdClass
      */
-    protected function get_file_infos(\stored_file $file, \cm_info $cm) {
+    protected function get_file_infos(\stored_file $file, \cm_info $cm, int $displayedversion) {
         $version = $file->get_filepath();
         $version = trim($version, '/');
 
+        if (empty($version)) {
+            $version = 0;
+        }
+
         $fileinfo = new \stdClass();
+        if ($version == $displayedversion) {
+            $fileinfo->iscurrent = true;
+        }
         $fileinfo->fileid = $file->get_id();
         $fileinfo->filename = $file->get_filename();
         $fileinfo->timecreated = userdate($file->get_timecreated());

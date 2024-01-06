@@ -19,6 +19,7 @@ namespace mod_collabora\api;
 use mod_collabora\event\document_locked;
 use mod_collabora\event\document_unlocked;
 use mod_collabora\event\document_repaired;
+use mod_collabora\util;
 
 /**
  * Main support functions
@@ -158,7 +159,13 @@ class collabora_fs extends base_filesystem {
         $file = $this->create_retrieve_file();
         $user = $DB->get_record('user', array('id' => $userid));
         $callbackurl = new \moodle_url('/mod/collabora/callback.php');
-        parent::__construct($user, $file, $callbackurl, $version);
+
+        $showversionui = false;
+        if (has_capability('mod/collabora:manageversions', $context, $user->id)) {
+            $showversionui = true;
+        }
+
+        parent::__construct($user, $file, $callbackurl, $version, $showversionui);
     }
 
     /**
@@ -329,31 +336,31 @@ class collabora_fs extends base_filesystem {
             'filename' => clean_filename(format_string($this->collaborarec->name)),
         ];
         switch ($this->collaborarec->format) {
-            case self::FORMAT_UPLOAD:
+            case util::FORMAT_UPLOAD:
                 $initfile = $this->get_initial_file();
                 $ext = pathinfo($initfile->get_filename(), PATHINFO_EXTENSION);
                 $filerec->filename .= '.'.$ext;
                 $file = $fs->create_file_from_storedfile($filerec, $initfile);
                 break;
-            case self::FORMAT_TEXT:
+            case util::FORMAT_TEXT:
                 $inittext = $this->collaborarec->initialtext;
                 $ext = 'txt';
                 $filerec->filename .= '.'.$ext;
                 $file = $fs->create_file_from_string($filerec, $inittext);
                 break;
-            case self::FORMAT_WORDPROCESSOR:
+            case util::FORMAT_WORDPROCESSOR:
                 $ext = 'docx';
                 $filerec->filename .= '.'.$ext;
                 $filepath = $CFG->dirroot.'/mod/collabora/blankfiles/blankdocument.docx';
                 $file = $fs->create_file_from_pathname($filerec, $filepath);
                 break;
-            case self::FORMAT_SPREADSHEET:
+            case util::FORMAT_SPREADSHEET:
                 $ext = 'xlsx';
                 $filerec->filename .= '.'.$ext;
                 $filepath = $CFG->dirroot.'/mod/collabora/blankfiles/blankspreadsheet.xlsx';
                 $file = $fs->create_file_from_pathname($filerec, $filepath);
                 break;
-            case self::FORMAT_PRESENTATION:
+            case util::FORMAT_PRESENTATION:
                 $ext = 'pptx';
                 $filerec->filename .= '.'.$ext;
                 $filepath = $CFG->dirroot.'/mod/collabora/blankfiles/blankpresentation.pptx';

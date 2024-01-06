@@ -54,10 +54,14 @@ if ($loadcurrentfile) {
     $collaborafs->send_groupfile();
     die;
 }
-if (!empty($loadversion)) {
-    require_capability('mod/collabora:manageversions', $PAGE->context);
-    $collaborafs->send_version_file($loadversion);
-    die;
+
+// Load the version file only if activated.
+if (!$collaborafs->use_versions()) {
+    if (!empty($loadversion)) {
+        require_capability('mod/collabora:manageversions', $PAGE->context);
+        $collaborafs->send_version_file($loadversion);
+        die;
+    }
 }
 
 if ($collaborafs->process_lock_unlock()) {
@@ -68,7 +72,7 @@ if ($collaborafs->process_lock_unlock()) {
 $PAGE->set_title($collabora->name);
 $PAGE->set_heading($course->fullname);
 $aspopup = false;
-if ($collabora->display === \mod_collabora\api\collabora_fs::DISPLAY_NEW) {
+if ($collabora->display === \mod_collabora\util::DISPLAY_NEW) {
     $PAGE->set_pagelayout('embedded');
     $aspopup = true;
 }
@@ -82,6 +86,10 @@ $opts = [
     'aspopup' => $aspopup,
     'iframeid' => 'collaboraiframe_' . $collabora->id,
     'versionviewerid' => 'version_viewer_' . $collabora->id,
+    'versionmanager' => has_capability('mod/collabora:manageversions', $cm->context),
+    'strback' => get_string('back'),
+    'imgbackurl' => $CFG->wwwroot . '/mod/collabora/pix/go_back.svg',
+    'uimode' => $collaborafs->get_ui_mode(),
 ];
 $PAGE->requires->js_call_amd('mod_collabora/postmessage', 'init', [$opts]);
 

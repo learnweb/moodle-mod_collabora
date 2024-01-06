@@ -25,46 +25,46 @@
     }
 
 }}
-<div class="row">
-    <div class="col-12 col-md-10 col-lg-6">
-        <table id="version_viewer_table-{{id}}" class="table table table-striped">
-            <thead>
+<table id="version_viewer_table-{{id}}" class="table table table-striped">
+    <thead>
+        <tr>
+            <th>{{#str}} version {{/str}}</th>
+            <th>{{#str}} action {{/str}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#currentfileinfo}}
+            <tr>
+                <td class="font-bold">{{#iscurrent}}<i class="fa fa-eye"></i> {{/iscurrent}}{{timemodified}} <i class="fa fa-asterisk fa-fw"></i></td>
+                <td>
+                    {{#hasversions}}
+                        <a href="#" class="collabora-preview-button" title="{{#str}} back {{/str}}" data-version="0">
+                            <i class="fa fa-arrow-left fa-fw collabora-preview-button" data-version="0"></i>
+                        </a>
+                    {{/hasversions}}
+                </td>
+            </tr>
+        {{/currentfileinfo}}
+        {{#hasversions}}
+            {{#versioninfos}}
                 <tr>
-                    <th>{{#str}} version {{/str}}</th>
-                    <th>{{#str}} action {{/str}}</th>
+                    <td>{{#iscurrent}}<i class="fa fa-eye"></i> {{/iscurrent}}{{timemodified}}</td>
+                    <td>
+                        <a href="{{{downloadurl}}}" target="_blank" title="{{#str}} download {{/str}}">
+                            <i class="fa fa-download fa-fw"></i>
+                        </a>
+                        <a href="#" class="collabora-preview-button" title="{{#str}} preview {{/str}}" data-version="{{version}}">
+                            <i class="fa fa-search fa-fw collabora-preview-button" data-version="{{version}}"></i>
+                        </a>
+                        <a href="#" class="collabora-restore-button" title="{{#str}} restore {{/str}}" data-version="{{version}}">
+                            <i class="fa fa-undo fa-fw collabora-restore-button" data-version="{{version}}""></i>
+                        </a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {{#currentfileinfo}}
-                    <tr>
-                        <td class="font-bold"><i class="fa fa-asterisk fa-fw"></i> {{timemodified}}</td>
-                        <td>
-                            <a href="#" class="collabora-preview-button" title="{{#str}} back {{/str}}" data-version="0">
-                                <i class="fa fa-arrow-left fa-fw collabora-preview-button" data-version="0"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {{/currentfileinfo}}
-                {{#hasversions}}
-                    {{#versioninfos}}
-                        <tr>
-                            <td>{{timemodified}}</td>
-                            <td>
-                                <a href="{{{downloadurl}}}" target="_blank" title="{{#str}} download {{/str}}">
-                                    <i class="fa fa-download fa-fw"></i>
-                                </a>
-                                <a href="#" class="collabora-preview-button" title="{{#str}} preview {{/str}}" data-version="{{version}}">
-                                    <i class="fa fa-search fa-fw collabora-preview-button" data-version="{{version}}"></i>
-                                </a>
-                                <i class="fa fa-undo fa-fw"></i>
-                            </td>
-                        </tr>
-                    {{/versioninfos}}
-                {{/hasversions}}
-            </tbody>
-        </table>
-    </div>
-</div>
+            {{/versioninfos}}
+        {{/hasversions}}
+    </tbody>
+</table>
 {{#js}}
     require(['core/log'], function(log) {
 
@@ -76,6 +76,16 @@
                 event.preventDefault();
                 var postObject = {
                     'MessageId': 'SET_VERSION',
+                    'Values': {
+                        'version': version
+                    }
+                };
+                postMessage(postObject);
+            }
+            if (target.classList.contains("collabora-restore-button")) {
+                event.preventDefault();
+                var postObject = {
+                    'MessageId': 'RESTORE_VERSION',
                     'Values': {
                         'version': version
                     }

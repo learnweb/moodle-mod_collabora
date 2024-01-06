@@ -26,6 +26,28 @@ namespace mod_collabora;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class util {
+
+    /** The classic view with menues. */
+    public const UI_COMPACT = 'classic';
+    /** The modern view with tabs. */
+    public const UI_TABBED = 'notebookbar';
+
+    /** Define the collabora file format for individual files */
+    public const FORMAT_UPLOAD = 'upload';
+    /** Define the collabora file format as simple text */
+    public const FORMAT_TEXT = 'text';
+    /** Define the collabora file format as spreadsheet */
+    public const FORMAT_SPREADSHEET = 'spreadsheet';
+    /** Define the collabora file format as wordprocessor */
+    public const FORMAT_WORDPROCESSOR = 'wordprocessor';
+    /** Define the collabora file format as presentation */
+    public const FORMAT_PRESENTATION = 'presentation';
+
+    /** Define the display in the current tab/window */
+    public const DISPLAY_CURRENT = 'current';
+    /** Define the display in a new tab/Window */
+    public const DISPLAY_NEW = 'new';
+
     public static function get_current_groupid_from_cm(\cm_info $cm, \stdClass $user = null) {
         global $USER;
 
@@ -57,4 +79,32 @@ class util {
         }
         return $groupid;
     }
+
+    /**
+     * Get an array for the activity format settings menu
+     *
+     * @return array
+     */
+    public static function format_menu() {
+        return [
+            static::FORMAT_UPLOAD => get_string(static::FORMAT_UPLOAD, 'mod_collabora'),
+            static::FORMAT_TEXT => get_string(static::FORMAT_TEXT, 'mod_collabora'),
+            static::FORMAT_SPREADSHEET => get_string(static::FORMAT_SPREADSHEET, 'mod_collabora'),
+            static::FORMAT_WORDPROCESSOR => get_string(static::FORMAT_WORDPROCESSOR, 'mod_collabora'),
+            static::FORMAT_PRESENTATION => get_string(static::FORMAT_PRESENTATION, 'mod_collabora'),
+        ];
+    }
+
+    /**
+     * Get an array for the activity display settings menu
+     *
+     * @return array
+     */
+    public static function display_menu() {
+        return [
+            static::DISPLAY_CURRENT => get_string(static::DISPLAY_CURRENT, 'mod_collabora'),
+            static::DISPLAY_NEW => get_string(static::DISPLAY_NEW, 'mod_collabora'),
+        ];
+    }
+
 }

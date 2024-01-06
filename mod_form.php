@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use \mod_collabora\api\collabora_fs;
+use \mod_collabora\util;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -77,7 +78,7 @@ class mod_collabora_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         // Format section.
-        $mform->addElement('select', 'format', get_string('format', 'mod_collabora'), collabora_fs::format_menu());
+        $mform->addElement('select', 'format', get_string('format', 'mod_collabora'), util::format_menu());
         $mform->setDefault('format', $config->defaultformat);
         if ($this->_instance) {
             $mform->freeze('format');
@@ -86,21 +87,21 @@ class mod_collabora_mod_form extends moodleform_mod {
         if (!$this->_instance) {
             $mform->addElement('filemanager', 'initialfile_filemanager', get_string('initialfile', 'mod_collabora'),
                                null, $this->get_filemanager_opts());
-            $mform->hideIf('initialfile_filemanager', 'format', 'neq', collabora_fs::FORMAT_UPLOAD);
-        } else if ($this->current->format === collabora_fs::FORMAT_UPLOAD) {
+            $mform->hideIf('initialfile_filemanager', 'format', 'neq', util::FORMAT_UPLOAD);
+        } else if ($this->current->format === util::FORMAT_UPLOAD) {
             $mform->addElement('static', 'initialfile', get_string('initialfile', 'mod_collabora'), $this->get_file_link());
         }
 
-        if (!$this->_instance || $this->current->format === collabora_fs::FORMAT_TEXT) {
+        if (!$this->_instance || $this->current->format === util::FORMAT_TEXT) {
             $mform->addElement('textarea', 'initialtext', get_string('initialtext', 'mod_collabora'));
-            $mform->hideIf('initialtext', 'format', 'neq', collabora_fs::FORMAT_TEXT);
+            $mform->hideIf('initialtext', 'format', 'neq', util::FORMAT_TEXT);
             if ($this->_instance) {
                 $mform->freeze('initialtext');
             }
         }
 
         // Display section.
-        $mform->addElement('select', 'display', get_string('display', 'mod_collabora'), collabora_fs::display_menu());
+        $mform->addElement('select', 'display', get_string('display', 'mod_collabora'), util::display_menu());
         $mform->setDefault('display', $config->defaultdisplay);
         $mform->addHelpButton('display', 'display', 'mod_collabora');
 
@@ -109,25 +110,25 @@ class mod_collabora_mod_form extends moodleform_mod {
         $mform->setDefault('width', 0);
         $mform->setType('width', PARAM_INT);
         $mform->setAdvanced('width');
-        $mform->disabledIf('width', 'display', 'eq', collabora_fs::DISPLAY_NEW);
+        $mform->disabledIf('width', 'display', 'eq', util::DISPLAY_NEW);
 
         // Height.
         $mform->addElement('text', 'height', get_string('height', 'mod_collabora'));
         $mform->setDefault('height', 0);
         $mform->setType('height', PARAM_INT);
         $mform->setAdvanced('height');
-        $mform->disabledIf('height', 'display', 'eq', collabora_fs::DISPLAY_NEW);
+        $mform->disabledIf('height', 'display', 'eq', util::DISPLAY_NEW);
 
         // Display activity name.
         $mform->addElement('selectyesno', 'displayname', get_string('displayname', 'mod_collabora'));
         $mform->setDefault('displayname', $config->defaultdisplayname);
         $mform->addHelpButton('displayname', 'displayname', 'mod_collabora');
-        $mform->disabledIf('displayname', 'display', 'eq', collabora_fs::DISPLAY_NEW);
+        $mform->disabledIf('displayname', 'display', 'eq', util::DISPLAY_NEW);
 
         // Display description.
         $mform->addElement('selectyesno', 'displaydescription', get_string('displaydescription', 'mod_collabora'));
         $mform->setDefault('displaydescription', $config->defaultdisplaydescription);
-        $mform->disabledIf('displaydescription', 'display', 'eq', collabora_fs::DISPLAY_NEW);
+        $mform->disabledIf('displaydescription', 'display', 'eq', util::DISPLAY_NEW);
 
         // Standard sections.
         $this->standard_coursemodule_elements();
@@ -145,7 +146,7 @@ class mod_collabora_mod_form extends moodleform_mod {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!$this->_instance) {
-            if ($data['format'] === collabora_fs::FORMAT_UPLOAD) {
+            if ($data['format'] === util::FORMAT_UPLOAD) {
                 if (empty($data['initialfile_filemanager'])) {
                     $errors['initialfile_filemanager'] = get_string('requiredforupload', 'mod_collabora');
                 } else {
@@ -154,7 +155,7 @@ class mod_collabora_mod_form extends moodleform_mod {
                         $errors['initialfile_filemanager'] = get_string('requiredforupload', 'mod_collabora');
                     }
                 }
-            } else if ($data['format'] === collabora_fs::FORMAT_TEXT) {
+            } else if ($data['format'] === util::FORMAT_TEXT) {
                 if (!isset($data['initialtext']) || !trim($data['initialtext'])) {
                     $errors['initialtext'] = get_string('requiredfortext', 'mod_collabora');
                 }

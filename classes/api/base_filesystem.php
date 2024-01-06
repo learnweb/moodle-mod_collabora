@@ -24,22 +24,6 @@ namespace mod_collabora\api;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base_filesystem {
-    /** Define the collabora file format for individual files */
-    public const FORMAT_UPLOAD = 'upload';
-    /** Define the collabora file format as simple text */
-    public const FORMAT_TEXT = 'text';
-    /** Define the collabora file format as spreadsheet */
-    public const FORMAT_SPREADSHEET = 'spreadsheet';
-    /** Define the collabora file format as wordprocessor */
-    public const FORMAT_WORDPROCESSOR = 'wordprocessor';
-    /** Define the collabora file format as presentation */
-    public const FORMAT_PRESENTATION = 'presentation';
-
-    /** Define the display in the current tab/window */
-    public const DISPLAY_CURRENT = 'current';
-    /** Define the display in a new tab/Window */
-    public const DISPLAY_NEW = 'new';
-
     /** Define the filearea for initial stored files */
     public const FILEAREA_INITIAL = 'initial';
     /** Define the filearea for files a group of users is working at */
@@ -60,6 +44,8 @@ abstract class base_filesystem {
     protected $callbackurl;
     /** @var bool */
     protected $useversions;
+    /** @var bool */
+    protected $showversionui;
     /** @var int */
     protected $version;
 
@@ -227,41 +213,15 @@ abstract class base_filesystem {
     }
 
     /**
-     * Get an array for the activity display settings menu
-     *
-     * @return array
-     */
-    public static function display_menu() {
-        return [
-            self::DISPLAY_CURRENT => get_string(self::DISPLAY_CURRENT, 'mod_collabora'),
-            self::DISPLAY_NEW => get_string(self::DISPLAY_NEW, 'mod_collabora'),
-        ];
-    }
-
-    /**
-     * Get an array for the activity format settings menu
-     *
-     * @return array
-     */
-    public static function format_menu() {
-        return [
-            self::FORMAT_UPLOAD => get_string(self::FORMAT_UPLOAD, 'mod_collabora'),
-            self::FORMAT_TEXT => get_string(self::FORMAT_TEXT, 'mod_collabora'),
-            self::FORMAT_SPREADSHEET => get_string(self::FORMAT_SPREADSHEET, 'mod_collabora'),
-            self::FORMAT_WORDPROCESSOR => get_string(self::FORMAT_WORDPROCESSOR, 'mod_collabora'),
-            self::FORMAT_PRESENTATION => get_string(self::FORMAT_PRESENTATION, 'mod_collabora'),
-        ];
-    }
-
-    /**
      * Constructor
      *
      * @param \stdClass $user
      * @param \stored_file $file
      * @param \moodle_url $callbackurl
      * @param int $version
+     * @param bool $showversionui
      */
-    public function __construct($user, $file, $callbackurl, $version = 0) {
+    public function __construct($user, $file, $callbackurl, $version = 0, $showversionui = false) {
         $this->myconfig = get_config('mod_collabora');
         $this->user = $user;
         $this->file = $file;
@@ -271,7 +231,8 @@ abstract class base_filesystem {
         // TODO: Make it configurable!
         // TODO: Make it configurable!
         // TODO: Make it configurable!
-        $this->useversions = true;
+        $this->useversions = $this->myconfig->enableversions ?? false;
+        $this->showversionui = $showversionui;
     }
 
     /**
@@ -309,6 +270,10 @@ abstract class base_filesystem {
      */
     protected function get_file_mimetype() {
         return $this->file->get_mimetype();
+    }
+
+    public function get_ui_mode() {
+        return $this->myconfig->uimode ?? \mod_collabora\util::UI_TABBED;
     }
 
     /**
@@ -381,13 +346,20 @@ abstract class base_filesystem {
         $lang = static::get_collabora_lang();
 
         $params = array(
-            // 'WOPISrc' => urlencode($wopisrc),
             'WOPISrc' => $wopisrc,
             'access_token' => $token,
             'lang' => $lang,
-            'revisionhistory' => 1,
             'closebutton' => 1,
         );
+        if ($this->use_versions()) {
+            if (empty($this->version)) {
+                if ($this->showversionui) { // Show the version ui only if activated.
+                    $params['revisionhistory'] = 1;
+                }
+            } else {
+                $params['permission'] = 'readonly';
+            }
+        }
 
         return $params;
     }
@@ -419,11 +391,11 @@ abstract class base_filesystem {
      * Send a version of our file from the moodle file api.
      * This function implicitly calls a "die"!
      *
-     * @param string $version
+     * @param int $version
      * @param bool $forcedownload
      * @return void
      */
-    public function send_version_file(string $version, bool $forcedownload = true) {
+    public function send_version_file(int $version, bool $forcedownload = true) {
         if ($file = $this->get_version_file($version)) {
             send_stored_file($file, null, 0, $forcedownload); // Force download.
         }
@@ -496,6 +468,10 @@ abstract class base_filesystem {
      * @return \stored_file[]
      */
     public function get_version_files() {
+        if (!$this->use_versions()) {
+            throw new \moodle_exception('versions_are_deactivated');
+        }
+
         $fs = get_file_storage();
         $files = $fs->get_area_files(
             $this->file->get_contextid(),
@@ -520,7 +496,11 @@ abstract class base_filesystem {
      *
      * @return \stored_file
      */
-    public function get_version_file(string $version) {
+    public function get_version_file(int $version) {
+        if (!$this->use_versions()) {
+            throw new \moodle_exception('versions_are_deactivated');
+        }
+
         $fs = get_file_storage();
         $files = $fs->get_area_files(
             $this->file->get_contextid(),
@@ -539,6 +519,62 @@ abstract class base_filesystem {
             }
         }
         return null;
+    }
+
+    /**
+     * Reset the current document by the given version.
+     * This creates a new version of the old current document and the version to be restored is removed.
+     *
+     * @param int $version The version to be restored.
+     * @return bool
+     */
+    public function restore_version(int $version) {
+        global $DB;
+
+        $fs = get_file_storage();
+
+        if (!$this->use_versions()) {
+            throw new \moodle_exception('versions_are_deactivated');
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+        try {
+            // First create a new version from the current file.
+            $versionrecord = (object) [
+                'contextid' => $this->file->get_contextid(),
+                'component' => $this->file->get_component(),
+                'filearea' => $this->file->get_filearea(),
+                'itemid' => $this->file->get_itemid(),
+                'filepath' => '/' . $this->file->get_timemodified() . '/',
+                'filename' => $this->file->get_filename(),
+                'timecreated' => $this->file->get_timecreated(),
+                'timemodified' => $this->file->get_timemodified(),
+            ];
+            $fs->create_file_from_storedfile($versionrecord, $this->file);
+
+            // Now copy the version file.
+            $versionfile = $this->get_version_file($version);
+            $filerecord = (object)[
+                'contextid' => $versionfile->get_contextid(),
+                'component' => $versionfile->get_component(),
+                'filearea' => $versionfile->get_filearea(),
+                'itemid' => $versionfile->get_itemid(),
+                'filepath' => '/',
+                'filename' => $versionfile->get_filename(),
+                'timecreated' => $versionfile->get_timecreated(),
+                'timemodified' => $versionfile->get_timemodified(),
+            ];
+            $this->file->delete(); // Remove the old file.
+            $this->file = $fs->create_file_from_storedfile($filerecord, $versionfile); // Create the new one.
+
+            // Remove the old version file.
+            $versionfile->delete();
+            $transaction->allow_commit();
+        } catch (\moodle_exception $e) {
+            $transaction->rollback($e);
+            return false;
+        }
+        return true;
     }
 
     /**

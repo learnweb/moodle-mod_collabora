@@ -53,8 +53,10 @@ class util {
             throw new \moodle_exception('missing or wrong id');
         }
 
+        $version = $args['version'] ?? 0;
+
         list($course, $cm) = get_course_and_cm_from_instance($id, 'collabora');
-        $versionwidget = new \mod_collabora\output\version_viewer_content($cm);
+        $versionwidget = new \mod_collabora\output\version_viewer_content($cm, $version);
         return $OUTPUT->render($versionwidget);
     }
 
