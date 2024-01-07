@@ -139,6 +139,11 @@ class api {
      * @return void|string If $return is true a string is returned
      */
     protected function handle_checkfileinfo($return = false) {
+        $url    = new \moodle_url('/');
+        $scheme = $url->get_scheme();
+        $host   = $url->get_host();
+        $origin = $scheme . '://' . $host;
+
         $file = $this->filesystem->get_file();
 
         $tz = date_default_timezone_get();
@@ -149,7 +154,7 @@ class api {
             'EnableShare'             => false,
             'LastModifiedTime'        => date('c', $file->get_timemodified()),
             'OwnerId'                 => $this->filesystem->get_ownerid(),
-            'PostMessageOrigin'       => 'https://test.grabs-edv.com',
+            'PostMessageOrigin'       => $origin,
             'Size'                    => $file->get_filesize(),
             'SupportsRename'          => false,
             'UserCanNotWriteRelative' => true,
