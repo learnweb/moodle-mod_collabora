@@ -90,6 +90,7 @@ if ($hassiteconfig) {
     );
 
     $modlist = [
+        util::UI_SERVER => get_string('uiserver', 'mod_collabora'),
         util::UI_COMPACT => get_string('uicompact', 'mod_collabora'),
         util::UI_TABBED => get_string('uitabbed', 'mod_collabora'),
     ];
@@ -98,7 +99,7 @@ if ($hassiteconfig) {
             'mod_collabora/uimode',
             new lang_string('uimode', 'mod_collabora'),
             '',
-            util::UI_TABBED,
+            util::UI_SERVER,
             $modlist
         )
     );

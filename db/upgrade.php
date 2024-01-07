@@ -71,5 +71,20 @@ function xmldb_collabora_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2022042002, 'collabora');
     }
 
+    if ($oldversion < 2024010700) {
+
+        // Define field width to be dropped from collabora.
+        $table = new xmldb_table('collabora');
+        $field = new xmldb_field('width');
+
+        // Conditionally launch drop field width.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Collabora savepoint reached.
+        upgrade_mod_savepoint(true, 2024010700, 'collabora');
+    }
+
     return true;
 }

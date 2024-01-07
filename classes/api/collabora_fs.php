@@ -165,7 +165,7 @@ class collabora_fs extends base_filesystem {
             $showversionui = true;
         }
 
-        parent::__construct($user, $file, $callbackurl, $version, $showversionui);
+        parent::__construct($user, $file, $callbackurl, $version, true, $showversionui);
     }
 
     /**

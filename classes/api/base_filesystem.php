@@ -221,17 +221,15 @@ abstract class base_filesystem {
      * @param int $version
      * @param bool $showversionui
      */
-    public function __construct($user, $file, $callbackurl, $version = 0, $showversionui = false) {
+    public function __construct($user, $file, $callbackurl, $version = 0, $useversions = true, $showversionui = false) {
         $this->myconfig = get_config('mod_collabora');
         $this->user = $user;
         $this->file = $file;
         $this->callbackurl = $callbackurl;
         $this->version = $version;
 
-        // TODO: Make it configurable!
-        // TODO: Make it configurable!
-        // TODO: Make it configurable!
         $this->useversions = $this->myconfig->enableversions ?? false;
+        $this->useversions = $this->useversions && $useversions; // Versions can be disabled through the constructor param.
         $this->showversionui = $showversionui;
     }
 
@@ -293,12 +291,24 @@ abstract class base_filesystem {
     }
 
     /**
-     * Get the origin of the handler, based on the collabora url.
+     * Get the origin of the collabora-server, based on the collabora url.
      *
      * @return string
      */
     public function get_collabora_origin() {
         $url = $this->get_collabora_url();
+        $scheme = $url->get_scheme();
+        $host = $url->get_host();
+        return $scheme . '://' . $host;
+    }
+
+    /**
+     * Get the origin of the moodle server, based on wwwroot.
+     *
+     * @return string
+     */
+    public function get_moodle_origin() {
+        $url = new \moodle_url('/');
         $scheme = $url->get_scheme();
         $host = $url->get_host();
         return $scheme . '://' . $host;
@@ -320,13 +330,7 @@ abstract class base_filesystem {
         $lang = static::get_collabora_lang();
 
         $collaboraurl = $this->get_collabora_url();
-        $params = array(
-            'WOPISrc' => $wopisrc,
-            'access_token' => $token,
-            'lang' => $lang,
-            'revisionhistory' => 1,
-            'closebutton' => 1,
-        );
+        $params = $this->get_view_params();
         $collaboraurl->params($params);
         return $collaboraurl;
     }
@@ -334,9 +338,10 @@ abstract class base_filesystem {
     /**
      * Get the URL for the iframe in which to display the collabora document.
      *
-     * @return \moodle_url
+     * @param bool $showclosebutton
+     * @return []
      */
-    public function get_view_params() {
+    public function get_view_params(bool $showclosebutton = true) {
         // Preparing the parameters.
         $fileid = $this->get_file_id();
         $wopisrc = $this->callbackurl->out().'/wopi/files/'.$fileid;
@@ -349,8 +354,10 @@ abstract class base_filesystem {
             'WOPISrc' => $wopisrc,
             'access_token' => $token,
             'lang' => $lang,
-            'closebutton' => 1,
         );
+        if ($showclosebutton) {
+            $params['closebutton'] = 1;
+        }
         if ($this->use_versions()) {
             if (empty($this->version)) {
                 if ($this->showversionui) { // Show the version ui only if activated.
@@ -522,6 +529,27 @@ abstract class base_filesystem {
     }
 
     /**
+     * Get a version of our file from this instance
+     *
+     * @return \stored_file
+     */
+    public function delete_version(int $version) {
+        $versionfile = $this->get_version_file($version);
+        // Get the directory of the version file.
+        $fs = get_file_storage();
+        $versiondir = $fs->get_file(
+            $versionfile->get_contextid(),
+            $versionfile->get_component(),
+            $versionfile->get_filearea(),
+            $versionfile->get_itemid(),
+            $versionfile->get_filepath(),
+            '.' // The filename of a directory always is a dot ".".
+        );
+        $versionfile->delete();
+        return $versiondir->delete();
+    }
+
+    /**
      * Reset the current document by the given version.
      * This creates a new version of the old current document and the version to be restored is removed.
      *
@@ -568,7 +596,7 @@ abstract class base_filesystem {
             $this->file = $fs->create_file_from_storedfile($filerecord, $versionfile); // Create the new one.
 
             // Remove the old version file.
-            $versionfile->delete();
+            $this->delete_version($version);
             $transaction->allow_commit();
         } catch (\moodle_exception $e) {
             $transaction->rollback($e);

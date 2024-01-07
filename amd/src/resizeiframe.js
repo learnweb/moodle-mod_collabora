@@ -34,6 +34,10 @@ export const init = () => {
      */
     function resizeIframe() {
         var inlineContainer = document.querySelector('.collabora-inline-container');
+        if (inlineContainer === null || inlineContainer == undefined) {
+            return;
+        }
+
         var currentTop = inlineContainer.getBoundingClientRect().top;
         var myHeight = parseInt(window.innerHeight - currentTop);
         myHeight = myHeight - 5; // Decrease the height a little.

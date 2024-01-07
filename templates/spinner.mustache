@@ -15,26 +15,18 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_collabora/iframe
+    @template mod_collabora/spinner
 
-    Displays collabora iframe
+    Displays a modal dialog just with a waiting.
 
     Example context (json):
-    {
-        "id" : 1
-    }
+    { }
 
 }}
 
-<div id="iframe-container_{{id}}" class="h-100 w-100 d-flex flex-row-reverse">
-    {{> mod_collabora/version_viewer }}
-    <div class="collabora-frame h-100 flex-grow-1">
-        <iframe
-            class="collabora-iframe border w-100 h-100"
-            id="collaboraiframe_{{id}}"
-            name="collaboraiframe_{{id}}"
-            src="about:blank" allowFullscreen>
-        </iframe>
+<div id="collabora-spinner-{{id}}" class="d-none" style="position:fixed;width: 100%;height:100%;z-index:2000;top:0;left:0;background-color:#000;opacity:0.7">
+    <div class="w-100 text-center text-light display-4" style="position:fixed;top:40%;left:0;">
+        <i class="fa fa-spinner fa-spin fa-2x fa-fw"></i><br>
+        {{#str}} pleasewait, mod_collabora {{/str}}
     </div>
-    {{> mod_collabora/spinner }}
 </div>

@@ -35,7 +35,7 @@ class backup_collabora_activity_structure_step extends backup_activity_structure
         // Define each element separated.
         $collabora = new backup_nested_element('collabora', ['id'], [
             'name', 'intro', 'introformat', 'timecreated', 'timemodified',
-            'format', 'initialtext', 'display', 'width', 'height', 'displayname',
+            'format', 'initialtext', 'display', 'height', 'displayname',
             'displaydescription'
         ]);
 

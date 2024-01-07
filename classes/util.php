@@ -31,6 +31,8 @@ class util {
     public const UI_COMPACT = 'classic';
     /** The modern view with tabs. */
     public const UI_TABBED = 'notebookbar';
+    /** Use the server defined ui. */
+    public const UI_SERVER = 0;
 
     /** Define the collabora file format for individual files */
     public const FORMAT_UPLOAD = 'upload';

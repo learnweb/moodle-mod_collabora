@@ -26,12 +26,12 @@ namespace mod_collabora\api;
 class api {
 
     /** @var string */
-    private $requesttype;
+    protected $requesttype;
     /** @var string */
-    private $postdata;
+    protected $postdata;
 
     /** @var base_filesystem */
-    private $filesystem;
+    protected $filesystem;
 
     /** Request to get the document from us */
     const REQUEST_GETFILE = 'getfile';
@@ -147,21 +147,18 @@ class api {
         date_default_timezone_set('UTC');
 
         $ret = (object)[
-            // 'Version' => '1',
-            'SupportsRename' => false,
-            'UserCanRename' => false,
-            'EnableShare' => false,
-            // 'FileVersionPostMessage' => true,
             'BaseFileName' => clean_filename($file->get_filename()),
-            'OwnerId' => $this->filesystem->get_ownerid(),
-            'Size' => $file->get_filesize(),
-            'UserId' => $this->filesystem->get_user_identifier(),
-            'UserFriendlyName' => $this->filesystem->get_username(),
-            'UserCanWrite' => !$this->filesystem->is_readonly(),
-            'UserCanRename' => false,
-            'UserCanNotWriteRelative' => true,
+            'EnableShare' => false,
             'LastModifiedTime' => date('c', $file->get_timemodified()),
+            'OwnerId' => $this->filesystem->get_ownerid(),
             'PostMessageOrigin' => 'https://test.grabs-edv.com',
+            'Size' => $file->get_filesize(),
+            'SupportsRename' => false,
+            'UserCanNotWriteRelative' => true,
+            'UserCanRename' => false,
+            'UserCanWrite' => !$this->filesystem->is_readonly(),
+            'UserFriendlyName' => $this->filesystem->get_username(),
+            'UserId' => $this->filesystem->get_user_identifier(),
         ];
 
         date_default_timezone_set($tz);

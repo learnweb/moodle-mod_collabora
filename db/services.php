@@ -33,4 +33,14 @@ $functions = [
         'capabilities' => 'mod/collabora:manageversions',
         'ajax'         => true,
     ],
+    // Delete version.
+    'mod_collabora_delete_version' => [
+        'classname'    => 'mod_collabora\external\services',
+        'methodname'   => 'delete_version',
+        'classpath'    => '',
+        'description'  => 'Delete a document version.',
+        'type'         => 'write',
+        'capabilities' => 'mod/collabora:manageversions',
+        'ajax'         => true,
+    ],
 ];

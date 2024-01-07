@@ -179,7 +179,6 @@ function collabora_dndupload_handle($uploadinfo) {
     // Set the display options to the site defaults.
     $config = get_config('mod_collabora');
     $data->display = $config->defaultdisplay;
-    $data->width = 0;
     $data->height = 0;
     $data->displayname = $config->defaultdisplayname;
     $data->displaydescription = $config->defaultdisplaydescription;
@@ -305,7 +304,7 @@ function collabora_get_fontawesome_icon_map() {
 }
 
 /**
- * Get a html fragment.
+ * Get an html fragment.
  *
  * @param mixed $args An array or object with context and parameters needed to get the data.
  * @return string The html fragment we want to use by ajax

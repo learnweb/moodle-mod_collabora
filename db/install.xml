@@ -16,7 +16,6 @@
         <FIELD NAME="format" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="upload" SEQUENCE="false" COMMENT="upload / text / spreadsheet / wordprocessor / presentation"/>
         <FIELD NAME="initialtext" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Initial text, if 'text' format selected"/>
         <FIELD NAME="display" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="current" SEQUENCE="false" COMMENT="current / new"/>
-        <FIELD NAME="width" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="iframe width - 0 for auto"/>
         <FIELD NAME="height" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="iframe height - 0 for auto"/>
         <FIELD NAME="displayname" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Should the name be displayed on the view page?"/>
         <FIELD NAME="displaydescription" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Should the description be displayed on the view page?"/>

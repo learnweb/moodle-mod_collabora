@@ -111,4 +111,85 @@ class services extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
+    public static function delete_version_parameters() {
+        return new external_function_parameters(
+            [
+                'id'      => new external_value(PARAM_INT, 'The collabora id'),
+                'version' => new external_value(PARAM_INT, 'The version to be restored'),
+                'userid' => new external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
+            ]
+        );
+    }
+
+    /**
+     * Process version delete.
+     *
+     * @param  int $id
+     * @param  int $version
+     * @param  int $userid
+     * @return array
+     */
+    public static function delete_version($id, $version, $userid) {
+        global $DB, $USER;
+
+        // We always must pass webservice params through validate_parameters.
+        [
+            'id' => $id,
+            'version' => $version,
+            'userid' => $userid,
+        ] = self::validate_parameters(self::delete_version_parameters(), [
+            'id' => $id,
+            'version' => $version,
+            'userid' => $userid,
+        ]);
+
+        if (!empty($userid)) {
+            $user = $DB->get_record('user', ['id' => $userid]);
+        } else {
+            $user = $USER;
+        }
+
+        [$course, $cm] = get_course_and_cm_from_instance($id, 'collabora');
+
+        // We always must call validate_context in a webservice.
+        self::validate_context($cm->context);
+        require_capability('mod/collabora:manageversions', $cm->context, $user->id);
+
+        $collabora = $DB->get_record('collabora', ['id' => $id]);
+        $groupid = util::get_current_groupid_from_cm($cm, $user);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, $cm->context, $groupid, $user->id);
+        if ($collaborafs->delete_version($version)) {
+            $return = [
+                'success' => 1,
+                'failure' => 0,
+                'failuremsg' => '',
+            ];
+        } else {
+            $return = [
+                'success' => 0,
+                'failure' => 1,
+                'failuremsg' => get_string('couldnotdeleteversion', 'mod_collabora'),
+            ];
+        }
+
+
+        return $return;
+    }
+
+    /**
+     * @return external_description
+     */
+    public static function delete_version_returns() {
+        return new external_single_structure(
+            [
+                'success'    => new external_value(PARAM_INT, '1 on success'),
+                'failure'    => new external_value(PARAM_INT, '1 on failure'),
+                'failuremsg' => new external_value(PARAM_TEXT, 'Message on failure'),
+            ]
+        );
+    }
+
 }

@@ -52,9 +52,6 @@ class content implements \renderable, \templatable {
             $this->data->activitymenu = groups_print_activity_menu($cm, $PAGE->url, true, true);
             $this->data->lockicon = $collaborafs->get_lock_icon();
 
-            $viewurl = $collaborafs->get_view_url();
-            $this->data->viewurl = $viewurl->out(false);
-
             if (empty($this->data->embedded)) {
                 $this->data->frameheight = $instance->height ?? false;
             }

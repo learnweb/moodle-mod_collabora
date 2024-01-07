@@ -55,6 +55,7 @@ class version_viewer_content implements \renderable, \templatable {
             $versioninfos[] = $this->get_file_infos($version, $cm, $displayedversion);
         }
 
+        $this->data->id = $collabora->id;
         $this->data->currentfileinfo = $currentfileinfo;
         $this->data->versioninfos = $versioninfos;
         $this->data->hasversions = count($versioninfos) > 0;

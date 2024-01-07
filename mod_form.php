@@ -105,13 +105,6 @@ class mod_collabora_mod_form extends moodleform_mod {
         $mform->setDefault('display', $config->defaultdisplay);
         $mform->addHelpButton('display', 'display', 'mod_collabora');
 
-        // Width.
-        $mform->addElement('text', 'width', get_string('width', 'mod_collabora'));
-        $mform->setDefault('width', 0);
-        $mform->setType('width', PARAM_INT);
-        $mform->setAdvanced('width');
-        $mform->disabledIf('width', 'display', 'eq', util::DISPLAY_NEW);
-
         // Height.
         $mform->addElement('text', 'height', get_string('height', 'mod_collabora'));
         $mform->setDefault('height', 0);
