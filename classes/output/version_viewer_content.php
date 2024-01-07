@@ -26,14 +26,14 @@ namespace mod_collabora\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class version_viewer_content implements \renderable, \templatable {
-    /** @var \stdClass $data */
+    /** @var \stdClass */
     private $data;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \cm_info $cm
-     * @param int $displayedversion // The version actually displayed but not necessarily the current version.
+     * @param int      $displayedversion // The version actually displayed but not necessarily the current version
      */
     public function __construct(\cm_info $cm, int $displayedversion) {
         global $USER, $DB;
@@ -41,13 +41,13 @@ class version_viewer_content implements \renderable, \templatable {
         $this->data = new \stdClass();
 
         // Handle groups selection.
-        $groupid = \mod_collabora\util::get_current_groupid_from_cm($cm);
+        $groupid   = \mod_collabora\util::get_current_groupid_from_cm($cm);
         $collabora = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
 
-        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, $cm->context, $groupid, $USER->id);
-        $currentfile = $collaborafs->get_file();
-        $versions = $collaborafs->get_version_files();
-        $versions = array_reverse($versions);
+        $collaborafs     = new \mod_collabora\api\collabora_fs($collabora, $cm->context, $groupid, $USER->id);
+        $currentfile     = $collaborafs->get_file();
+        $versions        = $collaborafs->get_version_files();
+        $versions        = array_reverse($versions);
         $currentfileinfo = $this->get_file_infos($currentfile, $cm, $displayedversion);
 
         $versioninfos = [];
@@ -55,10 +55,10 @@ class version_viewer_content implements \renderable, \templatable {
             $versioninfos[] = $this->get_file_infos($version, $cm, $displayedversion);
         }
 
-        $this->data->id = $collabora->id;
+        $this->data->id              = $collabora->id;
         $this->data->currentfileinfo = $currentfileinfo;
-        $this->data->versioninfos = $versioninfos;
-        $this->data->hasversions = count($versioninfos) > 0;
+        $this->data->versioninfos    = $versioninfos;
+        $this->data->hasversions     = count($versioninfos) > 0;
     }
 
     /**
@@ -67,7 +67,7 @@ class version_viewer_content implements \renderable, \templatable {
      * 1. No complex types - only stdClass, array, int, string, float, bool
      * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
      *
-     * @param \renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @param  \renderer_base  $output used to do a final render of any components that need to be rendered for export
      * @return \stdClass|array
      */
     public function export_for_template(\renderer_base $output) {
@@ -77,8 +77,9 @@ class version_viewer_content implements \renderable, \templatable {
     /**
      * Get an info object to a given stored_file.
      *
-     * @param \stored_file $file
-     * @param int $displayedversion
+     * @param  \stored_file $file
+     * @param  \cm_info     $cm
+     * @param  int          $displayedversion
      * @return \stdClass
      */
     protected function get_file_infos(\stored_file $file, \cm_info $cm, int $displayedversion) {
@@ -93,14 +94,15 @@ class version_viewer_content implements \renderable, \templatable {
         if ($version == $displayedversion) {
             $fileinfo->iscurrent = true;
         }
-        $fileinfo->fileid = $file->get_id();
-        $fileinfo->filename = $file->get_filename();
-        $fileinfo->timecreated = userdate($file->get_timecreated());
+        $fileinfo->fileid       = $file->get_id();
+        $fileinfo->filename     = $file->get_filename();
+        $fileinfo->timecreated  = userdate($file->get_timecreated());
         $fileinfo->timemodified = userdate($file->get_timemodified());
         if (!empty($version)) {
-            $fileinfo->version = $version;
+            $fileinfo->version     = $version;
             $fileinfo->downloadurl = new \moodle_url('/mod/collabora/view.php', ['id' => $cm->id, 'loadversion' => $version]);
         }
+
         return $fileinfo;
     }
 }

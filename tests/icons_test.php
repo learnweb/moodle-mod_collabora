@@ -30,7 +30,7 @@ class icons_test extends \advanced_testcase {
     /**
      * Setup function to create a course we can test with.
      */
-    public function setUp() : void {
+    public function setUp(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->course = $this->getDataGenerator()->create_course();
@@ -45,8 +45,8 @@ class icons_test extends \advanced_testcase {
     public function test_default_module_icon() {
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [
-                'course' => $this->course,
-                'format' => 'text',
+                'course'      => $this->course,
+                'format'      => 'text',
                 'initialtext' => 'Test text',
             ]
         );

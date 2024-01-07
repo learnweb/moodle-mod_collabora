@@ -15,17 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin upgrade script
+ * Plugin upgrade script.
  *
  * @package   mod_collabora
  * @copyright 2019 Jan Dageförde, WWU Münster
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @param mixed $oldversion
  */
 
 /**
  * Upgrade function for mod_collabora.
  *
- * @param string $oldversion the version we are upgrading from.
+ * @param string $oldversion the version we are upgrading from
  */
 function xmldb_collabora_upgrade($oldversion) {
     global $DB;
@@ -33,7 +34,6 @@ function xmldb_collabora_upgrade($oldversion) {
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2021102400) {
-
         // Define field repaircount to be added to collabora_document.
         $table = new xmldb_table('collabora_document');
         $field = new xmldb_field('repaircount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'locked');
@@ -48,7 +48,6 @@ function xmldb_collabora_upgrade($oldversion) {
     }
 
     if ($oldversion < 2022042002) {
-
         // Define field sid to be added to collabora_token.
         $table = new xmldb_table('collabora_token');
         $field = new xmldb_field('sid', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'token');
@@ -60,7 +59,7 @@ function xmldb_collabora_upgrade($oldversion) {
 
         // Now we combine sid with userid so we remove the unique userid index.
         $table = new xmldb_table('collabora_token');
-        $index = new xmldb_index('userid', XMLDB_INDEX_UNIQUE, array('userid'));
+        $index = new xmldb_index('userid', XMLDB_INDEX_UNIQUE, ['userid']);
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }
@@ -72,7 +71,6 @@ function xmldb_collabora_upgrade($oldversion) {
     }
 
     if ($oldversion < 2024010700) {
-
         // Define field width to be dropped from collabora.
         $table = new xmldb_table('collabora');
         $field = new xmldb_field('width');

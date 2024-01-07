@@ -32,20 +32,19 @@ namespace mod_collabora\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_viewed extends \core\event\course_module_viewed {
-
     /**
-     * Trigger the event
+     * Trigger the event.
      *
-     * @param \stdClass $course
-     * @param \stdClass $cm
-     * @param \stdClass $collabora
+     * @param  \stdClass $course
+     * @param  \stdClass $cm
+     * @param  \stdClass $collabora
      * @return void
      */
     public static function trigger_from_course_cm($course, $cm, $collabora) {
-        $params = array(
-            'context' => \context_module::instance($cm->id),
-            'objectid' => $collabora->id
-        );
+        $params = [
+            'context'  => \context_module::instance($cm->id),
+            'objectid' => $collabora->id,
+        ];
         $event = self::create($params);
         $event->add_record_snapshot('course_modules', $cm);
         $event->add_record_snapshot('course', $course);
@@ -60,16 +59,16 @@ class course_module_viewed extends \core\event\course_module_viewed {
      */
     protected function init() {
         $this->data['objecttable'] = 'collabora';
-        $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['crud']        = 'r';
+        $this->data['edulevel']    = self::LEVEL_PARTICIPATING;
     }
 
     /**
-     * Get the object mapping
+     * Get the object mapping.
      *
      * @return array
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'collabora', 'restore' => 'collabora');
+        return ['db' => 'collabora', 'restore' => 'collabora'];
     }
 }

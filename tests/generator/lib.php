@@ -15,24 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Module instance generator
+ * Module instance generator.
  *
  * @package   mod_collabora
  * @copyright 2019 Jan Dageförde, WWU Münster
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_collabora_generator extends testing_module_generator {
-
     /**
-     * Create a collabora activity instance
+     * Create a collabora activity instance.
      *
-     * @param array|\stdClass|null $record
-     * @param array|null $options
+     * @param  array|\stdClass|null $record
+     * @param  array|null           $options
      * @return \stdClass
      */
-    public function create_instance($record = null, array $options = null) {
-
-        return parent::create_instance($record, (array)$options);
+    public function create_instance($record = null, ?array $options = null) {
+        return parent::create_instance($record, (array) $options);
     }
-
 }

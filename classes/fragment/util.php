@@ -17,7 +17,7 @@
 namespace mod_collabora\fragment;
 
 /**
- * Util class for fragment api
+ * Util class for fragment api.
  *
  * @package    mod_collabora
  *
@@ -27,11 +27,11 @@ namespace mod_collabora\fragment;
  */
 class util {
     /**
-     * Returns the html fragment
+     * Returns the html fragment.
      *
-     * @param array $args
-     * @return string
+     * @param  array             $args
      * @throws \moodle_exception
+     * @return string
      */
     public static function get_html($args) {
         if (empty($args['function'])) {
@@ -45,6 +45,12 @@ class util {
         return static::{$function}($args);
     }
 
+    /**
+     * Get the html content for the version_viewer.
+     *
+     * @param [] $args
+     * @return string The rendered html
+     */
     protected static function get_version_viewer_content($args) {
         global $OUTPUT;
 
@@ -56,25 +62,33 @@ class util {
         $version = $args['version'] ?? 0;
 
         list($course, $cm) = get_course_and_cm_from_instance($id, 'collabora');
-        $versionwidget = new \mod_collabora\output\version_viewer_content($cm, $version);
+        $versionwidget     = new \mod_collabora\output\version_viewer_content($cm, $version);
+
         return $OUTPUT->render($versionwidget);
     }
 
+    /**
+     * Get the wopi src for a javascript as json string.
+     *
+     * @param [] $args
+     * @return string
+     */
     protected static function get_wopi_src($args) {
         global $DB, $USER;
 
         $version = $args['version'] ?? 0;
-        $id = $args['id'] ?? false;
+        $id      = $args['id'] ?? false;
         if (empty($id)) {
             throw new \moodle_exception('missing or wrong id');
         }
 
         list($course, $cm) = get_course_and_cm_from_instance($id, 'collabora');
-        $collabora = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
-        $groupid = \mod_collabora\util::get_current_groupid_from_cm($cm);
+        $collabora         = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
+        $groupid           = \mod_collabora\util::get_current_groupid_from_cm($cm);
 
         $collaborafs = new \mod_collabora\api\collabora_fs($collabora, $cm->context, $groupid, $USER->id, $version);
-        $params = $collaborafs->get_view_params();
+        $params      = $collaborafs->get_view_params();
+
         return json_encode($params);
     }
 }

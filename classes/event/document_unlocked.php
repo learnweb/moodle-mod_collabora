@@ -27,8 +27,8 @@ namespace mod_collabora\event;
 /**
  * The mod_collabora document unlocked event class.
  *
- * @property-read array $other {
- *      Extra information about the event.
+ * @property array $other {
+ *                        Extra information about the event.
  *
  *      - int groupid: The groupid this document is for.
  *      - int collaboraid: The collabora id the document is part of.
@@ -39,14 +39,13 @@ namespace mod_collabora\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class document_unlocked extends document_action_base {
-
     /**
      * Returns description of what happened.
      *
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has unlocked the document with id '$this->objectid' for group id ".
+        return "The user with id '$this->userid' has unlocked the document with id '$this->objectid' for group id " .
             "'{$this->other['groupid']}' in the collaborative documument with course module id '$this->contextinstanceid'.";
     }
 
@@ -58,5 +57,4 @@ class document_unlocked extends document_action_base {
     public static function get_name() {
         return get_string('eventdocumentunlocked', 'mod_collabora');
     }
-
 }

@@ -24,15 +24,18 @@
 
 namespace mod_collabora\privacy;
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 global $CFG;
 
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\approved_contextlist;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\approved_userlist;
-use \core_privacy\local\request\contextlist;
+use core_privacy\local\request\contextlist;
 use core_privacy\local\request\userlist;
+use core_privacy\local\request\core_userlist_provider;
+use core_privacy\local\metadata\provider as metadata_provider;
+use core_privacy\local\request\plugin\provider as plugin_provider;
 
 /**
  * Privacy class for requesting user data.
@@ -41,32 +44,29 @@ use core_privacy\local\request\userlist;
  * @copyright  2019 Justus Dieckmann, WWU; based on code by Benjamin Ellis, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements
-        \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\plugin\provider,
-        \core_privacy\local\request\core_userlist_provider {
-
+class provider implements metadata_provider, plugin_provider, core_userlist_provider {
     /**
      * Return meta data about this plugin.
      *
-     * @param collection $collection A list of information to add to.
-     * @return collection Return the collection after adding to it.
+     * @param  collection $collection a list of information to add to
+     * @return collection return the collection after adding to it
      */
     public static function get_metadata(collection $collection): collection {
         $collection->add_subsystem_link('core_files', [], 'privacy:metadata:core_files');
         $collection->add_external_location_link('collabora_extsystem', [
                 'UserFriendlyName' => 'privacy:metadata:collabora_extsystem:username',
                 'LastModifiedTime' => 'privacy:metadata:collabora_extsystem:lastmodified',
-                'FileContent' => 'privacy:metadata:collabora_extsystem:filecontent'
+                'FileContent'      => 'privacy:metadata:collabora_extsystem:filecontent',
         ], 'privacy:metadata:collabora_extsystem');
+
         return $collection;
     }
 
     /**
      * Get the list of contexts that contain user information for the specified user.
      *
-     * @param int $userid The user to search.
-     * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
+     * @param  int         $userid the user to search
+     * @return contextlist $contextlist  the contextlist containing the list of contexts used in this plugin
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
         // We don't delete files, because they were submitted as a group. To avoid confusion, we don't export them either.
@@ -76,7 +76,7 @@ class provider implements
     /**
      * Export all user data for the specified user, in the specified contexts.
      *
-     * @param approved_contextlist $contextlist The approved contexts to export information for.
+     * @param approved_contextlist $contextlist the approved contexts to export information for
      */
     public static function export_user_data(approved_contextlist $contextlist) {
         // We don't delete files, because they were submitted as a group. To avoid confusion, we don't export them either.
@@ -85,7 +85,7 @@ class provider implements
     /**
      * Delete all data for all users in the specified context.
      *
-     * @param \context $context The specific context to delete data for.
+     * @param \context $context the specific context to delete data for
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         // We don't delete files, because they were submitted as a group. To avoid confusion, we don't export them either.
@@ -94,7 +94,7 @@ class provider implements
     /**
      * Delete all user data for the specified user, in the specified contexts.
      *
-     * @param approved_contextlist $contextlist The approved contexts and user information to delete information for.
+     * @param approved_contextlist $contextlist the approved contexts and user information to delete information for
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
         // We don't delete files, because they were submitted as a group. To avoid confusion, we don't export them either.
@@ -103,7 +103,7 @@ class provider implements
     /**
      * Get the list of users who have data within a context.
      *
-     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     * @param userlist $userlist the userlist containing the list of users who have data in this context/plugin combination
      */
     public static function get_users_in_context(userlist $userlist) {
         // We don't delete files, because they were submitted as a group. To avoid confusion, we don't export them either.
@@ -112,7 +112,7 @@ class provider implements
     /**
      * Delete multiple users within a single context.
      *
-     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     * @param approved_userlist $userlist the approved context and user information to delete information for
      */
     public static function delete_data_for_users(approved_userlist $userlist) {
         // We don't delete files, because they were submitted as a group. To avoid confusion, we don't export them either.

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Service definition
+ * Service definition.
  *
  * @package   mod_collabora
  * @copyright 2024 Andreas Grabs

@@ -15,15 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_collabora\external;
+
 use core_external\external_api;
 use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use mod_collabora\util;
 
 /**
- * Main support functions
+ * Main support functions.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
@@ -31,6 +31,8 @@ use mod_collabora\util;
  */
 class services extends external_api {
     /**
+     * Parameter definition.
+     *
      * @return external_function_parameters
      */
     public static function restore_version_parameters() {
@@ -38,7 +40,7 @@ class services extends external_api {
             [
                 'id'      => new external_value(PARAM_INT, 'The collabora id'),
                 'version' => new external_value(PARAM_INT, 'The version to be restored'),
-                'userid' => new external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
+                'userid'  => new external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
             ]
         );
     }
@@ -46,9 +48,9 @@ class services extends external_api {
     /**
      * Process version restore.
      *
-     * @param  int $id
-     * @param  int $version
-     * @param  int $userid
+     * @param  int   $id
+     * @param  int   $version
+     * @param  int   $userid
      * @return array
      */
     public static function restore_version($id, $version, $userid) {
@@ -56,13 +58,13 @@ class services extends external_api {
 
         // We always must pass webservice params through validate_parameters.
         [
-            'id' => $id,
+            'id'      => $id,
             'version' => $version,
-            'userid' => $userid,
+            'userid'  => $userid,
         ] = self::validate_parameters(self::restore_version_parameters(), [
-            'id' => $id,
+            'id'      => $id,
             'version' => $version,
-            'userid' => $userid,
+            'userid'  => $userid,
         ]);
 
         if (!empty($userid)) {
@@ -77,28 +79,29 @@ class services extends external_api {
         self::validate_context($cm->context);
         require_capability('mod/collabora:manageversions', $cm->context, $user->id);
 
-        $collabora = $DB->get_record('collabora', ['id' => $id]);
-        $groupid = util::get_current_groupid_from_cm($cm, $user);
+        $collabora   = $DB->get_record('collabora', ['id' => $id]);
+        $groupid     = util::get_current_groupid_from_cm($cm, $user);
         $collaborafs = new \mod_collabora\api\collabora_fs($collabora, $cm->context, $groupid, $user->id);
         if ($collaborafs->restore_version($version)) {
             $return = [
-                'success' => 1,
-                'failure' => 0,
+                'success'    => 1,
+                'failure'    => 0,
                 'failuremsg' => '',
             ];
         } else {
             $return = [
-                'success' => 0,
-                'failure' => 1,
+                'success'    => 0,
+                'failure'    => 1,
                 'failuremsg' => get_string('couldnotrestoreversion', 'mod_collabora'),
             ];
         }
-
 
         return $return;
     }
 
     /**
+     * Definition of the return values.
+     *
      * @return external_description
      */
     public static function restore_version_returns() {
@@ -112,6 +115,8 @@ class services extends external_api {
     }
 
     /**
+     * Parameter definition.
+     *
      * @return external_function_parameters
      */
     public static function delete_version_parameters() {
@@ -119,7 +124,7 @@ class services extends external_api {
             [
                 'id'      => new external_value(PARAM_INT, 'The collabora id'),
                 'version' => new external_value(PARAM_INT, 'The version to be restored'),
-                'userid' => new external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
+                'userid'  => new external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
             ]
         );
     }
@@ -127,9 +132,9 @@ class services extends external_api {
     /**
      * Process version delete.
      *
-     * @param  int $id
-     * @param  int $version
-     * @param  int $userid
+     * @param  int   $id
+     * @param  int   $version
+     * @param  int   $userid
      * @return array
      */
     public static function delete_version($id, $version, $userid) {
@@ -137,13 +142,13 @@ class services extends external_api {
 
         // We always must pass webservice params through validate_parameters.
         [
-            'id' => $id,
+            'id'      => $id,
             'version' => $version,
-            'userid' => $userid,
+            'userid'  => $userid,
         ] = self::validate_parameters(self::delete_version_parameters(), [
-            'id' => $id,
+            'id'      => $id,
             'version' => $version,
-            'userid' => $userid,
+            'userid'  => $userid,
         ]);
 
         if (!empty($userid)) {
@@ -158,28 +163,29 @@ class services extends external_api {
         self::validate_context($cm->context);
         require_capability('mod/collabora:manageversions', $cm->context, $user->id);
 
-        $collabora = $DB->get_record('collabora', ['id' => $id]);
-        $groupid = util::get_current_groupid_from_cm($cm, $user);
+        $collabora   = $DB->get_record('collabora', ['id' => $id]);
+        $groupid     = util::get_current_groupid_from_cm($cm, $user);
         $collaborafs = new \mod_collabora\api\collabora_fs($collabora, $cm->context, $groupid, $user->id);
         if ($collaborafs->delete_version($version)) {
             $return = [
-                'success' => 1,
-                'failure' => 0,
+                'success'    => 1,
+                'failure'    => 0,
                 'failuremsg' => '',
             ];
         } else {
             $return = [
-                'success' => 0,
-                'failure' => 1,
+                'success'    => 0,
+                'failure'    => 1,
                 'failuremsg' => get_string('couldnotdeleteversion', 'mod_collabora'),
             ];
         }
-
 
         return $return;
     }
 
     /**
+     * Definition of the return values.
+     *
      * @return external_description
      */
     public static function delete_version_returns() {
@@ -191,5 +197,4 @@ class services extends external_api {
             ]
         );
     }
-
 }

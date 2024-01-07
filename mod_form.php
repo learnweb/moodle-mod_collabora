@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use \mod_collabora\api\collabora_fs;
-use \mod_collabora\util;
+use mod_collabora\api\collabora_fs;
+use mod_collabora\util;
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 global $CFG;
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 /**
- * Create instance form
+ * Create instance form.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
@@ -30,44 +30,45 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
  */
 class mod_collabora_mod_form extends moodleform_mod {
     /**
-     * Get options for the filemanger
+     * Get options for the filemanger.
      *
      * @return array
      */
     public static function get_filemanager_opts() {
         return [
-            'subdirs' => 0,
-            'maxbytes' => 0,
-            'maxfiles' => 1,
+            'subdirs'        => 0,
+            'maxbytes'       => 0,
+            'maxfiles'       => 1,
             'accepted_types' => collabora_fs::get_accepted_types(),
         ];
     }
 
     /**
-     * Get the file link to the document as an html fragment
+     * Get the file link to the document as an html fragment.
      *
      * @return string
      */
     private function get_file_link() {
-        $fs = get_file_storage();
+        $fs    = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_collabora', collabora_fs::FILEAREA_INITIAL,
-                                     false, '', false, 0, 0, 1);
+            false, '', false, 0, 0, 1);
         $file = reset($files);
         if (!$file) {
             return get_string('missingfile', 'mod_collabora');
         }
         $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-                                               $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+            $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+
         return html_writer::link($url, $file->get_filename());
     }
 
     /**
-     * Defines the mform items
+     * Defines the mform items.
      *
      * @return void
      */
     protected function definition() {
-        $mform = $this->_form;
+        $mform  = $this->_form;
         $config = get_config('mod_collabora');
 
         // General section.
@@ -86,7 +87,7 @@ class mod_collabora_mod_form extends moodleform_mod {
 
         if (!$this->_instance) {
             $mform->addElement('filemanager', 'initialfile_filemanager', get_string('initialfile', 'mod_collabora'),
-                               null, $this->get_filemanager_opts());
+                null, $this->get_filemanager_opts());
             $mform->hideIf('initialfile_filemanager', 'format', 'neq', util::FORMAT_UPLOAD);
         } else if ($this->current->format === util::FORMAT_UPLOAD) {
             $mform->addElement('static', 'initialfile', get_string('initialfile', 'mod_collabora'), $this->get_file_link());
@@ -130,11 +131,11 @@ class mod_collabora_mod_form extends moodleform_mod {
     }
 
     /**
-     * Validates the send mform params
+     * Validates the send mform params.
      *
-     * @param array $data
-     * @param array $files
-     * @return array The elements with the related error message.
+     * @param  array $data
+     * @param  array $files
+     * @return array the elements with the related error message
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
@@ -154,6 +155,7 @@ class mod_collabora_mod_form extends moodleform_mod {
                 }
             }
         }
+
         return $errors;
     }
 }

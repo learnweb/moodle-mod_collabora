@@ -17,19 +17,18 @@
 namespace mod_collabora\api;
 
 use mod_collabora\event\document_locked;
-use mod_collabora\event\document_unlocked;
 use mod_collabora\event\document_repaired;
+use mod_collabora\event\document_unlocked;
 use mod_collabora\util;
 
 /**
- * Main support functions
+ * Main support functions.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class collabora_fs extends base_filesystem {
-
     /** @var object */
     private $collaborarec;
     /** @var \context */
@@ -42,9 +41,9 @@ class collabora_fs extends base_filesystem {
     private $isgroupmember;
 
     /**
-     * Get the moodle user id from the collabora_token table
+     * Get the moodle user id from the collabora_token table.
      *
-     * @param string $token
+     * @param  string $token
      * @return int
      */
     public static function get_userid_from_token($token) {
@@ -54,16 +53,17 @@ class collabora_fs extends base_filesystem {
                 WHERE ct.token = :token
         ';
 
-        $tokenrec = $DB->get_record_sql($sql, array('token' => $token));
+        $tokenrec = $DB->get_record_sql($sql, ['token' => $token]);
 
         if (empty($tokenrec->userid)) {
             return false;
         }
+
         return $tokenrec->userid;
     }
 
     /**
-     * Remove unused tokens
+     * Remove unused tokens.
      *
      * @return int
      */
@@ -74,19 +74,20 @@ class collabora_fs extends base_filesystem {
 
         $select = 'sid = :sid AND userid > 0';
         foreach ($recordset as $tokenrec) {
-            $params = array('sid' => $tokenrec->sid);
+            $params = ['sid' => $tokenrec->sid];
             if (!$DB->record_exists_select('sessions', $select, $params)) {
-                $DB->delete_records('collabora_token', array('id' => $tokenrec->id));
+                $DB->delete_records('collabora_token', ['id' => $tokenrec->id]);
             }
         }
+
         return true;
     }
 
     /**
      * Get an instance of this class by using the fileid and the accesstoken comming from the request (collabora server).
      *
-     * @param string $fileid
-     * @param string $accesstoken
+     * @param  string $fileid
+     * @param  string $accesstoken
      * @return static
      */
     public static function get_instance_by_fileid($fileid, $accesstoken) {
@@ -108,9 +109,9 @@ class collabora_fs extends base_filesystem {
         require_capability('mod/collabora:view', $context, $userid);
 
         // Check the group access.
-        $isgroupmember = true;
+        $isgroupmember     = true;
         list($course, $cm) = get_course_and_cm_from_cmid($context->instanceid, 'collabora');
-        $rec = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
+        $rec               = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
 
         $groupmode = groups_get_activity_groupmode($cm);
         if ($groupmode == NOGROUPS) {
@@ -131,24 +132,23 @@ class collabora_fs extends base_filesystem {
         }
 
         return new static($rec, $context, $groupid, $userid, $version);
-
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \stdClass $collaborarec
-     * @param \context $context
-     * @param int $groupid
-     * @param int $userid
-     * @param int $version
+     * @param \context  $context
+     * @param int       $groupid
+     * @param int       $userid
+     * @param int       $version
      */
     public function __construct($collaborarec, $context, $groupid, $userid, $version = 0) {
         global $DB;
 
         $this->collaborarec = $collaborarec;
-        $this->context = $context;
-        $this->groupid = (int)$groupid;
+        $this->context      = $context;
+        $this->groupid      = (int) $groupid;
 
         $this->isgroupmember = true;
         if ($this->groupid > 0) {
@@ -156,8 +156,8 @@ class collabora_fs extends base_filesystem {
         }
 
         $this->create_retrieve_document_record();
-        $file = $this->create_retrieve_file();
-        $user = $DB->get_record('user', array('id' => $userid));
+        $file        = $this->create_retrieve_file();
+        $user        = $DB->get_record('user', ['id' => $userid]);
         $callbackurl = new \moodle_url('/mod/collabora/callback.php');
 
         $showversionui = false;
@@ -174,7 +174,7 @@ class collabora_fs extends base_filesystem {
      * @return string
      */
     public function display_name() {
-        return (bool)$this->collaborarec->displayname;
+        return (bool) $this->collaborarec->displayname;
     }
 
     /**
@@ -183,34 +183,35 @@ class collabora_fs extends base_filesystem {
      * @return string
      */
     public function display_description() {
-        return (bool)$this->collaborarec->displaydescription;
+        return (bool) $this->collaborarec->displaydescription;
     }
 
     /**
-     * Info whether or not the current document is locked
+     * Info whether or not the current document is locked.
      *
-     * @return boolean
+     * @return bool
      */
     public function is_locked() {
-        return (bool)$this->document->locked;
+        return (bool) $this->document->locked;
     }
 
     /**
-     * Info whether or not the current document can be unlocked
+     * Info whether or not the current document can be unlocked.
      *
-     * @return boolean
+     * @return bool
      */
     public function can_lock_unlock() {
         if (!$this->document) {
             return false;
         }
+
         return has_capability('mod/collabora:lock', $this->context);
     }
 
     /**
-     * Lock or unlock the current document if allowed
+     * Lock or unlock the current document if allowed.
      *
-     * @return boolean
+     * @return bool
      */
     public function process_lock_unlock() {
         global $DB, $PAGE;
@@ -233,7 +234,7 @@ class collabora_fs extends base_filesystem {
         }
         require_sesskey();
 
-        $locked = ($lock !== null) ? 1 : 0;
+        $locked                 = ($lock !== null) ? 1 : 0;
         $this->document->locked = $locked;
         $DB->set_field('collabora_document', 'locked', $locked, ['id' => $this->document->id]);
         if ($locked) {
@@ -241,6 +242,7 @@ class collabora_fs extends base_filesystem {
         } else {
             document_unlocked::trigger_from_document($this->context->instanceid, $this->document);
         }
+
         return true; // Locking/unlocking is done.
     }
 
@@ -254,10 +256,11 @@ class collabora_fs extends base_filesystem {
     public function process_repair() {
         global $DB;
 
-        $this->document->repaircount = intval($this->document->repaircount) + 1;
+        $this->document->repaircount = (int) $this->document->repaircount + 1;
 
         $return = $DB->set_field('collabora_document', 'repaircount', $this->document->repaircount, ['id' => $this->document->id]);
         document_repaired::trigger_from_document($this->context->instanceid, $this->document);
+
         return $return;
     }
 
@@ -271,13 +274,13 @@ class collabora_fs extends base_filesystem {
         global $DB;
         $this->document = $DB->get_record('collabora_document', [
             'collaboraid' => $this->collaborarec->id,
-            'groupid' => $this->groupid
+            'groupid'     => $this->groupid,
         ]);
         if (!$this->document) {
-            $this->document = (object)[
+            $this->document = (object) [
                 'collaboraid' => $this->collaborarec->id,
-                'groupid' => $this->groupid,
-                'locked' => 0,
+                'groupid'     => $this->groupid,
+                'locked'      => 0,
                 'repaircount' => 0,
             ];
             $this->document->id = $DB->insert_record('collabora_document', $this->document);
@@ -292,13 +295,14 @@ class collabora_fs extends base_filesystem {
      * @return void
      */
     private function create_retrieve_file() {
-        $fs = get_file_storage();
+        $fs    = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_collabora', self::FILEAREA_GROUP, $this->groupid,
-                                     'filepath', false, 0, 0, 1);
+            'filepath', false, 0, 0, 1);
         $file = reset($files);
         if (!$file) {
             $file = $this->create_file();
         }
+
         return $file;
     }
 
@@ -309,12 +313,13 @@ class collabora_fs extends base_filesystem {
      * @return \stored_file
      */
     private function get_initial_file() {
-        $fs = get_file_storage();
+        $fs    = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_collabora', self::FILEAREA_INITIAL, false, '', false, 0, 0, 1);
-        $file = reset($files);
+        $file  = reset($files);
         if (!$file) {
             throw new \moodle_exception('initialfilemissing', 'mod_collabora');
         }
+
         return $file;
     }
 
@@ -326,62 +331,63 @@ class collabora_fs extends base_filesystem {
      */
     private function create_file() {
         global $CFG;
-        $fs = get_file_storage();
-        $filerec = (object)[
+        $fs      = get_file_storage();
+        $filerec = (object) [
             'contextid' => $this->context->id,
             'component' => 'mod_collabora',
-            'filearea' => self::FILEAREA_GROUP,
-            'itemid' => $this->groupid,
-            'filepath' => '/',
-            'filename' => clean_filename(format_string($this->collaborarec->name)),
+            'filearea'  => self::FILEAREA_GROUP,
+            'itemid'    => $this->groupid,
+            'filepath'  => '/',
+            'filename'  => clean_filename(format_string($this->collaborarec->name)),
         ];
         switch ($this->collaborarec->format) {
             case util::FORMAT_UPLOAD:
                 $initfile = $this->get_initial_file();
-                $ext = pathinfo($initfile->get_filename(), PATHINFO_EXTENSION);
-                $filerec->filename .= '.'.$ext;
+                $ext      = pathinfo($initfile->get_filename(), PATHINFO_EXTENSION);
+                $filerec->filename .= '.' . $ext;
                 $file = $fs->create_file_from_storedfile($filerec, $initfile);
                 break;
             case util::FORMAT_TEXT:
                 $inittext = $this->collaborarec->initialtext;
-                $ext = 'txt';
-                $filerec->filename .= '.'.$ext;
+                $ext      = 'txt';
+                $filerec->filename .= '.' . $ext;
                 $file = $fs->create_file_from_string($filerec, $inittext);
                 break;
             case util::FORMAT_WORDPROCESSOR:
                 $ext = 'docx';
-                $filerec->filename .= '.'.$ext;
-                $filepath = $CFG->dirroot.'/mod/collabora/blankfiles/blankdocument.docx';
-                $file = $fs->create_file_from_pathname($filerec, $filepath);
+                $filerec->filename .= '.' . $ext;
+                $filepath = $CFG->dirroot . '/mod/collabora/blankfiles/blankdocument.docx';
+                $file     = $fs->create_file_from_pathname($filerec, $filepath);
                 break;
             case util::FORMAT_SPREADSHEET:
                 $ext = 'xlsx';
-                $filerec->filename .= '.'.$ext;
-                $filepath = $CFG->dirroot.'/mod/collabora/blankfiles/blankspreadsheet.xlsx';
-                $file = $fs->create_file_from_pathname($filerec, $filepath);
+                $filerec->filename .= '.' . $ext;
+                $filepath = $CFG->dirroot . '/mod/collabora/blankfiles/blankspreadsheet.xlsx';
+                $file     = $fs->create_file_from_pathname($filerec, $filepath);
                 break;
             case util::FORMAT_PRESENTATION:
                 $ext = 'pptx';
-                $filerec->filename .= '.'.$ext;
-                $filepath = $CFG->dirroot.'/mod/collabora/blankfiles/blankpresentation.pptx';
-                $file = $fs->create_file_from_pathname($filerec, $filepath);
+                $filerec->filename .= '.' . $ext;
+                $filepath = $CFG->dirroot . '/mod/collabora/blankfiles/blankpresentation.pptx';
+                $file     = $fs->create_file_from_pathname($filerec, $filepath);
                 break;
             default:
                 throw new \coding_exception("Unknown format: {$this->collaborarec->format}");
         }
+
         return $file;
     }
 
     /**
-     * Get the lock icon depending on the locking state of the current document
+     * Get the lock icon depending on the locking state of the current document.
      *
-     * @return string The html fragment of the icon presentation.
+     * @return string the html fragment of the icon presentation
      */
     public function get_lock_icon() {
         global $PAGE, $OUTPUT;
         $canupdate = $this->can_lock_unlock();
-        $islocked = $this->is_locked();
-        $url = null;
+        $islocked  = $this->is_locked();
+        $url       = null;
         if ($canupdate) {
             $params = ['sesskey' => sesskey()];
             if ($islocked) {
@@ -391,18 +397,19 @@ class collabora_fs extends base_filesystem {
             }
             $url = new \moodle_url($PAGE->url, $params);
         }
-        $data = (object)[
+        $data = (object) [
             'canupdate' => $this->can_lock_unlock(),
-            'islocked' => $islocked,
-            'url' => $url,
+            'islocked'  => $islocked,
+            'url'       => $url,
         ];
+
         return $OUTPUT->render_from_template('mod_collabora/lockicon', $data);
     }
 
     /**
      * Choose an appropriate filetype icon based on the mimetype.
      *
-     * @return string|false Icon URL to be used in `cached_cm_info` or false if there is no appropriate icon.
+     * @return string|false icon URL to be used in `cached_cm_info` or false if there is no appropriate icon
      */
     public function get_module_icon() {
         $mimetype = $this->get_file_mimetype();
@@ -423,6 +430,7 @@ class collabora_fs extends base_filesystem {
             case 'text/plain': // Text.
                 return 'txt';
         }
+
         return false;
     }
 
@@ -442,6 +450,7 @@ class collabora_fs extends base_filesystem {
             // Locked - only users with the ability to edit locked documents can edit.
             return !has_capability('mod/collabora:editlocked', $this->context, $this->user->id);
         }
+
         return false;
     }
 
@@ -458,6 +467,7 @@ class collabora_fs extends base_filesystem {
             $this->document->repaircount,
             $this->version, // On main files the version always is "0".
         ];
+
         return implode('_', $elements);
     }
 
@@ -467,7 +477,8 @@ class collabora_fs extends base_filesystem {
      * @return string
      */
     public function get_user_identifier() {
-        $identifier = $this->get_ownerid().'_user_'.$this->user->id;
+        $identifier = $this->get_ownerid() . '_user_' . $this->user->id;
+
         return sha1($identifier);
     }
 
@@ -479,10 +490,10 @@ class collabora_fs extends base_filesystem {
     public function get_user_token() {
         global $DB;
 
-        $params = array(
+        $params = [
             'userid' => $this->user->id,
-            'sid' => session_id(),
-        );
+            'sid'    => session_id(),
+        ];
         $sql = 'SELECT ct.id, ct.token from {collabora_token} ct
                 JOIN {sessions} s ON s.userid = ct.userid AND s.sid = ct.sid
                 WHERE ct.userid = :userid AND ct.sid = :sid
@@ -494,12 +505,12 @@ class collabora_fs extends base_filesystem {
             return $tokenrec->token;
         }
         // Create a new token record.
-        $tokenrec = new \stdClass();
+        $tokenrec         = new \stdClass();
         $tokenrec->userid = $this->user->id;
-        $tokenrec->token = random_string(12);
-        $tokenrec->sid = session_id();
+        $tokenrec->token  = random_string(12);
+        $tokenrec->sid    = session_id();
 
-        $params = array('token' => $tokenrec->token);
+        $params = ['token' => $tokenrec->token];
         while (true) {
             if (!$DB->record_exists('collabora_token', $params)) {
                 $DB->insert_record('collabora_token', $tokenrec, false);
@@ -509,5 +520,4 @@ class collabora_fs extends base_filesystem {
 
         return $tokenrec->token;
     }
-
 }

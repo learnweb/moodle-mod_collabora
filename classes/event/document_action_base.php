@@ -27,8 +27,8 @@ namespace mod_collabora\event;
 /**
  * The mod_collabora document action base event class.
  *
- * @property-read array $other {
- *      Extra information about the event.
+ * @property array $other {
+ *                        Extra information about the event.
  *
  *      - int groupid: The groupid this document is for.
  *      - int collaboraid: The collabora id the document is part of.
@@ -39,20 +39,19 @@ namespace mod_collabora\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class document_action_base extends \core\event\base {
-
     /**
-     * Trigger the event
+     * Trigger the event.
      *
-     * @param int $cmid
-     * @param \stdClass $document
+     * @param  int       $cmid
+     * @param  \stdClass $document
      * @return void
      */
     public static function trigger_from_document($cmid, $document) {
         $params = [
-            'context' => \context_module::instance($cmid),
+            'context'  => \context_module::instance($cmid),
             'objectid' => $document->id,
-            'other' => [
-                'groupid' => $document->groupid,
+            'other'    => [
+                'groupid'     => $document->groupid,
                 'collaboraid' => $document->collaboraid,
             ],
         ];
@@ -67,13 +66,13 @@ abstract class document_action_base extends \core\event\base {
      * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_TEACHING;
+        $this->data['crud']        = 'u';
+        $this->data['edulevel']    = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'collabora_document';
     }
 
     /**
-     * Get URL related to the action
+     * Get URL related to the action.
      *
      * @return \moodle_url
      */
@@ -104,23 +103,23 @@ abstract class document_action_base extends \core\event\base {
     }
 
     /**
-     * Get the object mapping
+     * Get the object mapping.
      *
      * @return array
      */
     public static function get_objectid_mapping() {
-        return array('db' => 'collabora_document', 'restore' => 'collabora_document');
+        return ['db' => 'collabora_document', 'restore' => 'collabora_document'];
     }
 
     /**
-     * Get the mapping for the other elements
+     * Get the mapping for the other elements.
      *
      * @return array
      */
     public static function get_other_mapping() {
-        $othermapped = array();
-        $othermapped['collaboraid'] = array('db' => 'collabora', 'restore' => 'collabora');
-        $othermapped['groupid'] = array('db' => 'group', 'restore' => 'group');
+        $othermapped                = [];
+        $othermapped['collaboraid'] = ['db' => 'collabora', 'restore' => 'collabora'];
+        $othermapped['groupid']     = ['db' => 'group', 'restore' => 'group'];
 
         return $othermapped;
     }

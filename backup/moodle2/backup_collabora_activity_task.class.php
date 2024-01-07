@@ -15,39 +15,37 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines backup_collabora_activity_task class
+ * Defines backup_collabora_activity_task class.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot.'/mod/collabora/backup/moodle2/backup_collabora_stepslib.php');
+require_once($CFG->dirroot . '/mod/collabora/backup/moodle2/backup_collabora_stepslib.php');
 
 /**
- * Provides the steps to perform one complete backup of the collabora instance
+ * Provides the steps to perform one complete backup of the collabora instance.
  */
 class backup_collabora_activity_task extends backup_activity_task {
-
     /**
-     * No specific settings for this activity
+     * No specific settings for this activity.
      */
     protected function define_my_settings() {
     }
 
     /**
-     * Defines a backup step to store the instance data in the collabora.xml file
+     * Defines a backup step to store the instance data in the collabora.xml file.
      */
     protected function define_my_steps() {
         $this->add_step(new backup_collabora_activity_structure_step('collabora structure', 'collabora.xml'));
     }
 
     /**
-     * Encodes URLs to the index.php, view.php and discuss.php scripts
+     * Encodes URLs to the index.php, view.php and discuss.php scripts.
      *
-     * @param string $content some HTML text that eventually contains URLs to the activity instance scripts
+     * @param  string $content some HTML text that eventually contains URLs to the activity instance scripts
      * @return string the content with the URLs encoded
      */
     public static function encode_content_links($content) {
@@ -56,11 +54,11 @@ class backup_collabora_activity_task extends backup_activity_task {
         $base = preg_quote($CFG->wwwroot, '/');
 
         // Link to the list of collaboras.
-        $search = "/(".$base."\/mod\/collabora\/index.php\?id\=)([0-9]+)/";
+        $search  = '/(' . $base . "\/mod\/collabora\/index.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@COLLABORAINDEX*$2@$', $content);
 
         // Link to collabora view by moduleid.
-        $search = "/(".$base."\/mod\/collabora\/view.php\?id\=)([0-9]+)/";
+        $search  = '/(' . $base . "\/mod\/collabora\/view.php\?id\=)([0-9]+)/";
         $content = preg_replace($search, '$@COLLABORAVIEWBYID*$2@$', $content);
 
         return $content;

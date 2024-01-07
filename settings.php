@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Global settings
+ * Global settings.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
@@ -24,7 +24,7 @@
 
 use mod_collabora\util;
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
     $settings->add(
@@ -67,7 +67,7 @@ if ($hassiteconfig) {
 
     $yesno = [
         1 => new lang_string('yes'),
-        0 => new lang_string('no')
+        0 => new lang_string('no'),
     ];
     $settings->add(
         new admin_setting_configselect(
@@ -90,9 +90,9 @@ if ($hassiteconfig) {
     );
 
     $modlist = [
-        util::UI_SERVER => get_string('uiserver', 'mod_collabora'),
+        util::UI_SERVER  => get_string('uiserver', 'mod_collabora'),
         util::UI_COMPACT => get_string('uicompact', 'mod_collabora'),
-        util::UI_TABBED => get_string('uitabbed', 'mod_collabora'),
+        util::UI_TABBED  => get_string('uitabbed', 'mod_collabora'),
     ];
     $settings->add(
         new admin_setting_configselect(

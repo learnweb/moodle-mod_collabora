@@ -17,14 +17,13 @@
 namespace mod_collabora\api;
 
 /**
- * Class to handle callbacks from Collabora
+ * Class to handle callbacks from Collabora.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class api {
-
     /** @var string */
     protected $requesttype;
     /** @var string */
@@ -34,24 +33,24 @@ class api {
     protected $filesystem;
 
     /** Request to get the document from us */
-    const REQUEST_GETFILE = 'getfile';
+    public const REQUEST_GETFILE = 'getfile';
     /** Request to put the document to us */
-    const REQUEST_PUTFILE = 'putfile';
+    public const REQUEST_PUTFILE = 'putfile';
     /** Request to get infos about the document */
-    const REQUEST_CHECKFILEINFO = 'checkfileinfo';
+    public const REQUEST_CHECKFILEINFO = 'checkfileinfo';
 
     /**
      * Get the request type and the fileid by using the relativepath and checking the postdata.
      *
-     * @param string $relativepath
-     * @param string $postdata
-     * @return array The request type and the fileid as array($requesttype, $fileid)
+     * @param  string $relativepath
+     * @param  string $postdata
+     * @return array  The request type and the fileid as array($requesttype, $fileid)
      */
     public static function get_request_and_fileid_from_path($relativepath, $postdata) {
         if (!preg_match('|/wopi/files/([^/]*)(/contents)?|', $relativepath, $matches)) {
             throw new \moodle_exception('invalidrequest', 'mod_collabora');
         }
-        $fileid = $matches[1];
+        $fileid      = $matches[1];
         $hascontents = !empty($matches[2]);
         $haspostdata = !empty($postdata);
         if ($hascontents && $haspostdata) {
@@ -65,26 +64,26 @@ class api {
             throw new \moodle_exception('invalidrequest', 'mod_collabora');
         }
 
-        return array($requesttype, $fileid);
+        return [$requesttype, $fileid];
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param string $requesttype
+     * @param string          $requesttype
      * @param base_filesystem $filesystem
-     * @param string|null $postdata
+     * @param string|null     $postdata
      */
     public function __construct($requesttype, $filesystem, $postdata = null) {
-        $this->postdata = $postdata;
+        $this->postdata    = $postdata;
         $this->requesttype = $requesttype;
-        $this->filesystem = $filesystem;
+        $this->filesystem  = $filesystem;
     }
 
     /**
-     * Handle request from WOPI server
+     * Handle request from WOPI server.
      *
-     * @param bool $return If true the result is returned instead throwed through the output.
+     * @param  bool        $return if true the result is returned instead throwed through the output
      * @return void|string If $return is true a string is returned
      */
     public function handle_request($return = false) {
@@ -107,21 +106,20 @@ class api {
     /**
      * Handle getfile requests.
      *
-     * @param bool $return If true the result is returned instead throwed through the output.
+     * @param  bool        $return if true the result is returned instead throwed through the output
      * @return void|string If $return is true a string is returned
      */
     protected function handle_getfile($return = false) {
         if ($return) {
             return $this->filesystem->get_file()->get_content();
-        } else {
-            $this->filesystem->send_groupfile(false);
         }
+        $this->filesystem->send_groupfile(false);
     }
 
     /**
      * Handle putfile requests.
      *
-     * @param bool $return If true the result is returned instead throwed through the output.
+     * @param  bool      $return if true the result is returned instead throwed through the output
      * @return void|bool
      */
     protected function handle_putfile($return = false) {
@@ -137,7 +135,7 @@ class api {
     /**
      * Handle checkfileinfo requests.
      *
-     * @param bool $return If true the result is returned instead throwed through the output.
+     * @param  bool        $return if true the result is returned instead throwed through the output
      * @return void|string If $return is true a string is returned
      */
     protected function handle_checkfileinfo($return = false) {
@@ -146,26 +144,25 @@ class api {
         $tz = date_default_timezone_get();
         date_default_timezone_set('UTC');
 
-        $ret = (object)[
-            'BaseFileName' => clean_filename($file->get_filename()),
-            'EnableShare' => false,
-            'LastModifiedTime' => date('c', $file->get_timemodified()),
-            'OwnerId' => $this->filesystem->get_ownerid(),
-            'PostMessageOrigin' => 'https://test.grabs-edv.com',
-            'Size' => $file->get_filesize(),
-            'SupportsRename' => false,
+        $ret = (object) [
+            'BaseFileName'            => clean_filename($file->get_filename()),
+            'EnableShare'             => false,
+            'LastModifiedTime'        => date('c', $file->get_timemodified()),
+            'OwnerId'                 => $this->filesystem->get_ownerid(),
+            'PostMessageOrigin'       => 'https://test.grabs-edv.com',
+            'Size'                    => $file->get_filesize(),
+            'SupportsRename'          => false,
             'UserCanNotWriteRelative' => true,
-            'UserCanRename' => false,
-            'UserCanWrite' => !$this->filesystem->is_readonly(),
-            'UserFriendlyName' => $this->filesystem->get_username(),
-            'UserId' => $this->filesystem->get_user_identifier(),
+            'UserCanRename'           => false,
+            'UserCanWrite'            => !$this->filesystem->is_readonly(),
+            'UserFriendlyName'        => $this->filesystem->get_username(),
+            'UserId'                  => $this->filesystem->get_user_identifier(),
         ];
 
         date_default_timezone_set($tz);
         if ($return) {
             return json_encode($ret);
-        } else {
-            die(json_encode($ret));
         }
+        die(json_encode($ret));
     }
 }

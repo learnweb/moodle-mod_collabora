@@ -17,7 +17,7 @@
 namespace mod_collabora\output;
 
 /**
- * Plugin renderer
+ * Plugin renderer.
  *
  * @package    mod_collabora
  *
@@ -29,7 +29,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Checks whether or not the current theme is based on boost.
      *
-     * @return boolean
+     * @return bool
      */
     public function is_boost_based() {
         if (strcmp($this->page->theme->name, 'boost') === 0) {
@@ -39,6 +39,7 @@ class renderer extends \plugin_renderer_base {
                 return true;
             }
         }
+
         return false;
     }
 }

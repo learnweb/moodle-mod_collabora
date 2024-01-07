@@ -15,22 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define all the restore steps that will be used by the restore_collabora_activity_task
+ * Define all the restore steps that will be used by the restore_collabora_activity_task.
  *
  * @package    mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_collabora_activity_structure_step extends restore_activity_structure_step {
-
     /**
      * Define the structure of the restore workflow.
      *
      * @return restore_path_element[]
      */
     protected function define_structure() {
-
-        $paths = array();
+        $paths    = [];
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('collabora', '/activity/collabora');
@@ -45,16 +43,16 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
     /**
      * Process a collabora restore.
      *
-     * @param object $data The data in object form
+     * @param  object $data The data in object form
      * @return void
      */
     protected function process_collabora($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data         = (object) $data;
         $data->course = $this->get_courseid();
 
-        $data->timecreated = $this->apply_date_offset($data->timecreated);
+        $data->timecreated  = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
         $newitemid = $DB->insert_record('collabora', $data);
@@ -64,18 +62,18 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
     /**
      * Process a collabora document restore.
      *
-     * @param object $data The data in object form
+     * @param  object $data The data in object form
      * @return void
      */
     protected function process_collabora_document($data) {
         global $DB;
 
-        $data = (object)$data;
-        $oldid = $data->id;
+        $data       = (object) $data;
+        $oldid      = $data->id;
         $oldgroupid = $data->groupid;
 
         $data->collaboraid = $this->get_new_parentid('collabora');
-        $data->groupid = $data->groupid ? $this->get_mappingid('group', $data->groupid) : 0;
+        $data->groupid     = $data->groupid ? $this->get_mappingid('group', $data->groupid) : 0;
         $data->repaircount = 0;
 
         $newitemid = $DB->insert_record('collabora_document', $data);
@@ -92,5 +90,51 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
         $this->add_related_files('mod_collabora', 'intro', null);
         $this->add_related_files('mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_INITIAL, null);
         $this->add_related_files('mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_GROUP, 'collabora_group');
+    }
+
+    /**
+     * Fix the version files after the restore is done.
+     * @return void
+     */
+    protected function after_restore() {
+
+        // Fix the file stamps.
+        $this->fix_file_timestamps();
+    }
+
+    /**
+     * Fix the timemodified stamp from all newly created version files.
+     *
+     * @return void
+     */
+    protected function fix_file_timestamps() {
+        global $DB;
+
+        // Get all files from the new collaboara instance.
+        $collabora = $DB->get_record('collabora', ['id' => $this->task->get_activityid()]);
+        list($course, $cm) = get_course_and_cm_from_instance($collabora->id, 'collabora');
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(
+            $cm->context->id,
+            'mod_collabora',
+            \mod_collabora\api\collabora_fs::FILEAREA_GROUP,
+            false,
+            'filepath',
+            false
+        );
+
+        // Set the timemodified field to the value from the filepath which represents the version.
+        foreach ($files as $file) {
+            $version = $file->get_filepath();
+            if ($version == '/') {
+                continue;
+            }
+            $version = trim($version, '/');
+            if (intval($version) && $version > 0) {
+                $timestamp = $version;
+            }
+            $file->set_timemodified($timestamp);
+        }
+
     }
 }

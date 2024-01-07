@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main plugin entry point
+ * Main plugin entry point.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__.'/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 global $PAGE, $DB, $USER;
 
-$cmid = required_param('id', PARAM_INT);
+$cmid    = required_param('id', PARAM_INT);
 $confirm = optional_param('confirm', false, true);
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'collabora');
@@ -41,9 +41,9 @@ $PAGE->set_pagelayout('admin');
 require_login($course, false, $cm);
 require_capability('mod/collabora:repair', $PAGE->context);
 
-$rec = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
-$confirmurl = new \moodle_url($myurl, array('confirm' => true));
-$returnurl = new \moodle_url('/mod/collabora/view.php', array('id' => $cm->id));
+$rec        = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
+$confirmurl = new \moodle_url($myurl, ['confirm' => true]);
+$returnurl  = new \moodle_url('/mod/collabora/view.php', ['id' => $cm->id]);
 
 // Handle groups selection.
 $groupid = \mod_collabora\util::get_current_groupid_from_cm($cm);
@@ -58,10 +58,10 @@ if ($confirm) {
     $collaborafs = new \mod_collabora\api\collabora_fs($rec, $PAGE->context, $groupid, $USER->id);
     // Try to repair the document.
     if ($collaborafs->process_repair()) {
-        $msg = get_string('repair_succeeded', 'mod_collabora');
+        $msg     = get_string('repair_succeeded', 'mod_collabora');
         $msgtype = \core\notification::SUCCESS;
     } else {
-        $msg = get_string('repair_failed', 'mod_collabora');
+        $msg     = get_string('repair_failed', 'mod_collabora');
         $msgtype = \core\notification::ERROR;
     }
     redirect($returnurl, $msg, null, $msgtype);

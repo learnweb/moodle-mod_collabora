@@ -15,17 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Version information.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 $plugin->version   = 2024010700;
-$plugin->release   = 'v4.3 (2023-06-23)';
-$plugin->requires  = 2022041200; // Moodle 4.0.
+$plugin->release   = 'v4.3.1 (2024-01-07)';
+$plugin->requires  = 2022111800; // Moodle 4.1.
 $plugin->component = 'mod_collabora';
 $plugin->maturity  = MATURITY_STABLE;

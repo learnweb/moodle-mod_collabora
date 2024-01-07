@@ -15,21 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * API functions
+ * API functions.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__.'/mod_form.php');
+defined('MOODLE_INTERNAL') || die;
+require_once(__DIR__ . '/mod_form.php');
 
 /**
- * Checks whether or not a feature is supported
+ * Checks whether or not a feature is supported.
  *
- * @param string $feature
- * @return boolean
+ * @param  string $feature
+ * @return bool
  */
 function collabora_supports($feature) {
     switch ($feature) {
@@ -59,48 +58,47 @@ function collabora_supports($feature) {
 /**
  * Create a new collabora instance.
  *
- * @param \stdClass $collabora
- * @param mod_collabora_mod_form $mform
+ * @param  \stdClass              $collabora
+ * @param  mod_collabora_mod_form $mform
  * @return int
  */
 function collabora_add_instance($collabora, $mform) {
     global $DB;
 
-    $collabora->timecreated = time();
+    $collabora->timecreated  = time();
     $collabora->timemodified = time();
 
     $collabora->id = $DB->insert_record('collabora', $collabora);
 
     $completiontimeexpected = !empty($collabora->completionexpected) ? $collabora->completionexpected : null;
     \core_completion\api::update_completion_date_event($collabora->coursemodule, 'collabora',
-                                                       $collabora->id, $completiontimeexpected);
+        $collabora->id, $completiontimeexpected);
 
     // Save the 'initial file'.
     $context = context_module::instance($collabora->coursemodule);
     file_postupdate_standard_filemanager($collabora, 'initialfile', mod_collabora_mod_form::get_filemanager_opts(),
-                                         $context, 'mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_INITIAL, 0);
+        $context, 'mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_INITIAL, 0);
 
     return $collabora->id;
-
 }
 
 /**
  * Update a collabora instance.
  *
- * @param \stdClass $collabora
- * @return boolean
+ * @param  \stdClass $collabora
+ * @return bool
  */
 function collabora_update_instance($collabora) {
     global $DB;
 
-    $collabora->id = $collabora->instance;
+    $collabora->id           = $collabora->instance;
     $collabora->timemodified = time();
 
     $DB->update_record('collabora', $collabora);
 
     $completiontimeexpected = !empty($collabora->completionexpected) ? $collabora->completionexpected : null;
     \core_completion\api::update_completion_date_event($collabora->coursemodule, 'collabora',
-                                                       $collabora->id, $completiontimeexpected);
+        $collabora->id, $completiontimeexpected);
 
     // Do not save the 'initial file' here, as you cannot change this after the activity has been created.
 
@@ -108,10 +106,10 @@ function collabora_update_instance($collabora) {
 }
 
 /**
- * Delete an existing collabora instance
+ * Delete an existing collabora instance.
  *
- * @param int $id
- * @return boolean
+ * @param  int  $id
+ * @return bool
  */
 function collabora_delete_instance($id) {
     global $DB;
@@ -130,7 +128,7 @@ function collabora_delete_instance($id) {
 }
 
 /**
- * Register the ability to handle drag and drop file uploads
+ * Register the ability to handle drag and drop file uploads.
  *
  * @return array containing details of the files / types the mod can handle
  */
@@ -138,49 +136,50 @@ function collabora_dndupload_register() {
     global $DB;
 
     // Prevent using this hook while disabled.
-    if (!$DB->get_field('modules', 'visible', array('name' => 'collabora'))) {
+    if (!$DB->get_field('modules', 'visible', ['name' => 'collabora'])) {
         return false;
     }
 
     $extensions = \mod_collabora\api\collabora_fs::get_accepted_types();
-    $strdnd = get_string('dnduploadcollabora', 'mod_collabora');
-    $files = array();
+    $strdnd     = get_string('dnduploadcollabora', 'mod_collabora');
+    $files      = [];
     foreach ($extensions as $extn) {
-        $extn = trim($extn, '.');
-        $files[] = array('extension' => $extn, 'message' => $strdnd);
+        $extn    = trim($extn, '.');
+        $files[] = ['extension' => $extn, 'message' => $strdnd];
     }
-    return array('files' => $files);
+
+    return ['files' => $files];
 }
 
 /**
- * Handle a file that has been uploaded
+ * Handle a file that has been uploaded.
  *
- * @param object $uploadinfo details of the file / content that has been uploaded
- * @return int instance id of the newly created mod
+ * @param  object $uploadinfo details of the file / content that has been uploaded
+ * @return int    instance id of the newly created mod
  */
 function collabora_dndupload_handle($uploadinfo) {
     global $DB;
 
     // Prevent using this hook while disabled.
-    if (!$DB->get_field('modules', 'visible', array('name' => 'collabora'))) {
+    if (!$DB->get_field('modules', 'visible', ['name' => 'collabora'])) {
         return false;
     }
 
     // Gather the required info.
-    $data = new stdClass();
-    $data->course = $uploadinfo->course->id;
-    $data->name = $uploadinfo->displayname;
-    $data->intro = '';
-    $data->introformat = FORMAT_HTML;
-    $data->coursemodule = $uploadinfo->coursemodule;
+    $data                          = new stdClass();
+    $data->course                  = $uploadinfo->course->id;
+    $data->name                    = $uploadinfo->displayname;
+    $data->intro                   = '';
+    $data->introformat             = FORMAT_HTML;
+    $data->coursemodule            = $uploadinfo->coursemodule;
     $data->initialfile_filemanager = $uploadinfo->draftitemid;
-    $data->format = \mod_collabora\util::FORMAT_UPLOAD;
+    $data->format                  = \mod_collabora\util::FORMAT_UPLOAD;
 
     // Set the display options to the site defaults.
-    $config = get_config('mod_collabora');
-    $data->display = $config->defaultdisplay;
-    $data->height = 0;
-    $data->displayname = $config->defaultdisplayname;
+    $config                   = get_config('mod_collabora');
+    $data->display            = $config->defaultdisplay;
+    $data->height             = 0;
+    $data->displayname        = $config->defaultdisplayname;
     $data->displaydescription = $config->defaultdisplaydescription;
 
     return collabora_add_instance($data, null);
@@ -189,7 +188,7 @@ function collabora_dndupload_handle($uploadinfo) {
 /**
  * Get a coursemodule info object with infos about its presentation on the course page.
  *
- * @param \stdClass $coursemodule
+ * @param  \stdClass       $coursemodule
  * @return \cached_cm_info
  */
 function collabora_get_coursemodule_info($coursemodule) {
@@ -201,8 +200,8 @@ function collabora_get_coursemodule_info($coursemodule) {
     $info = new cached_cm_info();
     if ($collabora->display === \mod_collabora\util::DISPLAY_NEW) {
         // Use javascript to open the link in a new tab.
-        $url = new moodle_url('/mod/collabora/view.php', ['id' => $coursemodule->id]);
-        $info->onclick = "event.preventDefault();window.open('".$url->out(false)."', '_blank').focus();";
+        $url           = new moodle_url('/mod/collabora/view.php', ['id' => $coursemodule->id]);
+        $info->onclick = "event.preventDefault();window.open('" . $url->out(false) . "', '_blank').focus();";
     }
     if ($coursemodule->showdescription) {
         $info->content = format_module_intro('collabora', $collabora, $coursemodule->id, false);
@@ -210,22 +209,23 @@ function collabora_get_coursemodule_info($coursemodule) {
 
     $collaborafs = new \mod_collabora\api\collabora_fs($collabora, context_module::instance($coursemodule->id), 0, $USER->id);
     if ($specificicon = $collaborafs->get_module_icon()) {
-        $info->icon = 'mod/collabora/' . $specificicon;
+        $info->icon                     = 'mod/collabora/' . $specificicon;
         $info->customdata['filtericon'] = 1; // Apply the monologo filter to the icon.
     }
+
     return $info;
 }
 
 /**
- * Send a stored_file to the browser
+ * Send a stored_file to the browser.
  *
- * @param \stdClass|int $course
- * @param \stdClass|null $cm
- * @param \context $context
- * @param string $filearea
- * @param array $args
- * @param boolean $forcedownload
- * @param array $options
+ * @param  \stdClass|int  $course
+ * @param  \stdClass|null $cm
+ * @param  \context       $context
+ * @param  string         $filearea
+ * @param  array          $args
+ * @param  bool           $forcedownload
+ * @param  array          $options
  * @return void
  */
 function collabora_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
@@ -242,18 +242,18 @@ function collabora_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
         return;
     }
 
-    $itemid = (int)array_shift($args);
+    $itemid = (int) array_shift($args);
     if ($itemid !== 0) {
         return;
     }
 
     $filename = array_pop($args);
-    $filepath = '/'.implode('/', $args);
+    $filepath = '/' . implode('/', $args);
     if ($filepath !== '/') {
         $filepath .= '/';
     }
 
-    $fs = get_file_storage();
+    $fs   = get_file_storage();
     $file = $fs->get_file($context->id, 'mod_collabora', $filearea, $itemid, $filepath, $filename);
     if (!$file) {
         return;
@@ -263,10 +263,10 @@ function collabora_pluginfile($course, $cm, $context, $filearea, $args, $forcedo
 }
 
 /**
- * Adds module specific settings to the settings block
+ * Adds module specific settings to the settings block.
  *
- * @param settings_navigation $settingsnav The settings navigation object
- * @param navigation_node $collaboranode The node to add module settings to
+ * @param  settings_navigation $settingsnav   The settings navigation object
+ * @param  navigation_node     $collaboranode The node to add module settings to
  * @return void
  */
 function collabora_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $collaboranode) {
@@ -277,7 +277,7 @@ function collabora_extend_settings_navigation(settings_navigation $settingsnav, 
     }
 
     if (has_capability('mod/collabora:repair', $PAGE->cm->context)) {
-        $repairurl = new \moodle_url('/mod/collabora/repair.php', array('id' => $PAGE->cm->id));
+        $repairurl  = new \moodle_url('/mod/collabora/repair.php', ['id' => $PAGE->cm->id]);
         $repairicon = new \pix_icon('repair', get_string('repair', 'mod_collabora'), 'mod_collabora');
 
         $collaboranode->add(
@@ -296,9 +296,9 @@ function collabora_extend_settings_navigation(settings_navigation $settingsnav, 
  */
 function collabora_get_fontawesome_icon_map() {
     // We build a map of some icons we use in pix_icon objects.
-    $iconmap = array(
+    $iconmap = [
         'mod_collabora:repair' => 'fa-medkit',
-    );
+    ];
 
     return $iconmap;
 }
@@ -306,7 +306,7 @@ function collabora_get_fontawesome_icon_map() {
 /**
  * Get an html fragment.
  *
- * @param mixed $args An array or object with context and parameters needed to get the data.
+ * @param  mixed  $args an array or object with context and parameters needed to get the data
  * @return string The html fragment we want to use by ajax
  */
 function mod_collabora_output_fragment_get_html($args) {

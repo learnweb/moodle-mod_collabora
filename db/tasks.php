@@ -15,23 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin scheduling
+ * Plugin scheduling.
  *
  * @package   mod_collabora
  * @copyright 2022 Andreas Grabs <moodle@grabs-edv.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 $tasks = [
     [
         'classname' => 'mod_collabora\task\cleanup',
-        'blocking' => 0,
-        'minute' => '10',
-        'hour' => '2',
-        'day' => '*',
-        'month' => '*',
+        'blocking'  => 0,
+        'minute'    => '10',
+        'hour'      => '2',
+        'day'       => '*',
+        'month'     => '*',
         'dayofweek' => '*',
     ],
 ];

@@ -17,14 +17,13 @@
 namespace mod_collabora\task;
 
 /**
- * Clean up task
+ * Clean up task.
  *
  * @package   mod_collabora
  * @copyright 2022 Andreas Grabs <moodle@grabs-edv.de>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cleanup extends \core\task\scheduled_task {
-
     /**
      * Returns localized name of this task.
      *
@@ -32,7 +31,6 @@ class cleanup extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-
         return get_string('task_cleanup', 'mod_collabora');
     }
 

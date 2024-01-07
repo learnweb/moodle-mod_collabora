@@ -243,6 +243,7 @@ class postMessageHandler {
 
     /**
      * Check saving has finished and reload version view if open.
+     * @param {object} msg The received message object from the collabora editor.
      */
     checkSaved(msg) {
         const _this = this;

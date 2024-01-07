@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main plugin entry point
+ * Main plugin entry point.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__.'/../../config.php');
+require_once(__DIR__ . '/../../config.php');
 global $PAGE, $DB, $USER;
 
-$cmid = required_param('id', PARAM_INT);
+$cmid            = required_param('id', PARAM_INT);
 $loadcurrentfile = optional_param('loadcurrentfile', false, PARAM_BOOL);
-$loadversion = optional_param('loadversion', false, PARAM_INT); // The version is the timemodified timestamp.
+$loadversion     = optional_param('loadversion', false, PARAM_INT); // The version is the timemodified timestamp.
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'collabora');
 
@@ -78,25 +78,25 @@ if ($collabora->display === \mod_collabora\util::DISPLAY_NEW) {
 }
 
 $opts = [
-    'id' => $collabora->id,
-    'contextid' => $PAGE->context->id,
-    'collaboraurl' => $collaborafs->get_collabora_url()->out(),
+    'id'              => $collabora->id,
+    'contextid'       => $PAGE->context->id,
+    'collaboraurl'    => $collaborafs->get_collabora_url()->out(),
     'origincollabora' => $collaborafs->get_collabora_origin(),
-    'originmoodle' => $collaborafs->get_moodle_origin(),
-    'courseurl' => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(),
-    'aspopup' => $aspopup,
-    'iframeid' => 'collaboraiframe_' . $collabora->id,
+    'originmoodle'    => $collaborafs->get_moodle_origin(),
+    'courseurl'       => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(),
+    'aspopup'         => $aspopup,
+    'iframeid'        => 'collaboraiframe_' . $collabora->id,
     'versionviewerid' => 'version_viewer_' . $collabora->id,
-    'versionmanager' => has_capability('mod/collabora:manageversions', $cm->context),
-    'strback' => get_string('back'),
-    'imgbackurl' => $CFG->wwwroot . '/mod/collabora/pix/go_back.svg',
-    'uimode' => $collaborafs->get_ui_mode(),
+    'versionmanager'  => has_capability('mod/collabora:manageversions', $cm->context),
+    'strback'         => get_string('back'),
+    'imgbackurl'      => $CFG->wwwroot . '/mod/collabora/pix/go_back.svg',
+    'uimode'          => $collaborafs->get_ui_mode(),
 ];
 $PAGE->requires->js_call_amd('mod_collabora/postmessage', 'init', [$opts]);
 
 // Decide whether or not we show the description.
 if ($PAGE->pagelayout == 'embedded' || !$collaborafs->display_description() || !trim(strip_tags($collabora->intro))) {
-    $PAGE->activityheader->set_attrs(array('description' => ''));
+    $PAGE->activityheader->set_attrs(['description' => '']);
 }
 
 /** @var \mod_collabora\output\renderer $renderer */

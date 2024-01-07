@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.3.1
+* 2024-01-07 -  Adding postmessage support which brings features like version management or switching the user interface
+* 2024-01-07 -  Compatibility to Moodle 4.3
+
 ### v4.3
 
 * 2023-06-23 -  Fix error in "collabora_get_coursemodule_info" throwing error in some situations (#40).

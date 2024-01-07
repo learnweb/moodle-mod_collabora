@@ -26,22 +26,22 @@ namespace mod_collabora\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class content implements \renderable, \templatable {
-    /** @var \stdClass $data */
+    /** @var \stdClass */
     private $data;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param \cm_info $cm
-     * @param \stdClass $instance
+     * @param \cm_info                        $cm
+     * @param \stdClass                       $instance
      * @param \mod_collabora\api\collabora_fs $collaborafs
-     * @param int $groupid
+     * @param int                             $groupid
      */
     public function __construct(\cm_info $cm, \stdClass $instance, \mod_collabora\api\collabora_fs $collaborafs, int $groupid) {
         global $PAGE;
 
-        $this->data = new \stdClass();
-        $this->data->id = $instance->id;
+        $this->data           = new \stdClass();
+        $this->data->id       = $instance->id;
         $this->data->filename = $collaborafs->display_name() ? format_string($collaborafs->get_file()->get_filename()) : '';
 
         if ($PAGE->pagelayout == 'embedded') {
@@ -50,7 +50,7 @@ class content implements \renderable, \templatable {
 
         if ($groupid >= 0) {
             $this->data->activitymenu = groups_print_activity_menu($cm, $PAGE->url, true, true);
-            $this->data->lockicon = $collaborafs->get_lock_icon();
+            $this->data->lockicon     = $collaborafs->get_lock_icon();
 
             if (empty($this->data->embedded)) {
                 $this->data->frameheight = $instance->height ?? false;
@@ -63,16 +63,15 @@ class content implements \renderable, \templatable {
                 $loadfileurl->param('loadcurrentfile', '1');
                 $this->data->loadfileurl = $loadfileurl->out(false);
             }
-
         } else {
             $this->data->warning = get_string('nogroupaccess', 'mod_collabora');
         }
 
         // Add a warning notice.
         if (\mod_collabora\api\collabora_fs::is_testing()) {
-            $this->data->hasnotice = true;
+            $this->data->hasnotice  = true;
             $this->data->noticetype = \core\notification::WARNING;
-            $this->data->notice = get_string('collaboraurlnotset', 'mod_collabora');
+            $this->data->notice     = get_string('collaboraurlnotset', 'mod_collabora');
         }
     }
 
@@ -82,7 +81,7 @@ class content implements \renderable, \templatable {
      * 1. No complex types - only stdClass, array, int, string, float, bool
      * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
      *
-     * @param \renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @param  \renderer_base  $output used to do a final render of any components that need to be rendered for export
      * @return \stdClass|array
      */
     public function export_for_template(\renderer_base $output) {

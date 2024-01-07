@@ -26,35 +26,35 @@ namespace mod_collabora\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class confirmation implements \renderable, \templatable {
-    /** @var \stdClass $data */
+    /** @var \stdClass */
     private $data;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \moodle_url $confirmurl
      * @param \moodle_url $cancelurl
-     * @param string $title
-     * @param string $confirmquestion
+     * @param string      $title
+     * @param string      $confirmquestion
      * @param string|null $confirmlabel
      * @param string|null $cancellabel
      * @param string|null $moreinfos
      */
     public function __construct(\moodle_url $confirmurl, \moodle_url $cancelurl,
-                                    string $title, string $confirmquestion, string $confirmlabel = null,
-                                    string $cancellabel = null, string $moreinfos = null) {
+        string $title, string $confirmquestion, ?string $confirmlabel = null,
+        ?string $cancellabel = null, ?string $moreinfos = null) {
         global $OUTPUT;
         $confirmlabel = $confirmlabel === null ? get_string('ok') : $confirmlabel;
-        $cancellabel = $cancellabel === null ? get_string('cancel') : $cancellabel;
+        $cancellabel  = $cancellabel === null ? get_string('cancel') : $cancellabel;
 
-        $confirmbutton = new \single_button($confirmurl, $confirmlabel, 'post', \single_button::BUTTON_PRIMARY);
-        $cancelbutton = new \single_button($cancelurl, $cancellabel, 'get');
-        $this->data = new \stdClass();
-        $this->data->title = $title;
+        $confirmbutton               = new \single_button($confirmurl, $confirmlabel, 'post', \single_button::BUTTON_PRIMARY);
+        $cancelbutton                = new \single_button($cancelurl, $cancellabel, 'get');
+        $this->data                  = new \stdClass();
+        $this->data->title           = $title;
         $this->data->confirmquestion = $confirmquestion;
-        $this->data->confirmbutton = $OUTPUT->render($confirmbutton);
-        $this->data->cancelbutton = $OUTPUT->render($cancelbutton);
-        $this->data->moreinfos = $moreinfos;
+        $this->data->confirmbutton   = $OUTPUT->render($confirmbutton);
+        $this->data->cancelbutton    = $OUTPUT->render($cancelbutton);
+        $this->data->moreinfos       = $moreinfos;
     }
 
     /**
@@ -63,7 +63,7 @@ class confirmation implements \renderable, \templatable {
      * 1. No complex types - only stdClass, array, int, string, float, bool
      * 2. Any additional info that is required for the template is pre-calculated (e.g. capability checks).
      *
-     * @param \renderer_base $output Used to do a final render of any components that need to be rendered for export.
+     * @param  \renderer_base  $output used to do a final render of any components that need to be rendered for export
      * @return \stdClass|array
      */
     public function export_for_template(\renderer_base $output) {

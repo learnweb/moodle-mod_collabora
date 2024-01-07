@@ -17,7 +17,7 @@
 namespace mod_collabora\api;
 
 /**
- * Class to handle callbacks from Collabora
+ * Class to handle callbacks from Collabora.
  *
  * @package   mod_collabora
  * @copyright 2022 Andreas Grabs <moodle@grabs-edv.de>
@@ -52,8 +52,8 @@ abstract class base_filesystem {
     /**
      * Get the URL for editing built from the given mimetype.
      *
-     * @param string $discoveryxml
-     * @param string $mimetype
+     * @param  string            $discoveryxml
+     * @param  string            $mimetype
      * @throws \moodle_exception
      * @return string
      */
@@ -64,17 +64,18 @@ abstract class base_filesystem {
             throw new \moodle_exception('unsupportedtype', 'mod_collabora', '', $mimetype);
         }
         $action = $app[0]->action;
-        $url = isset($action['urlsrc']) ? $action['urlsrc'] : '';
+        $url    = isset($action['urlsrc']) ? $action['urlsrc'] : '';
         if (!$url) {
             throw new \moodle_exception('unsupportedtype', 'mod_collabora', '', $mimetype);
         }
-        return (string)$url;
+
+        return (string) $url;
     }
 
     /**
      * Get the discovery XML file from the collabora server.
-     * @param \stdClass $cfg The collabora configuration.
-     * @return string The xml string
+     * @param  \stdClass $cfg the collabora configuration
+     * @return string    The xml string
      */
     public static function get_discovery_xml($cfg) {
         $baseurl = trim($cfg->url);
@@ -84,17 +85,17 @@ abstract class base_filesystem {
             if (static::is_testing()) {
                 $xml = static::get_fixture_discovery_xml();
             } else {
-                $url = rtrim($baseurl, '/').'/hosting/discovery';
+                $url = rtrim($baseurl, '/') . '/hosting/discovery';
 
                 // Do we explicitely allow the Collabora host?
-                $curlsettings = array();
+                $curlsettings = [];
                 if (!empty($cfg->allowcollaboraserverexplicit)) {
-                    $curlsettings = array(
+                    $curlsettings = [
                         'securityhelper' => new curl_security_helper($url),
-                    );
+                    ];
                 }
                 $curl = new \curl($curlsettings);
-                $xml = $curl->get($url);
+                $xml  = $curl->get($url);
             }
             // Check whether or not the xml is valid.
             try {
@@ -103,10 +104,11 @@ abstract class base_filesystem {
                 $xmlerror = true;
             }
             if (!empty($xmlerror)) {
-                throw new \moodle_exception('XML-Error: '.$xml);
+                throw new \moodle_exception('XML-Error: ' . $xml);
             }
             $cache->set($baseurl, $xml);
         }
+
         return $xml;
     }
 
@@ -122,14 +124,14 @@ abstract class base_filesystem {
 
         // Prepare the control array.
         $controllist = explode(',', self::ACCEPTED_LANGS);
-        array_walk($controllist, function(&$value, $key) {
+        array_walk($controllist, function (&$value, $key) {
             $value = substr($value, 0, 2);
         });
         array_unique($controllist);
 
         // First check whether or not the current lang is accepted.
         // For the check we only need the first two characters. That means e.g. "de_xyzabc" is accepted.
-        $currentlang = current_language();
+        $currentlang   = current_language();
         $controlstring = substr($currentlang, 0, 2);
         if (in_array($controlstring, $controllist)) {
             // Return the full langstring but with hyphen and not with underscore.
@@ -137,7 +139,7 @@ abstract class base_filesystem {
         }
 
         // If we got here we check the system language as first fallback.
-        $systemlang = isset($CFG->lang) ?: self::FALLBACK_LANG;
+        $systemlang    = isset($CFG->lang) ?: self::FALLBACK_LANG;
         $controlstring = substr($systemlang, 0, 2);
         if (in_array($controlstring, $controllist)) {
             // Return the full langstring but with hyphen and not with underscore.
@@ -151,7 +153,7 @@ abstract class base_filesystem {
     /**
      * Checks whether or not the current site is running a test (behat or unit test).
      *
-     * @return boolean
+     * @return bool
      */
     public static function is_testing() {
         $mycfg = get_config('mod_collabora');
@@ -163,31 +165,33 @@ abstract class base_filesystem {
         if (defined('BEHAT_SITE_RUNNING')) {
             return true;
         }
-        if ((defined('PHPUNIT_TEST') && PHPUNIT_TEST)) {
+        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
             return true;
         }
+
         return false;
     }
 
     /**
      * Get a dummy discovery xml from the fixtures folder. This is used if the Moodle instance is in testing mode
-     * or the "url" setting is empty. {@see static::is_testing}
+     * or the "url" setting is empty. {@see static::is_testing}.
      *
      * @return void
      */
     public static function get_fixture_discovery_xml() {
         global $CFG;
 
-        $search = 'https://example.com/browser/randomid/cool.html';
+        $search  = 'https://example.com/browser/randomid/cool.html';
         $replace = new \moodle_url('/mod/collabora/tests/fixtures/dummyoutput.html');
-        $xmlpath = $CFG->dirroot.'/mod/collabora/tests/fixtures/discovery.xml';
-        $xml = file_get_contents($xmlpath);
-        $xml = str_replace($search, $replace->out(), $xml);
+        $xmlpath = $CFG->dirroot . '/mod/collabora/tests/fixtures/discovery.xml';
+        $xml     = file_get_contents($xmlpath);
+        $xml     = str_replace($search, $replace->out(), $xml);
+
         return $xml;
     }
 
     /**
-     * Get an array which defines all accepted file types, this activity can handle
+     * Get an array which defines all accepted file types, this activity can handle.
      *
      * @return array
      */
@@ -213,23 +217,24 @@ abstract class base_filesystem {
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param \stdClass $user
+     * @param \stdClass    $user
      * @param \stored_file $file
-     * @param \moodle_url $callbackurl
-     * @param int $version
-     * @param bool $showversionui
+     * @param \moodle_url  $callbackurl
+     * @param int          $version
+     * @param bool         $useversions
+     * @param bool         $showversionui
      */
     public function __construct($user, $file, $callbackurl, $version = 0, $useversions = true, $showversionui = false) {
-        $this->myconfig = get_config('mod_collabora');
-        $this->user = $user;
-        $this->file = $file;
+        $this->myconfig    = get_config('mod_collabora');
+        $this->user        = $user;
+        $this->file        = $file;
         $this->callbackurl = $callbackurl;
-        $this->version = $version;
+        $this->version     = $version;
 
-        $this->useversions = $this->myconfig->enableversions ?? false;
-        $this->useversions = $this->useversions && $useversions; // Versions can be disabled through the constructor param.
+        $this->useversions   = $this->myconfig->enableversions ?? false;
+        $this->useversions   = $this->useversions && $useversions; // Versions can be disabled through the constructor param.
         $this->showversionui = $showversionui;
     }
 
@@ -270,6 +275,11 @@ abstract class base_filesystem {
         return $this->file->get_mimetype();
     }
 
+    /**
+     * What ui mode do we use?
+     *
+     * @return string
+     */
     public function get_ui_mode() {
         return $this->myconfig->uimode ?? \mod_collabora\util::UI_TABBED;
     }
@@ -280,8 +290,9 @@ abstract class base_filesystem {
      * @return \moodle_url
      */
     public function get_collabora_url() {
-        $mimetype = $this->get_file_mimetype();
+        $mimetype     = $this->get_file_mimetype();
         $discoveryxml = $this->load_discovery_xml();
+
         return new \moodle_url(
             static::get_url_from_mimetype(
                 $discoveryxml,
@@ -296,9 +307,10 @@ abstract class base_filesystem {
      * @return string
      */
     public function get_collabora_origin() {
-        $url = $this->get_collabora_url();
+        $url    = $this->get_collabora_url();
         $scheme = $url->get_scheme();
-        $host = $url->get_host();
+        $host   = $url->get_host();
+
         return $scheme . '://' . $host;
     }
 
@@ -308,30 +320,31 @@ abstract class base_filesystem {
      * @return string
      */
     public function get_moodle_origin() {
-        $url = new \moodle_url('/');
+        $url    = new \moodle_url('/');
         $scheme = $url->get_scheme();
-        $host = $url->get_host();
+        $host   = $url->get_host();
+
         return $scheme . '://' . $host;
     }
 
     /**
      * Get the URL for the iframe in which to display the collabora document.
      *
-     * @param bool $showclosebutton If true a close button is shown inside the collabora working space.
      * @return \moodle_url
      */
     public function get_view_url() {
         // Preparing the parameters.
-        $fileid = $this->get_file_id();
-        $wopisrc = $this->callbackurl->out().'/wopi/files/'.$fileid;
-        $token = $this->get_user_token();
+        $fileid  = $this->get_file_id();
+        $wopisrc = $this->callbackurl->out() . '/wopi/files/' . $fileid;
+        $token   = $this->get_user_token();
         // The loleaflet.html from $collaboraurl accepts a lang parameter but only with hyphen and not the underscore from moodle.
         // This is prepared by get_collabora_lang().
         $lang = static::get_collabora_lang();
 
         $collaboraurl = $this->get_collabora_url();
-        $params = $this->get_view_params();
+        $params       = $this->get_view_params();
         $collaboraurl->params($params);
+
         return $collaboraurl;
     }
 
@@ -343,18 +356,18 @@ abstract class base_filesystem {
      */
     public function get_view_params(bool $showclosebutton = true) {
         // Preparing the parameters.
-        $fileid = $this->get_file_id();
-        $wopisrc = $this->callbackurl->out().'/wopi/files/'.$fileid;
-        $token = $this->get_user_token();
+        $fileid  = $this->get_file_id();
+        $wopisrc = $this->callbackurl->out() . '/wopi/files/' . $fileid;
+        $token   = $this->get_user_token();
         // The loleaflet.html from $collaboraurl accepts a lang parameter but only with hyphen and not the underscore from moodle.
         // This is prepared by get_collabora_lang().
         $lang = static::get_collabora_lang();
 
-        $params = array(
-            'WOPISrc' => $wopisrc,
+        $params = [
+            'WOPISrc'      => $wopisrc,
             'access_token' => $token,
-            'lang' => $lang,
-        );
+            'lang'         => $lang,
+        ];
         if ($showclosebutton) {
             $params['closebutton'] = 1;
         }
@@ -384,7 +397,7 @@ abstract class base_filesystem {
      * Send the file from the moodle file api.
      * This function implicitly calls a "die"!
      *
-     * @param bool $forcedownload
+     * @param  bool $forcedownload
      * @return void
      */
     public function send_groupfile($forcedownload = true) {
@@ -398,8 +411,8 @@ abstract class base_filesystem {
      * Send a version of our file from the moodle file api.
      * This function implicitly calls a "die"!
      *
-     * @param int $version
-     * @param bool $forcedownload
+     * @param  int  $version
+     * @param  bool $forcedownload
      * @return void
      */
     public function send_version_file(int $version, bool $forcedownload = true) {
@@ -412,7 +425,7 @@ abstract class base_filesystem {
     /**
      * Update the stored file and create a new version if activated.
      *
-     * @param string $content
+     * @param  string $content
      * @return void
      */
     public function update_file($content) {
@@ -428,27 +441,28 @@ abstract class base_filesystem {
         $fs = get_file_storage();
 
         if ($this->use_versions()) {
+            // Create a new version from last current version.
             // Don't delete the old file but move it into a subdirectory.
             $versionrecord = (object) [
-                'contextid' => $this->file->get_contextid(),
-                'component' => $this->file->get_component(),
-                'filearea' => $this->file->get_filearea(),
-                'itemid' => $this->file->get_itemid(),
-                'filepath' => '/' . $this->file->get_timemodified() . '/',
-                'filename' => $this->file->get_filename(),
+                'contextid'   => $this->file->get_contextid(),
+                'component'   => $this->file->get_component(),
+                'filearea'    => $this->file->get_filearea(),
+                'itemid'      => $this->file->get_itemid(),
+                'filepath'    => '/' . $this->file->get_timemodified() . '/',
+                'filename'    => $this->file->get_filename(),
                 'timecreated' => $this->file->get_timecreated(),
             ];
             $fs->create_file_from_storedfile($versionrecord, $this->file);
         }
 
-        // Now we get to save the file - STOLEN CODE.
-        $filerecord = (object)[
-            'contextid' => $this->file->get_contextid(),
-            'component' => $this->file->get_component(),
-            'filearea' => $this->file->get_filearea(),
-            'itemid' => $this->file->get_itemid(),
-            'filepath' => $this->file->get_filepath(),
-            'filename' => $this->file->get_filename(),
+        // Now we get to save the file.
+        $filerecord = (object) [
+            'contextid'   => $this->file->get_contextid(),
+            'component'   => $this->file->get_component(),
+            'filearea'    => $this->file->get_filearea(),
+            'itemid'      => $this->file->get_itemid(),
+            'filepath'    => '/',
+            'filename'    => $this->file->get_filename(),
             'timecreated' => $this->file->get_timecreated(),
             // Time modified will be changed - and so will Version number.
         ];
@@ -458,7 +472,7 @@ abstract class base_filesystem {
     }
 
     /**
-     * Get the file from this instance
+     * Get the file from this instance.
      *
      * @return \stored_file
      */
@@ -466,11 +480,12 @@ abstract class base_filesystem {
         if (!empty($this->version)) {
             return $this->get_version_file($this->version);
         }
+
         return $this->file;
     }
 
     /**
-     * Get the file versions from this instance
+     * Get the file versions from this instance.
      *
      * @return \stored_file[]
      */
@@ -479,13 +494,13 @@ abstract class base_filesystem {
             throw new \moodle_exception('versions_are_deactivated');
         }
 
-        $fs = get_file_storage();
+        $fs    = get_file_storage();
         $files = $fs->get_area_files(
             $this->file->get_contextid(),
             $this->file->get_component(),
             $this->file->get_filearea(),
             $this->file->get_itemid(),
-            "filepath",
+            'filepath',
             false
         );
         $result = [];
@@ -495,12 +510,14 @@ abstract class base_filesystem {
             }
             $result[] = $file;
         }
+
         return $result;
     }
 
     /**
-     * Get a version of our file from this instance
+     * Get a version of our file from this instance.
      *
+     * @param int $version
      * @return \stored_file
      */
     public function get_version_file(int $version) {
@@ -508,13 +525,13 @@ abstract class base_filesystem {
             throw new \moodle_exception('versions_are_deactivated');
         }
 
-        $fs = get_file_storage();
+        $fs    = get_file_storage();
         $files = $fs->get_area_files(
             $this->file->get_contextid(),
             $this->file->get_component(),
             $this->file->get_filearea(),
             $this->file->get_itemid(),
-            "filepath",
+            'filepath',
             false
         );
 
@@ -525,18 +542,20 @@ abstract class base_filesystem {
                 return $file;
             }
         }
+
         return null;
     }
 
     /**
-     * Get a version of our file from this instance
+     * Get a version of our file from this instance.
      *
+     * @param int $version
      * @return \stored_file
      */
     public function delete_version(int $version) {
         $versionfile = $this->get_version_file($version);
         // Get the directory of the version file.
-        $fs = get_file_storage();
+        $fs         = get_file_storage();
         $versiondir = $fs->get_file(
             $versionfile->get_contextid(),
             $versionfile->get_component(),
@@ -546,6 +565,7 @@ abstract class base_filesystem {
             '.' // The filename of a directory always is a dot ".".
         );
         $versionfile->delete();
+
         return $versiondir->delete();
     }
 
@@ -553,7 +573,7 @@ abstract class base_filesystem {
      * Reset the current document by the given version.
      * This creates a new version of the old current document and the version to be restored is removed.
      *
-     * @param int $version The version to be restored.
+     * @param  int  $version the version to be restored
      * @return bool
      */
     public function restore_version(int $version) {
@@ -569,27 +589,27 @@ abstract class base_filesystem {
         try {
             // First create a new version from the current file.
             $versionrecord = (object) [
-                'contextid' => $this->file->get_contextid(),
-                'component' => $this->file->get_component(),
-                'filearea' => $this->file->get_filearea(),
-                'itemid' => $this->file->get_itemid(),
-                'filepath' => '/' . $this->file->get_timemodified() . '/',
-                'filename' => $this->file->get_filename(),
-                'timecreated' => $this->file->get_timecreated(),
+                'contextid'    => $this->file->get_contextid(),
+                'component'    => $this->file->get_component(),
+                'filearea'     => $this->file->get_filearea(),
+                'itemid'       => $this->file->get_itemid(),
+                'filepath'     => '/' . $this->file->get_timemodified() . '/',
+                'filename'     => $this->file->get_filename(),
+                'timecreated'  => $this->file->get_timecreated(),
                 'timemodified' => $this->file->get_timemodified(),
             ];
             $fs->create_file_from_storedfile($versionrecord, $this->file);
 
             // Now copy the version file.
             $versionfile = $this->get_version_file($version);
-            $filerecord = (object)[
-                'contextid' => $versionfile->get_contextid(),
-                'component' => $versionfile->get_component(),
-                'filearea' => $versionfile->get_filearea(),
-                'itemid' => $versionfile->get_itemid(),
-                'filepath' => '/',
-                'filename' => $versionfile->get_filename(),
-                'timecreated' => $versionfile->get_timecreated(),
+            $filerecord  = (object) [
+                'contextid'    => $versionfile->get_contextid(),
+                'component'    => $versionfile->get_component(),
+                'filearea'     => $versionfile->get_filearea(),
+                'itemid'       => $versionfile->get_itemid(),
+                'filepath'     => '/',
+                'filename'     => $versionfile->get_filename(),
+                'timecreated'  => $versionfile->get_timecreated(),
                 'timemodified' => $versionfile->get_timemodified(),
             ];
             $this->file->delete(); // Remove the old file.
@@ -600,13 +620,15 @@ abstract class base_filesystem {
             $transaction->allow_commit();
         } catch (\moodle_exception $e) {
             $transaction->rollback($e);
+
             return false;
         }
+
         return true;
     }
 
     /**
-     * Get the user name who is working on this document
+     * Get the user name who is working on this document.
      *
      * @return string
      */
@@ -621,6 +643,7 @@ abstract class base_filesystem {
      */
     public function get_ownerid() {
         global $CFG;
+
         // I think all the files should have the same owner, so just using the Moodle site id?
         return $CFG->siteidentifier;
     }

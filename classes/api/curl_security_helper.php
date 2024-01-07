@@ -31,7 +31,7 @@ class curl_security_helper extends \core\files\curl_security_helper {
     private $url;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $url
      */
@@ -44,14 +44,15 @@ class curl_security_helper extends \core\files\curl_security_helper {
      * The behaviour of this function can be classified as strict, as it returns true for URLs which are invalid or
      * could not be parsed, as well as those valid URLs which were found in the blocklist.
      *
-     * @param string $urlstring the URL to check.
-     * @param int $notused There used to be an optional parameter $maxredirects for a short while here, not used any more.
-     * @return bool true if the URL is blocked or invalid and false if the URL is not blocked.
+     * @param  string $urlstring the URL to check
+     * @param  int    $notused   there used to be an optional parameter $maxredirects for a short while here, not used any more
+     * @return bool   true if the URL is blocked or invalid and false if the URL is not blocked
      */
     public function url_is_blocked($urlstring, $notused = null) {
         if ($this->url == $urlstring) {
             return false;
         }
+
         return parent::url_is_blocked($urlstring);
     }
 }

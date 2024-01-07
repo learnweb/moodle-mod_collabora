@@ -15,20 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define all the backup steps that will be used by the backup_collabora_activity_task
+ * Define all the backup steps that will be used by the backup_collabora_activity_task.
  *
  * @package    mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_collabora_activity_structure_step extends backup_activity_structure_step {
-
     /**
-     * Define the structure for the collabora activity
+     * Define the structure for the collabora activity.
      * @return backup_nested_element
      */
     protected function define_structure() {
-
         // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
@@ -36,13 +34,13 @@ class backup_collabora_activity_structure_step extends backup_activity_structure
         $collabora = new backup_nested_element('collabora', ['id'], [
             'name', 'intro', 'introformat', 'timecreated', 'timemodified',
             'format', 'initialtext', 'display', 'height', 'displayname',
-            'displaydescription'
+            'displaydescription',
         ]);
 
         $documents = new backup_nested_element('documents');
 
         $document = new backup_nested_element('document', ['id'], [
-            'groupid', 'locked'
+            'groupid', 'locked',
         ]);
 
         // Build the tree.
@@ -68,5 +66,4 @@ class backup_collabora_activity_structure_step extends backup_activity_structure
         // Return the root element (collabora), wrapped into standard activity structure.
         return $this->prepare_activity_structure($collabora);
     }
-
 }

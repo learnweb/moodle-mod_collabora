@@ -15,82 +15,81 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions
+ * Capability definitions.
  *
  * @package   mod_collabora
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 $capabilities = [
     'mod/collabora:addinstance' => [
-        'riskbitmask' => RISK_SPAM + RISK_XSS,
-        'captype' => 'write',
+        'riskbitmask'  => RISK_SPAM + RISK_XSS,
+        'captype'      => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => [
+        'archetypes'   => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
         ],
         'clonepermissionsfrom' => 'moodle/course:manageactivities',
     ],
 
     'mod/collabora:lock' => [
-        'captype' => 'write',
+        'captype'      => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [
+        'archetypes'   => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
         ],
     ],
 
     'mod/collabora:repair' => [
-        'captype' => 'write',
+        'captype'      => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [
+        'archetypes'   => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
         ],
     ],
 
     'mod/collabora:editlocked' => [
-        'captype' => 'write',
+        'captype'      => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [
+        'archetypes'   => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
         ],
     ],
 
     'mod/collabora:view' => [
-        'captype' => 'write',
+        'captype'      => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
+        'archetypes'   => [
+            'student'        => CAP_ALLOW,
+            'teacher'        => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
         ],
     ],
 
     'mod/collabora:directdownload' => [
-        'captype' => 'read',
+        'captype'      => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [
-            'student' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
+        'archetypes'   => [
+            'student'        => CAP_ALLOW,
+            'teacher'        => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
         ],
     ],
 
     'mod/collabora:manageversions' => [
-        'captype' => 'read',
+        'captype'      => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [
+        'archetypes'   => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
         ],
     ],
 ];
