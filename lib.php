@@ -198,6 +198,7 @@ function collabora_get_coursemodule_info($coursemodule) {
     }
 
     $info = new cached_cm_info();
+    $info->name = $collabora->name;
     if ($collabora->display === \mod_collabora\util::DISPLAY_NEW) {
         // Use javascript to open the link in a new tab.
         $url           = new moodle_url('/mod/collabora/view.php', ['id' => $coursemodule->id]);
@@ -207,7 +208,9 @@ function collabora_get_coursemodule_info($coursemodule) {
         $info->content = format_module_intro('collabora', $collabora, $coursemodule->id, false);
     }
 
-    $collaborafs = new \mod_collabora\api\collabora_fs($collabora, context_module::instance($coursemodule->id), 0, $USER->id);
+    $groupid = \mod_collabora\util::get_current_groupid_from_cm($coursemodule);
+
+    $collaborafs = new \mod_collabora\api\collabora_fs($collabora, context_module::instance($coursemodule->id), $groupid, $USER->id);
     if ($specificicon = $collaborafs->get_module_icon()) {
         $info->icon                     = 'mod/collabora/' . $specificicon;
         $info->customdata['filtericon'] = 1; // Apply the monologo filter to the icon.

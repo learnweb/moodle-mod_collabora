@@ -16,10 +16,6 @@
 
 namespace mod_collabora\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
 use mod_collabora\util;
 
 /**
@@ -33,14 +29,14 @@ class services extends external_api {
     /**
      * Parameter definition.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function restore_version_parameters() {
-        return new external_function_parameters(
+        return new \external_function_parameters(
             [
-                'id'      => new external_value(PARAM_INT, 'The collabora id'),
-                'version' => new external_value(PARAM_INT, 'The version to be restored'),
-                'userid'  => new external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
+                'id'      => new \external_value(PARAM_INT, 'The collabora id'),
+                'version' => new \external_value(PARAM_INT, 'The version to be restored'),
+                'userid'  => new \external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
             ]
         );
     }
@@ -102,14 +98,14 @@ class services extends external_api {
     /**
      * Definition of the return values.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function restore_version_returns() {
-        return new external_single_structure(
+        return new \external_single_structure(
             [
-                'success'    => new external_value(PARAM_INT, '1 on success'),
-                'failure'    => new external_value(PARAM_INT, '1 on failure'),
-                'failuremsg' => new external_value(PARAM_TEXT, 'Message on failure'),
+                'success'    => new \external_value(PARAM_INT, '1 on success'),
+                'failure'    => new \external_value(PARAM_INT, '1 on failure'),
+                'failuremsg' => new \external_value(PARAM_TEXT, 'Message on failure'),
             ]
         );
     }
@@ -117,14 +113,14 @@ class services extends external_api {
     /**
      * Parameter definition.
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
     public static function delete_version_parameters() {
-        return new external_function_parameters(
+        return new \external_function_parameters(
             [
-                'id'      => new external_value(PARAM_INT, 'The collabora id'),
-                'version' => new external_value(PARAM_INT, 'The version to be restored'),
-                'userid'  => new external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
+                'id'      => new \external_value(PARAM_INT, 'The collabora id'),
+                'version' => new \external_value(PARAM_INT, 'The version to be restored'),
+                'userid'  => new \external_value(PARAM_INT, 'The userid', VALUE_DEFAULT, 0),
             ]
         );
     }
@@ -186,14 +182,14 @@ class services extends external_api {
     /**
      * Definition of the return values.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function delete_version_returns() {
-        return new external_single_structure(
+        return new \external_single_structure(
             [
-                'success'    => new external_value(PARAM_INT, '1 on success'),
-                'failure'    => new external_value(PARAM_INT, '1 on failure'),
-                'failuremsg' => new external_value(PARAM_TEXT, 'Message on failure'),
+                'success'    => new \external_value(PARAM_INT, '1 on success'),
+                'failure'    => new \external_value(PARAM_INT, '1 on failure'),
+                'failuremsg' => new \external_value(PARAM_TEXT, 'Message on failure'),
             ]
         );
     }

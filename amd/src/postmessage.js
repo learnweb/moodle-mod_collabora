@@ -505,6 +505,10 @@ class postMessageHandler {
         // So we just use promises[0].
         myPromises[0].done(function(data) {
             if (data.success == 1) {
+                if (version == _this.version) {
+                    _this.version = 0; // If the deleted version is in the editor, we set it to the default version.
+                    _this.setFrameData();
+                }
                 _this.showVersionView();
             } else {
                 notification.exception({message: data.failuremsg});

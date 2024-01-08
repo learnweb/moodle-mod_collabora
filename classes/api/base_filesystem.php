@@ -598,25 +598,41 @@ abstract class base_filesystem {
                 'timecreated'  => $this->file->get_timecreated(),
                 'timemodified' => $this->file->get_timemodified(),
             ];
-            $fs->create_file_from_storedfile($versionrecord, $this->file);
+            $fileexists = $fs->file_exists(
+                $versionrecord->contextid,
+                $versionrecord->component,
+                $versionrecord->filearea,
+                $versionrecord->itemid,
+                $versionrecord->filepath,
+                $versionrecord->filename
+            );
+            if (!$fileexists) {
+                $fs->create_file_from_storedfile($versionrecord, $this->file);
+            }
 
-            // Now copy the version file.
-            $versionfile = $this->get_version_file($version);
-            $filerecord  = (object) [
-                'contextid'    => $versionfile->get_contextid(),
-                'component'    => $versionfile->get_component(),
-                'filearea'     => $versionfile->get_filearea(),
-                'itemid'       => $versionfile->get_itemid(),
-                'filepath'     => '/',
-                'filename'     => $versionfile->get_filename(),
-                'timecreated'  => $versionfile->get_timecreated(),
-                'timemodified' => $versionfile->get_timemodified(),
-            ];
-            $this->file->delete(); // Remove the old file.
-            $this->file = $fs->create_file_from_storedfile($filerecord, $versionfile); // Create the new one.
+            if ($version > 0) {
+                // Now copy the version file.
+                $versionfile = $this->get_version_file($version);
+                $filerecord  = (object) [
+                    'contextid'    => $versionfile->get_contextid(),
+                    'component'    => $versionfile->get_component(),
+                    'filearea'     => $versionfile->get_filearea(),
+                    'itemid'       => $versionfile->get_itemid(),
+                    'filepath'     => '/',
+                    'filename'     => $versionfile->get_filename(),
+                    'timecreated'  => $versionfile->get_timecreated(),
+                    'timemodified' => $versionfile->get_timemodified(),
+                ];
+                $this->file->delete(); // Remove the old file.
+                $this->file = $fs->create_file_from_storedfile($filerecord, $versionfile); // Create the new one.
 
-            // Remove the old version file.
-            $this->delete_version($version);
+                // Remove the old version file.
+                $this->delete_version($version);
+            }
+            if ($version == -1) {
+                $this->file->delete(); // Remove the current file, so a new one is created by the initial file.
+            }
+
             $transaction->allow_commit();
         } catch (\moodle_exception $e) {
             $transaction->rollback($e);

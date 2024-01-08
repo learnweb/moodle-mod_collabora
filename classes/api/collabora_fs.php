@@ -299,7 +299,7 @@ class collabora_fs extends base_filesystem {
         $files = $fs->get_area_files($this->context->id, 'mod_collabora', self::FILEAREA_GROUP, $this->groupid,
             'filepath', false, 0, 0, 1);
         $file = reset($files);
-        if (!$file) {
+        if ((!$file) || $file->get_filepath() != '/') {
             $file = $this->create_file();
         }
 

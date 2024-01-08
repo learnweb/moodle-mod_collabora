@@ -52,16 +52,19 @@ class util {
     /**
      * Get the current groupid from $cm
      *
-     * @param  \cm_info       $cm
+     * @param  \stdClass|\cm_info       $cm
      * @param  \stdClass|null $user
      * @return int
      */
-    public static function get_current_groupid_from_cm(\cm_info $cm, ?\stdClass $user = null) {
+    public static function get_current_groupid_from_cm($cm, ?\stdClass $user = null) {
         global $USER;
 
         if (empty($user)) {
             $user = $USER;
         }
+
+        $context = \context_module::instance($cm->id);
+
 
         // Handle groups selection.
         $groupid = groups_get_activity_group($cm, true);
@@ -69,7 +72,7 @@ class util {
             $groupid = 0; // No groups, so use id 0 for everyone.
         } else if ($groupid === 0) {
             // Groups in use, but none currently selected, so we need to find the first available group.
-            $allgroups = has_capability('moodle/site:accessallgroups', $cm->context);
+            $allgroups = has_capability('moodle/site:accessallgroups', $context);
             // Start with groups we are a member of.
             $allowedgroups = groups_get_all_groups($cm->course, $user->id, $cm->groupingid);
             if (!$allowedgroups && ($allgroups || groups_get_activity_groupmode($cm) === VISIBLEGROUPS)) {

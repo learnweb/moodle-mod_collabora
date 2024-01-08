@@ -35,7 +35,7 @@
     <tbody>
         {{#currentfileinfo}}
             <tr {{#iscurrent}} class="border-success" style="border-left-style:solid;border-left-width:5px;"{{/iscurrent}}>
-                <td class="font-bold"><i class="fa fa-asterisk fa-fw"></i> {{timemodified}}</td>
+                <td class="font-weight-bold"><i class="fa fa-asterisk fa-fw"></i> {{timemodified}}</td>
                 <td>
                     {{#hasversions}}
                         {{^iscurrent}}
@@ -85,6 +85,20 @@
                 </tr>
             {{/versioninfos}}
         {{/hasversions}}
+
+        <tr>
+            <td class="font-weight-bold">{{#str}} initialfile, mod_collabora {{/str}}</td>
+            <td>
+                <a href="#" class="text-decoration-none" title="{{#str}} restore {{/str}}" data-toggle="collapse" data-target="#restorequestion-init">
+                    <i class="fa fa-undo fa-fw" data-toggle="collapse" data-target="#restorequestion-init"></i>
+                </a>
+                <div id="restorequestion-init" class="collapse">
+                    <a href="#" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#restorequestion-init">{{#str}}no{{/str}}</a>
+                    <a href="#" class="btn btn-primary btn-sm collabora-restore-button" data-version="-1">{{#str}}yes{{/str}}</a>
+                </div>
+            </td>
+        </tr>
+
     </tbody>
 </table>
 {{#js}}
