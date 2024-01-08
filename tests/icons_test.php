@@ -43,6 +43,8 @@ class icons_test extends \advanced_testcase {
      * @return void
      */
     public function test_default_module_icon() {
+        global $USER;
+
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [
                 'course'      => $this->course,
@@ -50,7 +52,7 @@ class icons_test extends \advanced_testcase {
                 'initialtext' => 'Test text',
             ]
         );
-        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, $USER->id);
 
         $this->assertEquals('txt', $collaborafs->get_module_icon());
     }
@@ -62,13 +64,15 @@ class icons_test extends \advanced_testcase {
      * @return void
      */
     public function test_wordprocessor_module_icon() {
+        global $USER;
+
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [
                 'course' => $this->course,
                 'format' => 'wordprocessor',
             ]
         );
-        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, $USER->id);
 
         $this->assertEquals('odt', $collaborafs->get_module_icon());
     }
@@ -80,13 +84,15 @@ class icons_test extends \advanced_testcase {
      * @return void
      */
     public function test_spreadsheet_module_icon() {
+        global $USER;
+
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [
                 'course' => $this->course,
                 'format' => 'spreadsheet',
             ]
         );
-        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, $USER->id);
 
         $this->assertEquals('ods', $collaborafs->get_module_icon());
     }
@@ -98,13 +104,15 @@ class icons_test extends \advanced_testcase {
      * @return void
      */
     public function test_presentation_module_icon() {
+        global $USER;
+
         $collabora = $this->getDataGenerator()->create_module('collabora',
             [
                 'course' => $this->course,
                 'format' => 'presentation',
             ]
         );
-        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, 0);
+        $collaborafs = new \mod_collabora\api\collabora_fs($collabora, \context_module::instance($collabora->cmid), 0, $USER->id);
 
         $this->assertEquals('odp', $collaborafs->get_module_icon());
     }

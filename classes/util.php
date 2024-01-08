@@ -65,7 +65,6 @@ class util {
 
         $context = \context_module::instance($cm->id);
 
-
         // Handle groups selection.
         $groupid = groups_get_activity_group($cm, true);
         if ($groupid === false) {
