@@ -42,7 +42,9 @@ jobs:
         database: ['mariadb', 'pgsql']
         moodlebranch: ['MOODLE_401_STABLE', 'MOODLE_403_STABLE']
         include:
-          - node: 16.20
+          - php: '8.2'
+            moodlebranch: 'MOODLE_403_STABLE'
+            database: 'pgsql'
 
     steps:
       - name: Check out repository code
@@ -50,22 +52,16 @@ jobs:
         with:
           path: plugin
 
-      - name: Install node  ${{ matrix.node }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-
       - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: pgsql, mysqli, zip, gd, xmlrpc, soap
           ini-values: max_input_vars=5000
           coverage: none
 
       - name: Initialise moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
           # Add dirs to $PATH
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH

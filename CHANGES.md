@@ -7,6 +7,7 @@ Changes
 ### v4.3.1
 * 2024-01-07 -  Adding postmessage support which brings features like version management or switching the user interface
 * 2024-01-07 -  Compatibility to Moodle 4.3
+* 2024-01-11 -  Update github actions
 
 ### v4.3
 
