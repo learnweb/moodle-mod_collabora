@@ -32,42 +32,39 @@ export const init = (id) => {
         if (target.classList.contains("collabora-preview-button")) {
             event.preventDefault();
             event.stopPropagation();
-            var postObject = {
+            postMessage({
                 'MessageId': 'SET_VERSION',
                 'Values': {
                     'version': version
                 }
-            };
-            postMessage(postObject);
+            });
         }
         if (target.classList.contains("collabora-restore-button")) {
             event.preventDefault();
             event.stopPropagation();
-            var postObject = {
+            postMessage({
                 'MessageId': 'RESTORE_VERSION',
                 'Values': {
                     'version': version
                 }
-            };
-            postMessage(postObject);
+            });
         }
         if (target.classList.contains("collabora-deleteversion-button")) {
             event.preventDefault();
             event.stopPropagation();
-            var postObject = {
+            postMessage({
                 'MessageId': 'DELETE_VERSION',
                 'Values': {
                     'version': version
                 }
-            };
-            postMessage(postObject);
+            });
         }
     });
 
     /**
-    * Send a message to the collabora editor
-    * @param {object} postObject The object we want to post.
-    */
+     * Send a message to the collabora editor
+     * @param {object} postObject The object we want to post.
+     */
     function postMessage(postObject) {
         postObject.SendTime = Date.now();
         var message = JSON.stringify(postObject);

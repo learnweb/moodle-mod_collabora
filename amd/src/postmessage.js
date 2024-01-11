@@ -29,7 +29,7 @@ import ajax from 'core/ajax';
 import notification from 'core/notification';
 import log from 'core/log';
 
-class postMessageHandler {
+class PostMessageHandler {
     asPopup;
     collaboraUrl;
     component;
@@ -82,10 +82,9 @@ class postMessageHandler {
 
         _this.setFrameData();
         _this.initModal();
-        // window.addEventListener('message', _this.receiveMessage, true);
         window.addEventListener('message', function(e) {
             _this.receiveMessage(e);
-        }.bind(_this));
+        });
     }
 
     /**
@@ -205,7 +204,7 @@ class postMessageHandler {
         }
 
         const serviceparams = {
-            'function' : 'version_viewer_content',
+            'function': 'version_viewer_content',
             'id': _this.id,
             'version': _this.version
         };
@@ -217,7 +216,8 @@ class postMessageHandler {
                 if (js) {
                     templates.runTemplateJS(js);
                 }
-            }.bind(_this)
+                return;
+            }
         ).fail(notification.exception);
     }
 
@@ -380,14 +380,14 @@ class postMessageHandler {
             $("body").addClass("modal-open");
 
             _this.setFrameData();
-        }.bind(_this));
+        });
 
         // Move the iframe to the inline element.
         $("#collaboramodal_" + _this.id).on("hide.bs.modal", function() {
             inlineelement.append(iframecontainer);
             $("body").removeClass("modal-open");
             _this.setFrameData();
-        }.bind(_this));
+        });
 
     }
 
@@ -408,7 +408,7 @@ class postMessageHandler {
 
         // Load the wopi_src params.
         var serviceparams = {
-            'function' : 'wopi_src',
+            'function': 'wopi_src',
             'id': _this.id,
             'version': _this.version
         };
@@ -431,8 +431,8 @@ class postMessageHandler {
                 document.body.appendChild(form);
 
                 form.submit();
-                // form.remove(); // Remove the form because it's only temporary used.
-            }.bind(_this)
+                return;
+            }
         ).fail(notification.exception);
 
         return;
@@ -464,7 +464,7 @@ class postMessageHandler {
                 methodname: _this.component + '_restore_version',
                 // The second one is a json object with all in the webservice defined parameters.
                 // The submitaction is needed to set the right action url in the mform.
-                args:{ id: _this.id, version: _this.newVersion }
+                args: {id: _this.id, version: _this.newVersion}
             }]);
 
             // We only have one promise because we call only one webservice. More would be possible.
@@ -480,7 +480,7 @@ class postMessageHandler {
                 } else {
                     notification.exception({message: data.failuremsg});
                 }
-            }.bind(_this)).fail(notification.exception); // If any went wrong we let the user know.
+            }).fail(notification.exception); // If any went wrong we let the user know.
         }
     }
 
@@ -498,7 +498,7 @@ class postMessageHandler {
             methodname: _this.component + '_delete_version',
             // The second one is a json object with all in the webservice defined parameters.
             // The submitaction is needed to set the right action url in the mform.
-            args:{ id: _this.id, version: version }
+            args: {id: _this.id, version: version}
         }]);
 
         // We only have one promise because we call only one webservice. More would be possible.
@@ -513,11 +513,11 @@ class postMessageHandler {
             } else {
                 notification.exception({message: data.failuremsg});
             }
-        }.bind(_this)).fail(notification.exception); // If any went wrong we let the user know.
+        }).fail(notification.exception); // If any went wrong we let the user know.
     }
 }
 
 export const init = (opts) => {
-    const pm = new postMessageHandler(opts);
+    const pm = new PostMessageHandler(opts);
     pm.init();
 };
