@@ -4,6 +4,9 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.3.2
+* 2024-02-01 -  Fix in 4.1 undefined constant PRIMARY_BUTTON in class single_button
+
 ### v4.3.1
 * 2024-01-07 -  Adding postmessage support which brings features like version management or switching the user interface
 * 2024-01-07 -  Compatibility to Moodle 4.3

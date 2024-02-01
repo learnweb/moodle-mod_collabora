@@ -47,7 +47,7 @@ class confirmation implements \renderable, \templatable {
         $confirmlabel = $confirmlabel === null ? get_string('ok') : $confirmlabel;
         $cancellabel  = $cancellabel === null ? get_string('cancel') : $cancellabel;
 
-        $confirmbutton               = new \single_button($confirmurl, $confirmlabel, 'post', \single_button::BUTTON_PRIMARY);
+        $confirmbutton               = new \single_button($confirmurl, $confirmlabel, 'post', 'primary');
         $cancelbutton                = new \single_button($cancelurl, $cancellabel, 'get');
         $this->data                  = new \stdClass();
         $this->data->title           = $title;
