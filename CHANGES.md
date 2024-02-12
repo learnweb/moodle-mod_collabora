@@ -4,6 +4,9 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.3.3
+* 2024-02-12 -  Fix course without groups but in group mode 1 or 2
+
 ### v4.3.2
 * 2024-02-01 -  Fix in 4.1 undefined constant PRIMARY_BUTTON in class single_button
 
