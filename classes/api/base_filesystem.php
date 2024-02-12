@@ -452,7 +452,12 @@ abstract class base_filesystem {
                 'filename'    => $this->file->get_filename(),
                 'timecreated' => $this->file->get_timecreated(),
             ];
-            $fs->create_file_from_storedfile($versionrecord, $this->file);
+            try {
+                $fs->create_file_from_storedfile($versionrecord, $this->file);
+            } catch (\moodle_exception $e) {
+                // There was an error creating the version file.
+                $versionrecord = null; // We want no empty catch statement.
+            }
         }
 
         // Now we get to save the file.

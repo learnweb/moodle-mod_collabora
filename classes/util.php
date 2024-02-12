@@ -70,21 +70,10 @@ class util {
         if ($groupid === false) {
             $groupid = 0; // No groups, so use id 0 for everyone.
         } else if ($groupid === 0) {
-            // Groups in use, but none currently selected, so we need to find the first available group.
-            $allgroups = has_capability('moodle/site:accessallgroups', $context);
-            // Start with groups we are a member of.
-            $allowedgroups = groups_get_all_groups($cm->course, $user->id, $cm->groupingid);
-            if (!$allowedgroups && ($allgroups || groups_get_activity_groupmode($cm) === VISIBLEGROUPS)) {
-                // Not a member of any groups, but can see some groups, so get the full list.
-                $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
-            }
-            if (!$allowedgroups) {
-                // No access to any group - will just display a warning message.
-                $groupid = -1;
-            } else {
-                // Phew ... we found some group(s) we can access, so display the first one.
-                $firstgroup = reset($allowedgroups);
-                $groupid    = $firstgroup->id;
+            if (groups_get_activity_groupmode($cm) === SEPARATEGROUPS) {
+                if (!has_capability('moodle/site:accessallgroups', $context)) {
+                    return -1;
+                }
             }
         }
 

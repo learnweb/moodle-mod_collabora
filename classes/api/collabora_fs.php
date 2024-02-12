@@ -120,14 +120,20 @@ class collabora_fs extends base_filesystem {
             }
         } else {
             if ($groupid == 0) {
-                throw new \moodle_exception('invalidgroupid', 'mod_collabora');
-            }
-            if (!$DB->record_exists('groups', ['id' => $groupid, 'courseid' => $course->id])) {
-                throw new \moodle_exception('invalidgroupid', 'mod_collabora');
-            }
-            $isgroupmember = groups_is_member($groupid, $userid);
-            if ($groupmode == SEPARATEGROUPS && !$isgroupmember) {
-                require_capability('moodle/site:accessallgroups', $context, $userid);
+                if ($groupmode == SEPARATEGROUPS) {
+                    require_capability('moodle/site:accessallgroups', $context, $userid);
+                }
+            } else {
+                $isgroupmember = groups_is_member($groupid, $userid);
+                if ($groupmode == SEPARATEGROUPS) {
+                    if (!$isgroupmember) {
+                        require_capability('moodle/site:accessallgroups', $context, $userid);
+                    }
+                }
+
+                if (!$DB->record_exists('groups', ['id' => $groupid, 'courseid' => $course->id])) {
+                    throw new \moodle_exception('invalidgroupid', 'mod_collabora');
+                }
             }
         }
 

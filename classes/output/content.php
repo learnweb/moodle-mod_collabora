@@ -49,7 +49,12 @@ class content implements \renderable, \templatable {
         }
 
         if ($groupid >= 0) {
-            $this->data->activitymenu = groups_print_activity_menu($cm, $PAGE->url, true, true);
+            if (groups_get_activity_groupmode($cm) === SEPARATEGROUPS) {
+                $hideallparticipants = true;
+            } else {
+                $hideallparticipants = false;
+            }
+            $this->data->activitymenu = groups_print_activity_menu($cm, $PAGE->url, true, $hideallparticipants);
             $this->data->lockicon     = $collaborafs->get_lock_icon();
 
             if (empty($this->data->embedded)) {

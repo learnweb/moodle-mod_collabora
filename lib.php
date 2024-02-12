@@ -209,7 +209,9 @@ function collabora_get_coursemodule_info($coursemodule) {
     }
 
     $groupid = \mod_collabora\util::get_current_groupid_from_cm($coursemodule);
-
+    if ($groupid < 0) {
+        return null;
+    }
     $collaborafs = new \mod_collabora\api\collabora_fs(
         $collabora,
         context_module::instance($coursemodule->id),
