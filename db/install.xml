@@ -13,7 +13,7 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="format" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="upload" SEQUENCE="false" COMMENT="upload / text / spreadsheet / wordprocessor / presentation"/>
+        <FIELD NAME="format" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="upload" SEQUENCE="false" COMMENT="upload / text / spreadsheet / wordprocessor / presentation"/>
         <FIELD NAME="initialtext" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Initial text, if 'text' format selected"/>
         <FIELD NAME="display" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="current" SEQUENCE="false" COMMENT="current / new"/>
         <FIELD NAME="height" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="iframe height - 0 for auto"/>

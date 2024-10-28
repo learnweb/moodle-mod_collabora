@@ -27,107 +27,19 @@ use mod_collabora\util;
 defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) {
-    $settings->add(
-        new admin_setting_heading(
-            'mod_collabora_general_hdr',
-            get_string('general'),
-            ''
-        )
+    $settings = null; // We add our own settings pages and do not want the standard settings link.
+
+    $settingscategory = new \mod_collabora\admin_settingspage_tabs(
+        'modsettingcollabora',
+        get_string('pluginname', 'mod_collabora')
+    );
+    $settingscategory->set_description(get_string('modulename_help', 'mod_collabora'));
+    $settingscategory->add(\mod_collabora\setting_tab\connection::get_settings_tab());
+    $settingscategory->add(\mod_collabora\setting_tab\template::get_settings_tab());
+
+    $ADMIN->add(
+        'modsettings',
+        $settingscategory
     );
 
-    $settings->add(
-        new admin_setting_configtext(
-            'mod_collabora/url',
-            new lang_string('collaboraurl', 'mod_collabora'),
-            '',
-            '',
-            PARAM_URL
-        )
-    );
-
-    $settings->add(
-        new admin_setting_configselect(
-            'mod_collabora/defaultformat',
-            new lang_string('defaultformat', 'mod_collabora'),
-            '',
-            util::FORMAT_WORDPROCESSOR,
-            util::format_menu()
-        )
-    );
-
-    $settings->add(
-        new admin_setting_configselect(
-            'mod_collabora/defaultdisplay',
-            new lang_string('defaultdisplay', 'mod_collabora'),
-            '',
-            util::DISPLAY_CURRENT,
-            util::display_menu()
-        )
-    );
-
-    $yesno = [
-        1 => new lang_string('yes'),
-        0 => new lang_string('no'),
-    ];
-    $settings->add(
-        new admin_setting_configselect(
-            'mod_collabora/defaultdisplayname',
-            new lang_string('defaultdisplayname', 'mod_collabora'),
-            '',
-            1,
-            $yesno
-        )
-    );
-
-    $settings->add(
-        new admin_setting_configselect(
-            'mod_collabora/defaultdisplaydescription',
-            new lang_string('defaultdisplaydescription', 'mod_collabora'),
-            '',
-            1,
-            $yesno
-        )
-    );
-
-    $modlist = [
-        util::UI_SERVER  => get_string('uiserver', 'mod_collabora'),
-        util::UI_COMPACT => get_string('uicompact', 'mod_collabora'),
-        util::UI_TABBED  => get_string('uitabbed', 'mod_collabora'),
-    ];
-    $settings->add(
-        new admin_setting_configselect(
-            'mod_collabora/uimode',
-            new lang_string('uimode', 'mod_collabora'),
-            '',
-            util::UI_SERVER,
-            $modlist
-        )
-    );
-
-    $settings->add(
-        new admin_setting_configcheckbox(
-            'mod_collabora/enableversions',
-            new lang_string('enableversions', 'mod_collabora'),
-            new lang_string('enableversions_help', 'mod_collabora'),
-            true
-        )
-    );
-
-    $settings->add(
-        new admin_setting_heading(
-            'mod_collabora_security_hdr',
-            get_string('setting_header_security', 'mod_collabora'),
-            ''
-        )
-    );
-
-    $settings->add(
-        new admin_setting_configselect(
-            'mod_collabora/allowcollaboraserverexplicit',
-            new lang_string('setting_allowcollaboraserverexplicit', 'mod_collabora'),
-            new lang_string('setting_allowcollaboraserverexplicit_help', 'mod_collabora'),
-            0,
-            $yesno
-        )
-    );
 }

@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information.
+ * This plugin extends the auth_oidc plugin with additional features for schools.
  *
- * @package   mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_collabora
+ * @copyright  2021 (http://www.grabs-edv.de)
+ * @author     Andreas Grabs
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2024103000;
-$plugin->release   = 'v4.5.0 (2024103000)';
-$plugin->requires  = 2022111800; // Moodle 4.1.
-$plugin->component = 'mod_collabora';
-$plugin->maturity  = MATURITY_BETA;
+namespace mod_collabora\setting_tab;
+
+/**
+ * Settings tab base class.
+ */
+class base {
+    /**
+     * Get the tab id built from the class name.
+     * @return string
+     */
+    public static function get_tab_id() {
+        return str_replace('\\', '_', get_called_class());
+    }
+}

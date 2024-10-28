@@ -302,8 +302,14 @@ class collabora_fs extends base_filesystem {
      */
     private function create_retrieve_file() {
         $fs    = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'mod_collabora', self::FILEAREA_GROUP, $this->groupid,
-            'filepath', false, 0, 0, 1);
+        $files = $fs->get_area_files(
+            contextid: $this->context->id,
+            component: 'mod_collabora',
+            filearea:  self::FILEAREA_GROUP,
+            itemid:    $this->groupid,
+            includedirs: false,
+            limitnum: 1
+        );
         $file = reset($files);
         if ((!$file) || $file->get_filepath() != '/') {
             $file = $this->create_file();
@@ -320,7 +326,14 @@ class collabora_fs extends base_filesystem {
      */
     private function get_initial_file() {
         $fs    = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'mod_collabora', self::FILEAREA_INITIAL, false, '', false, 0, 0, 1);
+        $files = $fs->get_area_files(
+            contextid: $this->context->id,
+            component: 'mod_collabora',
+            filearea:  self::FILEAREA_INITIAL,
+            includedirs: false,
+            limitnum: 1
+        );
+
         $file  = reset($files);
         if (!$file) {
             throw new \moodle_exception('initialfilemissing', 'mod_collabora');
@@ -346,41 +359,15 @@ class collabora_fs extends base_filesystem {
             'filepath'  => '/',
             'filename'  => clean_filename(format_string($this->collaborarec->name)),
         ];
-        switch ($this->collaborarec->format) {
-            case util::FORMAT_UPLOAD:
-                $initfile = $this->get_initial_file();
-                $ext      = pathinfo($initfile->get_filename(), PATHINFO_EXTENSION);
-                $filerec->filename .= '.' . $ext;
-                $file = $fs->create_file_from_storedfile($filerec, $initfile);
-                break;
-            case util::FORMAT_TEXT:
-                $inittext = $this->collaborarec->initialtext;
-                $ext      = 'txt';
-                $filerec->filename .= '.' . $ext;
-                $file = $fs->create_file_from_string($filerec, $inittext);
-                break;
-            case util::FORMAT_WORDPROCESSOR:
-                $ext = 'docx';
-                $filerec->filename .= '.' . $ext;
-                $filepath = $CFG->dirroot . '/mod/collabora/blankfiles/blankdocument.docx';
-                $file     = $fs->create_file_from_pathname($filerec, $filepath);
-                break;
-            case util::FORMAT_SPREADSHEET:
-                $ext = 'xlsx';
-                $filerec->filename .= '.' . $ext;
-                $filepath = $CFG->dirroot . '/mod/collabora/blankfiles/blankspreadsheet.xlsx';
-                $file     = $fs->create_file_from_pathname($filerec, $filepath);
-                break;
-            case util::FORMAT_PRESENTATION:
-                $ext = 'pptx';
-                $filerec->filename .= '.' . $ext;
-                $filepath = $CFG->dirroot . '/mod/collabora/blankfiles/blankpresentation.pptx';
-                $file     = $fs->create_file_from_pathname($filerec, $filepath);
-                break;
-            default:
-                throw new \coding_exception("Unknown format: {$this->collaborarec->format}");
-        }
 
+        $initfile = $this->get_initial_file();
+        $ext      = pathinfo($initfile->get_filename(), PATHINFO_EXTENSION);
+        $filerec->filename .= '.' . $ext;
+        $file = $fs->create_file_from_storedfile($filerec, $initfile);
+
+        if (empty($file)) {
+            throw new \moodle_exception('Could not create file from initial file');
+        }
         return $file;
     }
 

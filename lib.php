@@ -68,16 +68,20 @@ function collabora_add_instance($collabora, $mform) {
     $collabora->timecreated  = time();
     $collabora->timemodified = time();
 
+    // Save the 'initial file'.
+    if (!\mod_collabora\util::store_initial_file($collabora, $collabora->coursemodule)) {
+        return 0;
+    }
+
     $collabora->id = $DB->insert_record('collabora', $collabora);
 
     $completiontimeexpected = !empty($collabora->completionexpected) ? $collabora->completionexpected : null;
-    \core_completion\api::update_completion_date_event($collabora->coursemodule, 'collabora',
-        $collabora->id, $completiontimeexpected);
-
-    // Save the 'initial file'.
-    $context = context_module::instance($collabora->coursemodule);
-    file_postupdate_standard_filemanager($collabora, 'initialfile', mod_collabora_mod_form::get_filemanager_opts(),
-        $context, 'mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_INITIAL, 0);
+    \core_completion\api::update_completion_date_event(
+        $collabora->coursemodule,
+        'collabora',
+        $collabora->id,
+        $completiontimeexpected
+    );
 
     return $collabora->id;
 }
@@ -115,11 +119,12 @@ function collabora_delete_instance($id) {
     global $DB;
 
     if (!$collabora = $DB->get_record('collabora', ['id' => $id])) {
-        return false;
+        return true; // The instance is deleted already.
     }
 
-    $cm = get_coursemodule_from_instance('collabora', $id);
-    \core_completion\api::update_completion_date_event($cm->id, 'collabora', $id, null);
+    if ($cm = get_coursemodule_from_instance('collabora', $id)) {
+        \core_completion\api::update_completion_date_event($cm->id, 'collabora', $id, null);
+    }
 
     $DB->delete_records('collabora_document', ['collaboraid' => $collabora->id]);
     $DB->delete_records('collabora', ['id' => $collabora->id]);

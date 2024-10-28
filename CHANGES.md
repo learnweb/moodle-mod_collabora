@@ -4,6 +4,9 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.5.0
+* 2024-10-30 -  Add support for managing templates.
+
 ### v4.3.3
 * 2024-02-12 -  Fix course without groups but in group mode 1 or 2
 

@@ -97,30 +97,34 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
      * @return void
      */
     protected function after_restore() {
+        global $DB;
+
+        $collabora = $DB->get_record('collabora', ['id' => $this->task->get_activityid()]);
+        $cm = get_coursemodule_from_instance('collabora', $collabora->id);
 
         // Fix the file stamps.
-        $this->fix_file_timestamps();
+        $this->fix_file_timestamps($cm);
+
+        // Add missing initial files if needed.
+        // Old backups might come without them.
+        \mod_collabora\util::fix_legacy_initfiles($collabora, $cm);
     }
 
     /**
      * Fix the timemodified stamp from all newly created version files.
      *
+     * @param \stdClass $cm
      * @return void
      */
-    protected function fix_file_timestamps() {
-        global $DB;
+    protected function fix_file_timestamps($cm) {
+        $context = \context_module::instance($cm->id);
 
-        // Get all files from the new collaboara instance.
-        $collabora = $DB->get_record('collabora', ['id' => $this->task->get_activityid()]);
-        list($course, $cm) = get_course_and_cm_from_instance($collabora->id, 'collabora');
         $fs = get_file_storage();
         $files = $fs->get_area_files(
-            $cm->context->id,
-            'mod_collabora',
-            \mod_collabora\api\collabora_fs::FILEAREA_GROUP,
-            false,
-            'filepath',
-            false
+            contextid: $context->id,
+            component: 'mod_collabora',
+            filearea: \mod_collabora\api\collabora_fs::FILEAREA_GROUP,
+            includedirs: false
         );
 
         // Set the timemodified field to the value from the filepath which represents the version.

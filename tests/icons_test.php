@@ -23,7 +23,7 @@ namespace mod_collabora;
  * @copyright 2019 Jan Dageförde, WWU Münster
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class icons_test extends \advanced_testcase {
+final class icons_test extends \advanced_testcase {
     /** @var \stdClass */
     private $course;
 
@@ -31,6 +31,7 @@ class icons_test extends \advanced_testcase {
      * Setup function to create a course we can test with.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $this->course = $this->getDataGenerator()->create_course();
@@ -42,7 +43,7 @@ class icons_test extends \advanced_testcase {
      * @covers \mod_collabora\api\collabora
      * @return void
      */
-    public function test_default_module_icon() {
+    public function test_default_module_icon(): void {
         global $USER;
 
         $collabora = $this->getDataGenerator()->create_module('collabora',
@@ -63,7 +64,7 @@ class icons_test extends \advanced_testcase {
      * @covers \mod_collabora\api\collabora
      * @return void
      */
-    public function test_wordprocessor_module_icon() {
+    public function test_wordprocessor_module_icon(): void {
         global $USER;
 
         $collabora = $this->getDataGenerator()->create_module('collabora',
@@ -83,7 +84,7 @@ class icons_test extends \advanced_testcase {
      * @covers \mod_collabora\api\collabora
      * @return void
      */
-    public function test_spreadsheet_module_icon() {
+    public function test_spreadsheet_module_icon(): void {
         global $USER;
 
         $collabora = $this->getDataGenerator()->create_module('collabora',
@@ -103,7 +104,7 @@ class icons_test extends \advanced_testcase {
      * @covers \mod_collabora\api\collabora
      * @return void
      */
-    public function test_presentation_module_icon() {
+    public function test_presentation_module_icon(): void {
         global $USER;
 
         $collabora = $this->getDataGenerator()->create_module('collabora',

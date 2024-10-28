@@ -29,29 +29,21 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_collabora_mod_form extends moodleform_mod {
-    /**
-     * Get options for the filemanger.
-     *
-     * @return array
-     */
-    public static function get_filemanager_opts() {
-        return [
-            'subdirs'        => 0,
-            'maxbytes'       => 0,
-            'maxfiles'       => 1,
-            'accepted_types' => collabora_fs::get_accepted_types(),
-        ];
-    }
 
     /**
      * Get the file link to the document as an html fragment.
      *
      * @return string
      */
-    private function get_file_link() {
+    private function get_initial_file_link() {
         $fs    = get_file_storage();
-        $files = $fs->get_area_files($this->context->id, 'mod_collabora', collabora_fs::FILEAREA_INITIAL,
-            false, '', false, 0, 0, 1);
+        $files = $fs->get_area_files(
+            contextid: $this->context->id,
+            component: 'mod_collabora',
+            filearea: collabora_fs::FILEAREA_INITIAL,
+            includedirs: false,
+            limitnum: 1
+        );
         $file = reset($files);
         if (!$file) {
             return get_string('missingfile', 'mod_collabora');
@@ -79,22 +71,28 @@ class mod_collabora_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         // Format section.
-        $mform->addElement('select', 'format', get_string('format', 'mod_collabora'), util::format_menu());
-        $mform->setDefault('format', $config->defaultformat);
-        if ($this->_instance) {
-            $mform->freeze('format');
+        if (!$this->_instance) {
+            $mform->addElement(
+                'selectgroups',
+                'format',
+                get_string('format', 'mod_collabora'),
+                util::grouped_format_menu()
+            );
+            $mform->addRule('format', null, 'required', null, 'client');
+            $mform->setDefault('format', $config->defaultformat ?? '');
         }
 
         if (!$this->_instance) {
             $mform->addElement('filemanager', 'initialfile_filemanager', get_string('initialfile', 'mod_collabora'),
-                null, $this->get_filemanager_opts());
+                null, util::get_filemanager_opts());
             $mform->hideIf('initialfile_filemanager', 'format', 'neq', util::FORMAT_UPLOAD);
-        } else if ($this->current->format === util::FORMAT_UPLOAD) {
-            $mform->addElement('static', 'initialfile', get_string('initialfile', 'mod_collabora'), $this->get_file_link());
+        } else {
+            $mform->addElement('static', 'initialfile', get_string('initialfile', 'mod_collabora'), $this->get_initial_file_link());
         }
 
         if (!$this->_instance || $this->current->format === util::FORMAT_TEXT) {
-            $mform->addElement('textarea', 'initialtext', get_string('initialtext', 'mod_collabora'));
+            $mform->addElement('textarea', 'initialtext', get_string('initialtext', 'mod_collabora'), ['rows' => 10]);
+            $mform->setType('initialtext', PARAM_TEXT);
             $mform->hideIf('initialtext', 'format', 'neq', util::FORMAT_TEXT);
             if ($this->_instance) {
                 $mform->freeze('initialtext');

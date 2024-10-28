@@ -84,5 +84,25 @@ function xmldb_collabora_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024010700, 'collabora');
     }
 
+    if ($oldversion < 2024102900) {
+        // Changing precision of field format on table collabora to (255).
+        $table = new xmldb_table('collabora');
+        $field = new xmldb_field('format', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'upload', 'introformat');
+
+        // Launch change of precision for field format.
+        $dbman->change_field_precision($table, $field);
+
+        // Convert the legacy initfiles to the new format.
+        $collaborarecords = $DB->get_recordset('collabora');
+        foreach ($collaborarecords as $collabora) {
+            $cm = get_coursemodule_from_instance('collabora', $collabora->id);
+            \mod_collabora\util::fix_legacy_initfiles($collabora, $cm);
+        }
+        $collaborarecords->close();
+
+        // Collabora savepoint reached.
+        upgrade_mod_savepoint(true, 2024102900, 'collabora');
+    }
+
     return true;
 }

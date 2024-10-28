@@ -24,6 +24,8 @@ namespace mod_collabora\api;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base_filesystem {
+    /** The filearea for templates */
+    public const FILEAREA_TEMPLATE = 'template';
     /** Define the filearea for initial stored files */
     public const FILEAREA_INITIAL = 'initial';
     /** Define the filearea for files a group of users is working at */
@@ -501,12 +503,12 @@ abstract class base_filesystem {
 
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            $this->file->get_contextid(),
-            $this->file->get_component(),
-            $this->file->get_filearea(),
-            $this->file->get_itemid(),
-            'filepath',
-            false
+            contextid: $this->file->get_contextid(),
+            component: $this->file->get_component(),
+            filearea: $this->file->get_filearea(),
+            itemid: $this->file->get_itemid(),
+            sort: 'filepath',
+            includedirs: false
         );
         $result = [];
         foreach ($files as $file) {
@@ -530,15 +532,7 @@ abstract class base_filesystem {
             throw new \moodle_exception('versions_are_deactivated');
         }
 
-        $fs    = get_file_storage();
-        $files = $fs->get_area_files(
-            $this->file->get_contextid(),
-            $this->file->get_component(),
-            $this->file->get_filearea(),
-            $this->file->get_itemid(),
-            'filepath',
-            false
-        );
+        $files = $this->get_version_files();
 
         foreach ($files as $file) {
             $fileversion = $file->get_filepath();
