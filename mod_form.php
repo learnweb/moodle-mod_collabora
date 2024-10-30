@@ -38,11 +38,15 @@ class mod_collabora_mod_form extends moodleform_mod {
     private function get_initial_file_link() {
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            contextid: $this->context->id,
-            component: 'mod_collabora',
-            filearea: collabora_fs::FILEAREA_INITIAL,
-            includedirs: false,
-            limitnum: 1
+            $this->context->id,             // Param contextid.
+            'mod_collabora',                // Param component
+            collabora_fs::FILEAREA_INITIAL, // Param filearea.
+            false,                          // Param itemid.
+            '',                             // Param sort.
+            false,                          // Param includedirs.
+            0,                              // Param updatedsince.
+            0,                              // Param limitfrom.
+            1                               // Param limitnum.
         );
         $file = reset($files);
         if (!$file) {

@@ -503,12 +503,12 @@ abstract class base_filesystem {
 
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            contextid: $this->file->get_contextid(),
-            component: $this->file->get_component(),
-            filearea: $this->file->get_filearea(),
-            itemid: $this->file->get_itemid(),
-            sort: 'filepath',
-            includedirs: false
+            $this->file->get_contextid(), // Param contextid.
+            $this->file->get_component(), // Param component.
+            $this->file->get_filearea(),  // Param filearea.
+            $this->file->get_itemid(),    // Param itemid.
+            'filename',                   // Param sort.
+            false                         // Param includedirs.
         );
         $result = [];
         foreach ($files as $file) {

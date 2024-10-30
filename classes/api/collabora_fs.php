@@ -303,12 +303,15 @@ class collabora_fs extends base_filesystem {
     private function create_retrieve_file() {
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            contextid: $this->context->id,
-            component: 'mod_collabora',
-            filearea:  self::FILEAREA_GROUP,
-            itemid:    $this->groupid,
-            includedirs: false,
-            limitnum: 1
+            $this->context->id,   // Param contextid.
+            'mod_collabora',      // Param component.
+            self::FILEAREA_GROUP, // Param filearea.
+            $this->groupid,       // Param itemid.
+            'filename',           // Param sort.
+            false,                // Param includedirs.
+            0,                    // Param updatedsince.
+            0,                    // Param limitfrom.
+            1                     // Param limitnum.
         );
         $file = reset($files);
         if ((!$file) || $file->get_filepath() != '/') {
@@ -327,11 +330,15 @@ class collabora_fs extends base_filesystem {
     private function get_initial_file() {
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            contextid: $this->context->id,
-            component: 'mod_collabora',
-            filearea:  self::FILEAREA_INITIAL,
-            includedirs: false,
-            limitnum: 1
+            $this->context->id,     // Param contextid.
+            'mod_collabora',        // Param component.
+            self::FILEAREA_INITIAL, // Param filearea.
+            false,                  // Param itemid.
+            'filename',             // Param sort.
+            false,                  // Param includedirs.
+            0,                      // Param updatedsince.
+            0,                      // Param limitfrom.
+            1                       // Param limitnum.
         );
 
         $file  = reset($files);

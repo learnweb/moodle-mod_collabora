@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use mod_collabora\api\collabora_fs;
+
 /**
  * Define all the restore steps that will be used by the restore_collabora_activity_task.
  *
@@ -88,8 +90,8 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
     protected function after_execute() {
         // Add collabora related files.
         $this->add_related_files('mod_collabora', 'intro', null);
-        $this->add_related_files('mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_INITIAL, null);
-        $this->add_related_files('mod_collabora', \mod_collabora\api\collabora_fs::FILEAREA_GROUP, 'collabora_group');
+        $this->add_related_files('mod_collabora', collabora_fs::FILEAREA_INITIAL, null);
+        $this->add_related_files('mod_collabora', collabora_fs::FILEAREA_GROUP, 'collabora_group');
     }
 
     /**
@@ -121,12 +123,13 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
 
         $fs = get_file_storage();
         $files = $fs->get_area_files(
-            contextid: $context->id,
-            component: 'mod_collabora',
-            filearea: \mod_collabora\api\collabora_fs::FILEAREA_GROUP,
-            includedirs: false
+            $context->id,
+            'mod_collabora',
+            collabora_fs::FILEAREA_GROUP,
+            false,
+            'filename',
+            false
         );
-
         // Set the timemodified field to the value from the filepath which represents the version.
         foreach ($files as $file) {
             $version = $file->get_filepath();

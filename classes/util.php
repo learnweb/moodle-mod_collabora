@@ -194,7 +194,7 @@ class util {
                     static::get_filemanager_opts(),
                     $context,
                     'mod_collabora',
-                    \mod_collabora\api\collabora_fs::FILEAREA_INITIAL,
+                    collabora_fs::FILEAREA_INITIAL,
                     0
                 );
                 return true;
@@ -207,7 +207,7 @@ class util {
         $filerec = (object) [
             'contextid' => $context->id,
             'component' => 'mod_collabora',
-            'filearea'  => \mod_collabora\api\collabora_fs::FILEAREA_INITIAL,
+            'filearea'  => collabora_fs::FILEAREA_INITIAL,
             'itemid'    => 0,
             'filepath'  => '/',
             'filename'  => clean_filename(format_string($collabora->name)),
@@ -297,10 +297,12 @@ class util {
         $fs = get_file_storage();
 
         $templates = $fs->get_area_files(
-            contextid: $context->id,
-            component: 'mod_collabora',
-            filearea: \mod_collabora\api\collabora_fs::FILEAREA_TEMPLATE,
-            includedirs: false
+            $context->id,                    // Param contextid.
+            'mod_collabora',                 // Param component.
+            collabora_fs::FILEAREA_TEMPLATE, // Param filearea.
+            false,                           // Param itemid.
+            'filename',                      // Param sort.
+            false                            // Param includedirs.
         );
 
         $templatelist = [];
@@ -324,11 +326,15 @@ class util {
         $context = \context_module::instance($cm->id);
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            contextid: $context->id,
-            component: 'mod_collabora',
-            filearea: \mod_collabora\api\collabora_fs::FILEAREA_INITIAL,
-            includedirs: false,
-            limitnum: 1
+            $context->id,                   // Param contextid.
+            'mod_collabora',                // Param component.
+            collabora_fs::FILEAREA_INITIAL, // Param filearea.
+            false,                          // Param itemid.
+            'filename',                     // Param sort.
+            false,                          // Param includedirs.
+            0,                              // Param updatedsince.
+            0,                              // Param limitfrom.
+            1                               // Param limitnum.
         );
         if ($files) {
             $file  = reset($files);
