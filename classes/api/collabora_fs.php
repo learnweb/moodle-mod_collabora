@@ -307,7 +307,8 @@ class collabora_fs extends base_filesystem {
             'mod_collabora',      // Param component.
             self::FILEAREA_GROUP, // Param filearea.
             $this->groupid,       // Param itemid.
-            'filename',           // Param sort.
+            // The sorting is important because of the way we store document versions.
+            'filepath',           // Param sort.
             false,                // Param includedirs.
             0,                    // Param updatedsince.
             0,                    // Param limitfrom.

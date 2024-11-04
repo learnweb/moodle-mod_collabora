@@ -127,7 +127,8 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
             'mod_collabora',
             collabora_fs::FILEAREA_GROUP,
             false,
-            'filename',
+            // The sorting is important because of the way we store document versions.
+            'filepath',
             false
         );
         // Set the timemodified field to the value from the filepath which represents the version.

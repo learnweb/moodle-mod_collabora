@@ -4,6 +4,9 @@ moodle-mod_collabora
 Changes
 -------
 
+### v4.5.1
+* 2024-11-04 -  Fix wrong sort param int get_area_files while loading the current group file.
+
 ### v4.5.0
 * 2024-10-30 -  Add support for managing templates.
 

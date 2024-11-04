@@ -39,7 +39,7 @@ class mod_collabora_mod_form extends moodleform_mod {
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
             $this->context->id,             // Param contextid.
-            'mod_collabora',                // Param component
+            'mod_collabora',                // Param component.
             collabora_fs::FILEAREA_INITIAL, // Param filearea.
             false,                          // Param itemid.
             '',                             // Param sort.

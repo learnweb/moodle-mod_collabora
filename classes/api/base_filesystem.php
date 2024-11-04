@@ -507,7 +507,8 @@ abstract class base_filesystem {
             $this->file->get_component(), // Param component.
             $this->file->get_filearea(),  // Param filearea.
             $this->file->get_itemid(),    // Param itemid.
-            'filename',                   // Param sort.
+            // The sorting is important because of the way we store document versions.
+            'filepath',                   // Param sort.
             false                         // Param includedirs.
         );
         $result = [];
