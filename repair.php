@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../../config.php');
 global $PAGE, $DB, $USER;
 
 $cmid    = required_param('id', PARAM_INT);
-$confirm = optional_param('confirm', false, true);
+$confirm = optional_param('confirm', false, PARAM_BOOL);
 
 list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'collabora');
 
