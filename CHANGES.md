@@ -3,6 +3,10 @@ moodle-mod_collabora
 
 Changes
 -------
+### v4.5.2
+* 2025-01-21 -  Since Moodle 4.5, you have to check an existing session by using the session handler (#45).
+* 2025-01-21 -  Fix wrong type param in repair.php
+* 2025-01-21 -  Adjust github workflow to be more restrictive
 
 ### v4.5.1
 * 2024-11-04 -  Fix wrong sort param int get_area_files while loading the current group file.

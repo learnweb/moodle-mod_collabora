@@ -219,6 +219,19 @@ abstract class base_filesystem {
     }
 
     /**
+     * Does the PHP session with given id exist?
+     *
+     * The session must exist in actual session backend and the session must not be timed out.
+     * With this check, we ensure that the callback calls belong to a user who is actually logged in.
+     *
+     * @param string $sid
+     * @return bool
+     */
+    public static function session_exists($sid) {
+        return \mod_collabora\session::session_exists($sid);
+    }
+
+    /**
      * Constructor.
      *
      * @param \stdClass    $user

@@ -48,14 +48,18 @@ class collabora_fs extends base_filesystem {
      */
     public static function get_userid_from_token($token) {
         global $DB;
-        $sql = 'SELECT ct.id, ct.userid from {collabora_token} ct
-                JOIN {sessions} s ON s.userid = ct.userid AND s.sid = ct.sid
+        $sql = 'SELECT * from {collabora_token} ct
                 WHERE ct.token = :token
         ';
 
         $tokenrec = $DB->get_record_sql($sql, ['token' => $token]);
 
         if (empty($tokenrec->userid)) {
+            return false;
+        }
+
+        // Check the user has a valid session in moodle.
+        if (!static::session_exists($tokenrec->sid)) {
             return false;
         }
 
@@ -72,10 +76,9 @@ class collabora_fs extends base_filesystem {
 
         $recordset = $DB->get_recordset('collabora_token');
 
-        $select = 'sid = :sid AND userid > 0';
         foreach ($recordset as $tokenrec) {
-            $params = ['sid' => $tokenrec->sid];
-            if (!$DB->record_exists_select('sessions', $select, $params)) {
+            // Check the user has a valid session in moodle.
+            if (!static::session_exists($tokenrec->sid)) {
                 $DB->delete_records('collabora_token', ['id' => $tokenrec->id]);
             }
         }
@@ -495,15 +498,17 @@ class collabora_fs extends base_filesystem {
             'userid' => $this->user->id,
             'sid'    => session_id(),
         ];
-        $sql = 'SELECT ct.id, ct.token from {collabora_token} ct
-                JOIN {sessions} s ON s.userid = ct.userid AND s.sid = ct.sid
+        $sql = 'SELECT * from {collabora_token} ct
                 WHERE ct.userid = :userid AND ct.sid = :sid
         ';
 
         $tokenrec = $DB->get_record_sql($sql, $params);
 
+        // Check the user has a valid session in moodle.
         if (!empty($tokenrec->token)) {
-            return $tokenrec->token;
+            if (static::session_exists($tokenrec->sid)) {
+                return $tokenrec->token;
+            }
         }
         // Create a new token record.
         $tokenrec         = new \stdClass();
