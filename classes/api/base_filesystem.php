@@ -666,6 +666,18 @@ abstract class base_filesystem {
     }
 
     /**
+     * Get the user picture of who is working on this document.
+     *
+     * @return string
+     */
+    public function get_userpicture_url() {
+        global $PAGE;
+        $userpicture = new \user_picture($this->user);
+        $userpicture->size = 1;
+        return $userpicture->get_url($PAGE)->out(false);
+    }
+
+    /**
      * Unique identifier for the owner of the document.
      *
      * @return string

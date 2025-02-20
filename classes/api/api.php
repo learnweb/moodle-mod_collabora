@@ -162,6 +162,9 @@ class api {
             'UserCanWrite'            => !$this->filesystem->is_readonly(),
             'UserFriendlyName'        => $this->filesystem->get_username(),
             'UserId'                  => $this->filesystem->get_user_identifier(),
+            'UserExtraInfo'           => [
+                'avatar' => $this->filesystem->get_userpicture_url(),
+            ],
         ];
 
         date_default_timezone_set($tz);
