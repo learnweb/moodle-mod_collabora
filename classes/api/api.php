@@ -162,6 +162,7 @@ class api {
             'UserCanWrite'            => !$this->filesystem->is_readonly(),
             'UserFriendlyName'        => $this->filesystem->get_username(),
             'UserId'                  => $this->filesystem->get_user_identifier(),
+            'IsAdminUser'             => $this->filesystem->is_user_admin(),
         ];
 
         date_default_timezone_set($tz);

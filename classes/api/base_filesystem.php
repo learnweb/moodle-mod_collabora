@@ -275,6 +275,15 @@ abstract class base_filesystem {
     abstract public function get_user_identifier();
 
     /**
+     * Return if the user is site administrator.
+     *
+     * @return stdClass
+     */
+    public function is_user_admin() {
+        return is_siteadmin($this->user);
+    }
+
+    /**
      * Retrieve the existing unique user token, or generate a new one.
      *
      * @return string
