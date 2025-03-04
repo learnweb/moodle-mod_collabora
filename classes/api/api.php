@@ -163,6 +163,7 @@ class api {
             'UserFriendlyName'        => $this->filesystem->get_username(),
             'UserId'                  => $this->filesystem->get_user_identifier(),
             'UserExtraInfo'           => ['avatar' => $this->filesystem->get_userpicture_url()],
+            'IsAdminUser'             => $this->filesystem->show_server_audit(),
         ];
 
         date_default_timezone_set($tz);

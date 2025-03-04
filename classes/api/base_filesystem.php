@@ -317,6 +317,21 @@ abstract class base_filesystem {
     }
 
     /**
+     * Determines whether the server audit should be displayed.
+     *
+     * The server audit is displayed only if the 'showserveraudit' configuration option is enabled
+     * and the user accessing the document is a site administrator.
+     *
+     * @return bool True if the server audit should be displayed, false otherwise.
+     */
+    public function show_server_audit(): bool {
+        if (!empty($this->myconfig->showserveraudit)) {
+            return is_siteadmin($this->user);
+        }
+        return false;
+    }
+
+    /**
      * Get the origin of the collabora-server, based on the collabora url.
      *
      * @return string

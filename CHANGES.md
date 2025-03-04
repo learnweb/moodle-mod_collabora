@@ -5,6 +5,7 @@ Changes
 -------
 ### v4.5.3
 * 2025-03-04 -  Add feature to show user pictures in collabora editor (thanks to https://github.com/hfiguiere)
+* 2025-03-04 -  Add feature to show the collabora server audit for siteadmins (thanks to https://github.com/hfiguiere)
 * 2025-03-04 -  Optimize handling of tokens
 
 ### v4.5.2

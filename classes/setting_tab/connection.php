@@ -120,6 +120,16 @@ class connection extends base {
         );
 
         $page->add(
+            new \admin_setting_configselect(
+                'mod_collabora/showserveraudit',
+                get_string('setting_showserveraudit', 'mod_collabora'),
+                get_string('setting_showserveraudit_help', 'mod_collabora'),
+                0,
+                util::yesno_options()
+            )
+        );
+
+        $page->add(
             new \admin_setting_heading(
                 'mod_collabora_security_hdr',
                 get_string('setting_header_security', 'mod_collabora'),
