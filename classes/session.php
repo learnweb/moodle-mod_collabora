@@ -47,6 +47,9 @@ class session {
         try {
             $handler->init();
         } catch (\Exception $e) {
+            if (session_id() == $sid) {
+                return true;
+            }
             debugging($e->getMessage());
             return false;
         }

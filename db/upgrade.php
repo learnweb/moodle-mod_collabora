@@ -104,5 +104,38 @@ function xmldb_collabora_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024102900, 'collabora');
     }
 
+    if ($oldversion < 2025030400) {
+
+        // Define field doctoken to be added to collabora_document.
+        $table = new xmldb_table('collabora_document');
+        $field = new xmldb_field('doctoken', XMLDB_TYPE_CHAR, '254', null, null, null, null, 'groupid');
+
+        // Conditionally launch add field doctoken.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define index doctoken (unique) to be added to collabora_document.
+        $table = new xmldb_table('collabora_document');
+        $index = new xmldb_index('doctoken', XMLDB_INDEX_UNIQUE, ['doctoken']);
+
+        // Conditionally launch add index doctoken.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field documentid to be added to collabora_token.
+        $table = new xmldb_table('collabora_token');
+        $field = new xmldb_field('documentid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'userid');
+
+        // Conditionally launch add field documentid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Collabora savepoint reached.
+        upgrade_mod_savepoint(true, 2025030400, 'collabora');
+    }
+
     return true;
 }

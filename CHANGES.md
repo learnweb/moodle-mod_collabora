@@ -3,6 +3,10 @@ moodle-mod_collabora
 
 Changes
 -------
+### v4.5.3
+* 2025-03-04 -  Add feature to show user pictures in collabora editor (thanks to https://github.com/hfiguiere)
+* 2025-03-04 -  Optimize handling of tokens
+
 ### v4.5.2
 * 2025-01-21 -  Since Moodle 4.5, you have to check an existing session by using the session handler (#45).
 * 2025-01-21 -  Fix wrong type param in repair.php

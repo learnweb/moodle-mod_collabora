@@ -77,6 +77,7 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
         $data->collaboraid = $this->get_new_parentid('collabora');
         $data->groupid     = $data->groupid ? $this->get_mappingid('group', $data->groupid) : 0;
         $data->repaircount = 0;
+        $data->doctoken = collabora_fs::get_unique_table_token('collabora_document', 'doctoken');
 
         $newitemid = $DB->insert_record('collabora_document', $data);
         $this->set_mapping('collabora_document', $oldid, $newitemid);

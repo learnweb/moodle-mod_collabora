@@ -110,6 +110,16 @@ class connection extends base {
         );
 
         $page->add(
+            new \admin_setting_configselect(
+                'mod_collabora/shareuserimages',
+                get_string('setting_share_userimages', 'mod_collabora'),
+                get_string('setting_share_userimages_help', 'mod_collabora'),
+                1,
+                util::yesno_options()
+            )
+        );
+
+        $page->add(
             new \admin_setting_heading(
                 'mod_collabora_security_hdr',
                 get_string('setting_header_security', 'mod_collabora'),

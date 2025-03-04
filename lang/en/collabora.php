@@ -90,6 +90,8 @@ $string['setting_allowcollaboraserverexplicit_help'] = '<strong>Note:</strong> T
 If your Collabora server is accessed by one of the in <strong>$CFG->curlsecurityblockedhosts</strong> defined hosts you have to enable this setting or remove the host from the blocked list.';
 $string['setting_connection']               = 'Connection';
 $string['setting_header_security']          = 'Security';
+$string['setting_share_userimages']         = 'Share user images with Collabora users.';
+$string['setting_share_userimages_help']    = 'Users who are working together on a document can see the user images in the Collabora editor. If you do not want this, deactivate this setting.';
 $string['setting_showlegacytemplates']      = 'Show legacy templates';
 $string['setting_showlegacytemplates_help'] = 'When a new document is created, the legacy templates can also be used in addition to the templates defined here.';
 $string['setting_templates']                = 'Templates';

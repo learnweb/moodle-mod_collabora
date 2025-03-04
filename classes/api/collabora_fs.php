@@ -144,6 +144,47 @@ class collabora_fs extends base_filesystem {
     }
 
     /**
+     * Generates a unique token for a specified table and field.
+     *
+     * This function repeatedly generates random strings until it finds one
+     * that doesn't already exist in the specified table and field.
+     *
+     * @param string $table The name of the database table to check against.
+     * @param string $tokenfield The name of the field in the table to check for uniqueness.
+     * @return string A unique random string of 12 characters.
+     */
+    public static function get_unique_table_token(string $table, string $tokenfield) {
+        global $DB;
+        while (true) {
+            $token = random_string(12);
+            if (!$DB->record_exists($table, [$tokenfield => $token])) {
+                return $token;
+            }
+        }
+    }
+
+    /**
+     * Validates a document token against a user ID.
+     *
+     * This function checks if a given document token is valid for a specific user
+     * by querying the database for matching records in the collabora_document
+     * and collabora_token tables.
+     *
+     * @param string $doctoken The document token to validate.
+     * @param int $userid The ID of the user to check against.
+     * @return bool Returns true if the document token is valid for the given user, false otherwise.
+     */
+    public static function validate_doctoken(string $doctoken, int $userid): bool {
+        global $DB;
+
+        $sql = 'SELECT cd.* FROM {collabora_document} cd
+                INNER JOIN {collabora_token} ct ON ct.documentid = cd.id
+                WHERE cd.doctoken = :doctoken AND ct.userid = :userid
+        ';
+        return $DB->record_exists_sql($sql, ['doctoken' => $doctoken, 'userid' => $userid]);
+    }
+
+    /**
      * Constructor.
      *
      * @param \stdClass $collaborarec
@@ -289,10 +330,16 @@ class collabora_fs extends base_filesystem {
             $this->document = (object) [
                 'collaboraid' => $this->collaborarec->id,
                 'groupid'     => $this->groupid,
+                'doctoken'    => static::get_unique_table_token('collabora_document', 'doctoken'),
                 'locked'      => 0,
                 'repaircount' => 0,
             ];
             $this->document->id = $DB->insert_record('collabora_document', $this->document);
+        } else {
+            if (!$this->document->doctoken) {
+                $this->document->doctoken = static::get_unique_table_token('collabora_document', 'doctoken');
+                $DB->update_record('collabora_document', $this->document);
+            }
         }
     }
 
@@ -380,6 +427,21 @@ class collabora_fs extends base_filesystem {
             throw new \moodle_exception('Could not create file from initial file');
         }
         return $file;
+    }
+
+    /**
+     * Retrieves the URL for the user's picture, if sharing is enabled.
+     *
+     * @return string The URL for the user's picture, or an empty string if sharing is not enabled.
+     */
+    public function get_userpicture_url(): string {
+        if (!empty($this->myconfig->shareuserimages)) {
+            $urlparams = ['userid' => $this->user->id, 'doctoken' => $this->document->doctoken];
+            $url = new \moodle_url('/mod/collabora/userpic.php', $urlparams);
+            return $url->out(false);
+        }
+
+        return '';
     }
 
     /**
@@ -497,32 +559,29 @@ class collabora_fs extends base_filesystem {
         $params = [
             'userid' => $this->user->id,
             'sid'    => session_id(),
+            'documentid' => $this->document->id,
         ];
         $sql = 'SELECT * from {collabora_token} ct
-                WHERE ct.userid = :userid AND ct.sid = :sid
+                WHERE ct.userid = :userid AND ct.sid = :sid AND ct.documentid = :documentid
         ';
 
-        $tokenrec = $DB->get_record_sql($sql, $params);
+        $tokenrecs = $DB->get_records_sql($sql, $params);
 
         // Check the user has a valid session in moodle.
+        $tokenrec = array_pop($tokenrecs);
         if (!empty($tokenrec->token)) {
             if (static::session_exists($tokenrec->sid)) {
                 return $tokenrec->token;
             }
         }
         // Create a new token record.
-        $tokenrec         = new \stdClass();
-        $tokenrec->userid = $this->user->id;
-        $tokenrec->token  = random_string(12);
-        $tokenrec->sid    = session_id();
+        $tokenrec             = new \stdClass();
+        $tokenrec->userid     = $this->user->id;
+        $tokenrec->documentid = $this->document->id;
+        $tokenrec->token      = static::get_unique_table_token('collabora_token', 'token');
+        $tokenrec->sid        = session_id();
 
-        $params = ['token' => $tokenrec->token];
-        while (true) {
-            if (!$DB->record_exists('collabora_token', $params)) {
-                $DB->insert_record('collabora_token', $tokenrec, false);
-                break;
-            }
-        }
+        $DB->insert_record('collabora_token', $tokenrec);
 
         return $tokenrec->token;
     }

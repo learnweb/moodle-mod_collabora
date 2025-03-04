@@ -364,6 +364,16 @@ abstract class base_filesystem {
     }
 
     /**
+     * Get the url of the userpicture to be shown inside the collabora editor.
+     * This method should be overriden by the implementing class.
+     *
+     * @return string
+     */
+    public function get_userpicture_url() {
+        return '';
+    }
+
+    /**
      * Get the URL for the iframe in which to display the collabora document.
      *
      * @param bool $showclosebutton

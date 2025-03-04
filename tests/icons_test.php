@@ -40,7 +40,7 @@ final class icons_test extends \advanced_testcase {
     /**
      * Test for default icon.
      *
-     * @covers \mod_collabora\api\collabora
+     * @covers \mod_collabora\api\collabora_fs::get_module_icon
      * @return void
      */
     public function test_default_module_icon(): void {
@@ -61,7 +61,7 @@ final class icons_test extends \advanced_testcase {
     /**
      * Test for wordprocessor icon.
      *
-     * @covers \mod_collabora\api\collabora
+     * @covers \mod_collabora\api\collabora_fs::get_module_icon
      * @return void
      */
     public function test_wordprocessor_module_icon(): void {
@@ -81,7 +81,7 @@ final class icons_test extends \advanced_testcase {
     /**
      * Test for spreadsheet icon.
      *
-     * @covers \mod_collabora\api\collabora
+     * @covers \mod_collabora\api\collabora_fs::get_module_icon
      * @return void
      */
     public function test_spreadsheet_module_icon(): void {
@@ -101,7 +101,7 @@ final class icons_test extends \advanced_testcase {
     /**
      * Test for presentation icon.
      *
-     * @covers \mod_collabora\api\collabora
+     * @covers \mod_collabora\api\collabora_fs::get_module_icon
      * @return void
      */
     public function test_presentation_module_icon(): void {
