@@ -56,7 +56,7 @@ if ($loadcurrentfile) {
 }
 
 // Load the version file only if activated.
-if (!$collaborafs->use_versions()) {
+if ($collaborafs->use_versions()) {
     if (!empty($loadversion)) {
         require_capability('mod/collabora:manageversions', $PAGE->context);
         $collaborafs->send_version_file($loadversion);
@@ -86,6 +86,7 @@ $opts = [
     'courseurl'       => (new moodle_url('/course/view.php', ['id' => $course->id]))->out(),
     'aspopup'         => $aspopup,
     'iframeid'        => 'collaboraiframe_' . $collabora->id,
+    'useversions'     => $collaborafs->use_versions(),
     'versionviewerid' => 'version_viewer_' . $collabora->id,
     'versionmanager'  => has_capability('mod/collabora:manageversions', $cm->context),
     'strback'         => get_string('back'),

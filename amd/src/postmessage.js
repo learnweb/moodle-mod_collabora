@@ -45,6 +45,7 @@ class PostMessageHandler {
     strBack;
     uiMode;
     version;
+    useVersions;
     versionManager;
     versionViewer;
     spinner;
@@ -66,6 +67,11 @@ class PostMessageHandler {
         this.strBack = opts.strback;
         this.imgBackUrl = opts.imgbackurl;
         this.uiMode = opts.uimode;
+        if (opts.useversions == undefined) {
+            this.useVersions = false;
+        } else {
+            this.useVersions = opts.useversions;
+        }
         this.versionManager = opts.versionmanager;
         this.isSaving = false;
 
@@ -187,8 +193,10 @@ class PostMessageHandler {
      * Show the version_view page with all current versions.
      */
     showVersionView() {
+        if (!this.useVersions) {
+            return;
+        }
         const _this = this;
-
         _this.loadVersionView();
         $('#' + _this.versionViewer.id).collapse('show');
     }
@@ -252,6 +260,9 @@ class PostMessageHandler {
 
         if (msg.Values.Modified == false) {
             if (_this.isSaving) {
+                if (!_this.useVersions) {
+                    return;
+                }
                 _this.loadVersionView();
             }
         }

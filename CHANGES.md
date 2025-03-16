@@ -3,6 +3,11 @@ moodle-mod_collabora
 
 Changes
 -------
+### v4.5.4
+* 2025-03-16 -  If "Enable versioning" was set to "No", an error appeared
+* 2025-03-16 -  Download of version files was not possible
+
+-------
 ### v4.5.3
 * 2025-03-04 -  Add feature to show user pictures in collabora editor - **thanks to** [Collabora Productivity](https://www.collaboraonline.com)
 * 2025-03-04 -  Add feature to show the collabora server audit for siteadmins - **thanks to** [Collabora Productivity](https://www.collaboraonline.com)
