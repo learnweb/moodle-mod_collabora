@@ -28,30 +28,27 @@ require_once(__DIR__ . '/mod_form.php');
  * Checks whether or not a feature is supported.
  *
  * @param  string $feature
- * @return bool
+ * @return mixed  True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function collabora_supports($feature) {
     switch ($feature) {
         case FEATURE_GROUPS:
-            return true;
         case FEATURE_GROUPINGS:
-            return true;
         case FEATURE_MOD_INTRO:
-            return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
-            return true;
-        case FEATURE_GRADE_HAS_GRADE:
-            return false;
-        case FEATURE_GRADE_OUTCOMES:
-            return false;
         case FEATURE_BACKUP_MOODLE2:
-            return true;
         case FEATURE_SHOW_DESCRIPTION:
             return true;
+
+        case FEATURE_GRADE_HAS_GRADE:
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
+
         case FEATURE_MOD_PURPOSE:
             return MOD_PURPOSE_COLLABORATION;
+
         default:
-            return false;
+            return null;
     }
 }
 

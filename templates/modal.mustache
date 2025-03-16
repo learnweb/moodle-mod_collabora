@@ -32,15 +32,15 @@
         <div class="modal-content h-100">
 
             <!-- Modal Header -->
-            <div class="modal-header">
-                <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal" title="{{#str}}restorewindowsize, mod_collabora{{/str}}" >
+            <div class="modal-header d-flex justify-content-between border-0 py-1">
+                <button type="button" class="close-button btn btn-primary btn-sm" data-bs-dismiss="modal" title="{{#str}}restorewindowsize, mod_collabora{{/str}}" >
                     <i class="fa fa-compress fa-lg" aria-hidden="true"> </i>
                 </button>
-                {{#loadfileurl}}<div class="float-right mt-2"><a href="{{{.}}}" title="{{#str}}download{{/str}}"><i class="icon fa fa-download"></i>{{#str}}download{{/str}}</a></div>{{/loadfileurl}}
+                {{#loadfileurl}}<div class="mt-2"><a href="{{{.}}}" title="{{#str}}download{{/str}}"><i class="icon fa fa-download"></i>{{#str}}download{{/str}}</a></div>{{/loadfileurl}}
             </div>
 
             <!-- Modal body -->
-            <div id="collaboramodal-body_{{id}}" class="modal-body">
+            <div id="collaboramodal-body_{{id}}" class="modal-body pt-1">
                 <!-- The iframe is moved here when the modal is shown. -->
             </div>
         </div>

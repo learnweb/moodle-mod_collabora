@@ -50,20 +50,24 @@
 {{/embedded}}
 
 {{^warning}}
-    {{^embedded}}
-        <button type="button" title="{{#str}}fullscreen, mod_collabora{{/str}}" class="collaboramodal btn btn-primary btn-sm" data-toggle="modal" data-target="#collaboramodal_{{id}}">
-            <i class="fa fa-expand fa-lg" aria-hidden="true"></i>
-        </button>
-    {{/embedded}}
-    {{{activitymenu}}}
-    {{{lockicon}}}
-    {{#loadfileurl}}
-        <div class="float-right mr-2{{^embedded}} mt-2{{/embedded}}">
-            <a href="{{{.}}}" title="{{#str}}download{{/str}}">
-                <i class="icon fa fa-download"></i>{{#str}}download{{/str}}
-            </a>
-        </div>
-    {{/loadfileurl}}
+    <div class="d-flex justify-content-between">
+        {{^embedded}}
+            <button type="button" title="{{#str}}fullscreen, mod_collabora{{/str}}" class="collaboramodal btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#collaboramodal_{{id}}">
+                <i class="fa fa-expand fa-lg fa-fw" aria-hidden="true"></i>
+            </button>
+        {{/embedded}}
+        {{{activitymenu}}}
+        <span class="flex-grow-1 align-self-center ms-2">
+            {{{lockicon}}}
+        </span>
+        {{#loadfileurl}}
+            <div class="align-self-center me-2{{^embedded}} mt-2{{/embedded}}">
+                <a href="{{{.}}}" title="{{#str}}download{{/str}}">
+                    <i class="icon fa fa-download"></i>{{#str}}download{{/str}}
+                </a>
+            </div>
+        {{/loadfileurl}}
+    </div>
     {{> mod_collabora/inline}}
     {{^embedded}}
         {{> mod_collabora/modal}}

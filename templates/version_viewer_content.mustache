@@ -35,7 +35,7 @@
     <tbody>
         {{#currentfileinfo}}
             <tr {{#iscurrent}} class="border-success" style="border-left-style:solid;border-left-width:5px;"{{/iscurrent}}>
-                <td class="font-weight-bold"><i class="fa fa-asterisk fa-fw"></i> {{timemodified}}</td>
+                <td class="fw-bold"><i class="fa fa-asterisk fa-fw"></i> {{timemodified}}</td>
                 <td>
                     {{#hasversions}}
                         {{^iscurrent}}
@@ -66,19 +66,19 @@
                         <a href="{{{downloadurl}}}" class="text-decoration-none" target="_blank" title="{{#str}} download {{/str}}">
                             <i class="fa fa-download fa-fw"></i>
                         </a>
-                        <a href="#" class="text-decoration-none" title="{{#str}} restore {{/str}}" data-toggle="collapse" data-target="#restorequestion-{{version}}">
-                            <i class="fa fa-undo fa-fw" data-toggle="collapse" data-target="#restorequestion-{{version}}"></i>
+                        <a href="#" class="text-decoration-none" title="{{#str}} restore {{/str}}" data-bs-toggle="collapse" data-bs-target="#restorequestion-{{version}}">
+                            <i class="fa fa-undo fa-fw" data-bs-toggle="collapse" data-bs-target="#restorequestion-{{version}}"></i>
                         </a>
-                        <a href="#" class="text-decoration-none text-danger" title="{{#str}} delete {{/str}}" data-toggle="collapse" data-target="#deletequestion-{{version}}">
+                        <a href="#" class="text-decoration-none text-danger" title="{{#str}} delete {{/str}}" data-bs-toggle="collapse" data-bs-target="#deletequestion-{{version}}">
                             <i class="fa fa-trash fa-fw"></i>
                         </a>
                         <!-- Confirmation toggles -->
                         <div id="restorequestion-{{version}}" class="collapse">
-                            <a href="#" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#restorequestion-{{version}}">{{#str}}no{{/str}}</a>
+                            <a href="#" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#restorequestion-{{version}}">{{#str}}no{{/str}}</a>
                             <a href="#" class="btn btn-primary btn-sm collabora-restore-button" data-version="{{version}}">{{#str}}yes{{/str}}</a>
                         </div>
                         <div id="deletequestion-{{version}}" class="collapse">
-                            <a href="#" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#deletequestion-{{version}}">{{#str}}no{{/str}}</a>
+                            <a href="#" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#deletequestion-{{version}}">{{#str}}no{{/str}}</a>
                             <a href="#" class="btn btn-danger btn-sm collabora-deleteversion-button" data-version="{{version}}">{{#str}}yes{{/str}}</a>
                         </div>
                     </td>
@@ -87,13 +87,13 @@
         {{/hasversions}}
 
         <tr>
-            <td class="font-weight-bold">{{#str}} initialfile, mod_collabora {{/str}}</td>
+            <td class="fw-bold">{{#str}} initialfile, mod_collabora {{/str}}</td>
             <td>
-                <a href="#" class="text-decoration-none" title="{{#str}} restore {{/str}}" data-toggle="collapse" data-target="#restorequestion-init">
-                    <i class="fa fa-undo fa-fw" data-toggle="collapse" data-target="#restorequestion-init"></i>
+                <a href="#" class="text-decoration-none" title="{{#str}} restore {{/str}}" data-bs-toggle="collapse" data-bs-target="#restorequestion-init">
+                    <i class="fa fa-undo fa-fw" data-bs-toggle="collapse" data-bs-target="#restorequestion-init"></i>
                 </a>
                 <div id="restorequestion-init" class="collapse">
-                    <a href="#" class="btn btn-secondary btn-sm" data-toggle="collapse" data-target="#restorequestion-init">{{#str}}no{{/str}}</a>
+                    <a href="#" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#restorequestion-init">{{#str}}no{{/str}}</a>
                     <a href="#" class="btn btn-primary btn-sm collabora-restore-button" data-version="-1">{{#str}}yes{{/str}}</a>
                 </div>
             </td>
