@@ -3,6 +3,10 @@ moodle-mod_collabora
 
 Changes
 -------
+
+### v5.0
+* adjust code for Moodle 5.0 using Bootstrap 5.3
+
 ### v4.5.4
 * 2025-03-16 -  If "Enable versioning" was set to "No", an error appeared
 * 2025-03-16 -  Download of version files was not possible
