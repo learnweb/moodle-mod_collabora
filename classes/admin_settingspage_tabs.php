@@ -18,9 +18,9 @@
  * This plugin extends the auth_oidc plugin with additional features for schools.
  *
  * @package    mod_collabora
- * @copyright  2021 (http://www.grabs-edv.de)
- * @author     Andreas Grabs
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_collabora;

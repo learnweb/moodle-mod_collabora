@@ -20,7 +20,7 @@ use mod_collabora\api\collabora_fs;
  * Define all the restore steps that will be used by the restore_collabora_activity_task.
  *
  * @package    mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @copyright  2019 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_collabora_activity_structure_step extends restore_activity_structure_step {
@@ -144,6 +144,5 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
             }
             $file->set_timemodified($timestamp);
         }
-
     }
 }

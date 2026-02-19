@@ -17,9 +17,10 @@
 /**
  * The mod_collabora document unlocked event.
  *
- * @package    mod_collabora
- * @copyright  2019 Davo Smith, Synergy Learning
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_collabora
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_collabora\event;

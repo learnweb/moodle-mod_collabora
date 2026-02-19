@@ -17,11 +17,10 @@
 /**
  * Redirects to the list of etherpadlite activities in the courseoverview.
  *
- * @package    mod_etherpadlite
- *
- * @author     Timo Welde <tjwelde@gmail.com>
- * @copyright  2012 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_collabora
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // phpcs:disable moodle.Files.MoodleInternal.MoodleInternalGlobalState

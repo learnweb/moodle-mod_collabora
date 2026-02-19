@@ -20,7 +20,8 @@ namespace mod_collabora\api;
  * Class to handle callbacks from Collabora.
  *
  * @package   mod_collabora
- * @copyright 2022 Andreas Grabs <moodle@grabs-edv.de>
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class base_filesystem {
@@ -543,11 +544,11 @@ abstract class base_filesystem {
         $files = $fs->get_area_files(
             $this->file->get_contextid(), // Param contextid.
             $this->file->get_component(), // Param component.
-            $this->file->get_filearea(),  // Param filearea.
-            $this->file->get_itemid(),    // Param itemid.
+            $this->file->get_filearea(), // Param filearea.
+            $this->file->get_itemid(), // Param itemid.
             // The sorting is important because of the way we store document versions.
-            'filepath',                   // Param sort.
-            false                         // Param includedirs.
+            'filepath', // Param sort.
+            false // Param includedirs.
         );
         $result = [];
         foreach ($files as $file) {

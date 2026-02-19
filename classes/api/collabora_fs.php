@@ -25,7 +25,8 @@ use mod_collabora\util;
  * Main support functions.
  *
  * @package   mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class collabora_fs extends base_filesystem {
@@ -102,7 +103,7 @@ class collabora_fs extends base_filesystem {
         if (count($parts) < 4) {
             throw new \moodle_exception('invalidfileid', 'mod_collabora');
         }
-        list($contextid, $groupid, $repaircount, $version) = $parts;
+        [$contextid, $groupid, $repaircount, $version] = $parts;
 
         // Check the context.
         $context = \context::instance_by_id($contextid);
@@ -113,7 +114,7 @@ class collabora_fs extends base_filesystem {
 
         // Check the group access.
         $isgroupmember     = true;
-        list($course, $cm) = get_course_and_cm_from_cmid($context->instanceid, 'collabora');
+        [$course, $cm] = get_course_and_cm_from_cmid($context->instanceid, 'collabora');
         $rec               = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
 
         $groupmode = groups_get_activity_groupmode($cm);
@@ -353,16 +354,16 @@ class collabora_fs extends base_filesystem {
     private function create_retrieve_file() {
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            $this->context->id,   // Param contextid.
-            'mod_collabora',      // Param component.
+            $this->context->id, // Param contextid.
+            'mod_collabora', // Param component.
             self::FILEAREA_GROUP, // Param filearea.
-            $this->groupid,       // Param itemid.
+            $this->groupid, // Param itemid.
             // The sorting is important because of the way we store document versions.
-            'filepath',           // Param sort.
-            false,                // Param includedirs.
-            0,                    // Param updatedsince.
-            0,                    // Param limitfrom.
-            1                     // Param limitnum.
+            'filepath', // Param sort.
+            false, // Param includedirs.
+            0, // Param updatedsince.
+            0, // Param limitfrom.
+            1 // Param limitnum.
         );
         $file = reset($files);
         if ((!$file) || $file->get_filepath() != '/') {
@@ -381,15 +382,15 @@ class collabora_fs extends base_filesystem {
     private function get_initial_file() {
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            $this->context->id,     // Param contextid.
-            'mod_collabora',        // Param component.
+            $this->context->id, // Param contextid.
+            'mod_collabora', // Param component.
             self::FILEAREA_INITIAL, // Param filearea.
-            false,                  // Param itemid.
-            'filename',             // Param sort.
-            false,                  // Param includedirs.
-            0,                      // Param updatedsince.
-            0,                      // Param limitfrom.
-            1                       // Param limitnum.
+            false, // Param itemid.
+            'filename', // Param sort.
+            false, // Param includedirs.
+            0, // Param updatedsince.
+            0, // Param limitfrom.
+            1 // Param limitnum.
         );
 
         $file  = reset($files);

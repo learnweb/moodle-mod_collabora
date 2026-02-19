@@ -19,11 +19,11 @@ namespace mod_collabora\output;
 /**
  * Plugin renderer.
  *
- * @package    mod_collabora
+ * @package   mod_collabora
  *
- * @author     Andreas Grabs <moodle@grabs-edv.de>
- * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends \plugin_renderer_base {
     /**

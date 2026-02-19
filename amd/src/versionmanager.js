@@ -14,12 +14,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Change the iframe size relative to the window size.
+ * Manage version history panel and actions.
  *
- * @module     mod_collabora/resizeiframe
- * @author     Andreas Grabs <moodle@grabs-edv.de>
- * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module    mod_collabora/versionmanager
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import log from 'core/log';

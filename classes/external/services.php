@@ -22,7 +22,8 @@ use mod_collabora\util;
  * Main support functions.
  *
  * @package   mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class services extends external_api {

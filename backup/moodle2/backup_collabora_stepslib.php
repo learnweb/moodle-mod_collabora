@@ -18,7 +18,7 @@
  * Define all the backup steps that will be used by the backup_collabora_activity_task.
  *
  * @package    mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @copyright  2019 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_collabora_activity_structure_step extends backup_activity_structure_step {

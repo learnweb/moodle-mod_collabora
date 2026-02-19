@@ -105,7 +105,6 @@ function xmldb_collabora_upgrade($oldversion) {
     }
 
     if ($oldversion < 2025030400) {
-
         // Define field doctoken to be added to collabora_document.
         $table = new xmldb_table('collabora_document');
         $field = new xmldb_field('doctoken', XMLDB_TYPE_CHAR, '254', null, null, null, null, 'groupid');

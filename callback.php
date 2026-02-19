@@ -18,7 +18,8 @@
  * Endpoint for callback from Collabora.
  *
  * @package   mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -35,7 +36,7 @@ $relativepath = get_file_argument();
 $accesstoken  = required_param('access_token', PARAM_ALPHANUMEXT);
 $postdata     = file_get_contents('php://input');
 
-list($requesttyp, $fileid) = api::get_request_and_fileid_from_path($relativepath, $postdata);
+[$requesttyp, $fileid] = api::get_request_and_fileid_from_path($relativepath, $postdata);
 $collaborafs               = collabora_fs::get_instance_by_fileid($fileid, $accesstoken);
 $api                       = new api($requesttyp, $collaborafs, $postdata);
 $api->handle_request();

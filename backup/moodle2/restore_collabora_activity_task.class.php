@@ -22,7 +22,7 @@ require_once($CFG->dirroot . '/mod/collabora/backup/moodle2/restore_collabora_st
  * collabora restore task that provides all the settings and steps to perform one complete restore of the activity.
  *
  * @package    mod_collabora
- * @copyright 2019 Davo Smith, Synergy Learning
+ * @copyright  2019 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_collabora_activity_task extends restore_activity_task {

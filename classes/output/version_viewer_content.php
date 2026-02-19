@@ -19,11 +19,11 @@ namespace mod_collabora\output;
 /**
  * Output class to render the collabora iframe page.
  *
- * @package    mod_collabora
+ * @package   mod_collabora
  *
- * @author     Andreas Grabs <moodle@grabs-edv.de>
- * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class version_viewer_content implements \renderable, \templatable {
     /** @var \stdClass */

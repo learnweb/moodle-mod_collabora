@@ -26,7 +26,8 @@ use core_courseformat\local\overview\overviewitem;
  * Etherpad Lite overview integration (for Moodle 5.1+)
  *
  * @package   mod_collabora
- * @copyright 2025 Luca Bösch <luca.boesch@bfh.ch>
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class overview extends \core_courseformat\activityoverviewbase {
@@ -52,10 +53,18 @@ class overview extends \core_courseformat\activityoverviewbase {
         );
 
         $text = get_string('view');
+        // The button::BODY_OUTLINE constant is available since Moodle 5.1.
+        // So we have to check the existing here.
+        if (defined(button::class . '::BODY_OUTLINE')) {
+            $bodyclass = button::BODY_OUTLINE->classes();
+        } else {
+            $bodyclass = button::SECONDARY_OUTLINE->classes();
+        }
+
         $content = new action_link(
             url: $url,
             text: $text,
-            attributes: ['class' => button::BODY_OUTLINE->classes()],
+            attributes: ['class' => $bodyclass],
         );
 
         return new overviewitem(

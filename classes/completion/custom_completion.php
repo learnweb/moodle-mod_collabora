@@ -26,12 +26,12 @@ use core_completion\activity_custom_completion;
  * Class for defining mod_collabora's custom completion rules and fetching the completion statuses
  * of the custom completion rules for a given collabora instance and a user.
  *
- * @package    mod_collabora
- * @copyright  2021 Huong Nguyen <huongn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_collabora
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_completion extends activity_custom_completion {
-
     /**
      * Fetches the completion state for a given completion rule.
      *
@@ -69,14 +69,14 @@ class custom_completion extends activity_custom_completion {
      */
     public function manual_completion_always_shown(): bool {
         global $CFG;
-        require_once($CFG->libdir.'/resourcelib.php');
+        require_once($CFG->libdir . '/resourcelib.php');
 
         $display = $this->cm->customdata['display'] ?? null;
 
         $displaytypes = [
                 RESOURCELIB_DISPLAY_NEW,
                 RESOURCELIB_DISPLAY_OPEN,
-                RESOURCELIB_DISPLAY_POPUP
+                RESOURCELIB_DISPLAY_POPUP,
         ];
 
         return in_array($display, $displaytypes);

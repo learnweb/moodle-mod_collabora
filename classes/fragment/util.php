@@ -19,11 +19,11 @@ namespace mod_collabora\fragment;
 /**
  * Util class for fragment api.
  *
- * @package    mod_collabora
+ * @package   mod_collabora
  *
- * @author     Andreas Grabs <moodle@grabs-edv.de>
- * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class util {
     /**
@@ -61,7 +61,7 @@ class util {
 
         $version = $args['version'] ?? 0;
 
-        list($course, $cm) = get_course_and_cm_from_instance($id, 'collabora');
+        [$course, $cm] = get_course_and_cm_from_instance($id, 'collabora');
         $versionwidget     = new \mod_collabora\output\version_viewer_content($cm, $version);
 
         return $OUTPUT->render($versionwidget);
@@ -82,7 +82,7 @@ class util {
             throw new \moodle_exception('missing or wrong id');
         }
 
-        list($course, $cm) = get_course_and_cm_from_instance($id, 'collabora');
+        [$course, $cm] = get_course_and_cm_from_instance($id, 'collabora');
         $collabora         = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
         $groupid           = \mod_collabora\util::get_current_groupid_from_cm($cm);
 

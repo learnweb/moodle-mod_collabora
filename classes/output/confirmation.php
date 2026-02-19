@@ -19,11 +19,11 @@ namespace mod_collabora\output;
 /**
  * Output class to render a confirmation page.
  *
- * @package    mod_collabora
+ * @package   mod_collabora
  *
- * @author     Andreas Grabs <moodle@grabs-edv.de>
- * @copyright  2019 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class confirmation implements \renderable, \templatable {
     /** @var \stdClass */
@@ -40,9 +40,15 @@ class confirmation implements \renderable, \templatable {
      * @param string|null $cancellabel
      * @param string|null $moreinfos
      */
-    public function __construct(\moodle_url $confirmurl, \moodle_url $cancelurl,
-        string $title, string $confirmquestion, ?string $confirmlabel = null,
-        ?string $cancellabel = null, ?string $moreinfos = null) {
+    public function __construct(
+        \moodle_url $confirmurl,
+        \moodle_url $cancelurl,
+        string $title,
+        string $confirmquestion,
+        ?string $confirmlabel = null,
+        ?string $cancellabel = null,
+        ?string $moreinfos = null
+    ) {
         global $OUTPUT;
         $confirmlabel = $confirmlabel === null ? get_string('ok') : $confirmlabel;
         $cancellabel  = $cancellabel === null ? get_string('cancel') : $cancellabel;

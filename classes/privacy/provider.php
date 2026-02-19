@@ -44,7 +44,7 @@ use core_privacy\local\request\plugin\provider as plugin_provider;
  * @copyright  2019 Justus Dieckmann, WWU; based on code by Benjamin Ellis, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements metadata_provider, plugin_provider, core_userlist_provider {
+class provider implements core_userlist_provider, metadata_provider, plugin_provider {
     /**
      * Return meta data about this plugin.
      *

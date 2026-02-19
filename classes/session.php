@@ -23,14 +23,13 @@ use mod_collabora\api\collabora_fs;
  *
  * Currently it is only used to find out whether or not a user has a valid session.
  *
- * @package    mod_collabora
+ * @package   mod_collabora
  *
- * @author     Andreas Grabs <moodle@grabs-edv.de>
- * @copyright  2025 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class session {
-
     /**
      * Does the PHP session with given id exist?
      *

@@ -23,7 +23,8 @@ namespace mod_collabora\api;
  * See $CFG->curlsecurityblockedhosts
  *
  * @package   mod_collabora
- * @copyright 2021 Andreas Grabs
+ * @author    Andreas Grabs <info@grabs-edv.de>
+ * @copyright 2021 onwards Grabs EDV {@link https://www.grabs-edv.de}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class curl_security_helper extends \core\files\curl_security_helper {

@@ -50,7 +50,8 @@ final class userpicture_test extends \advanced_testcase {
     public function test_userpicture(): void {
         global $USER;
 
-        $collabora = $this->getDataGenerator()->create_module('collabora',
+        $collabora = $this->getDataGenerator()->create_module(
+            'collabora',
             [
                 'course'      => $this->course,
                 'format'      => 'text',
@@ -99,7 +100,7 @@ final class userpicture_test extends \advanced_testcase {
 
         $params = new \stdClass();
         foreach ($queryparts as $querypart) {
-            list($key, $value) = explode('=', $querypart);
+            [$key, $value] = explode('=', $querypart);
             $params->{$key} = $value;
         }
         return $params;
