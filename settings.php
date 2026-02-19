@@ -33,7 +33,6 @@ if ($hassiteconfig) {
         'modsettingcollabora',
         get_string('pluginname', 'mod_collabora')
     );
-    $settingscategory->set_description(get_string('modulename_help', 'mod_collabora'));
     $settingscategory->add(\mod_collabora\setting_tab\connection::get_settings_tab());
     $settingscategory->add(\mod_collabora\setting_tab\template::get_settings_tab());
 

@@ -59,7 +59,12 @@ $string['initialtext']                                       = 'Initial text';
 $string['locked']                                            = 'Document locked by teacher';
 $string['lockedunlock']                                      = 'Document currently locked, click here to unlock it and allow editing';
 $string['modulename']                                        = 'Collaborative document';
-$string['modulename_help']                                   = 'With this application you can connect to a Collabora Online Server to create a text, word, presentation or spreet sheet document or upload a document and work collaborative on this document.';
+$string['modulename_help']                                   = 'Collabora Online is an open-source, browser-based office suite that lets multiple users edit documents, spreadsheets, presentations and drawings together in real time.
+
+###### Key capabilities include:
+
+- Real-time collaborative editing with comments, change tracking and version history, so teams can work on the same file simultaneously without version conflicts.
+- Broad file format support (ODF, modern and older Microsoft Office formats, plus PDF, CSV, RTF, EPUB and others), preserving layout and formatting as much as possible.';
 $string['modulenameplural']                                  = 'Collaborative documents';
 $string['name']                                              = 'Name';
 $string['new']                                               = 'New tab';

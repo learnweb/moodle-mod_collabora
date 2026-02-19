@@ -15,89 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * List of all collabora instances in course.
+ * Redirects to the list of etherpadlite activities in the courseoverview.
  *
- * @package    mod_collabora
- * @copyright  2019 Davo Smith, Synergy Learning
+ * @package    mod_etherpadlite
+ *
+ * @author     Timo Welde <tjwelde@gmail.com>
+ * @copyright  2012 Humboldt-Universität zu Berlin <moodle-support@cms.hu-berlin.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require(__DIR__ . '/../../config.php');
+// phpcs:disable moodle.Files.MoodleInternal.MoodleInternalGlobalState
+// phpcs:disable moodle.Files.RequireLogin.Missing
 
-$id = required_param('id', PARAM_INT); // Course id.
+require_once('../../config.php');
 
-$course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
+$courseid = required_param('id', PARAM_INT);
 
-require_course_login($course);
-$PAGE->set_pagelayout('incourse');
-
-\mod_collabora\event\course_module_instance_list_viewed::trigger_from_course($course);
-
-$strcollabora    = get_string('modulename', 'collabora');
-$strcollaboras   = get_string('modulenameplural', 'collabora');
-$strsectionname  = get_string('sectionname', 'format_' . $course->format);
-$strname         = get_string('name');
-$strintro        = get_string('moduleintro');
-$strlastmodified = get_string('lastmodified');
-
-$PAGE->set_url('/mod/collabora/index.php', ['id' => $course->id]);
-$PAGE->set_title($course->shortname . ': ' . $strcollaboras);
-$PAGE->set_heading($course->fullname);
-$PAGE->navbar->add($strcollaboras);
-echo $OUTPUT->header();
-echo $OUTPUT->heading($strcollaboras);
-
-if (!$collaboras = get_all_instances_in_course('collabora', $course)) {
-    notice(get_string('thereareno', 'moodle', $strcollaboras), "$CFG->wwwroot/course/view.php?id=$course->id");
-    exit;
-}
-
-$usesections = course_format_uses_sections($course->format);
-
-$table                      = new html_table();
-$table->attributes['class'] = 'generaltable mod_index';
-
-if ($usesections) {
-    $table->head  = [$strsectionname, $strname, $strintro];
-    $table->align = ['center', 'left', 'left'];
-} else {
-    $table->head  = [$strlastmodified, $strname, $strintro];
-    $table->align = ['left', 'left', 'left'];
-}
-
-$modinfo        = get_fast_modinfo($course);
-$currentsection = '';
-foreach ($collaboras as $collabora) {
-    $cm = $modinfo->cms[$collabora->coursemodule];
-    if ($usesections) {
-        $printsection = '';
-        if ($collabora->section !== $currentsection) {
-            if ($collabora->section) {
-                $printsection = get_section_name($course, $collabora->section);
-            }
-            if ($currentsection !== '') {
-                $table->data[] = 'hr';
-            }
-            $currentsection = $collabora->section;
-        }
-    } else {
-        $printsection = '<span class="smallinfo">' . userdate($collabora->timemodified) . '</span>';
-    }
-
-    $extra = empty($cm->extra) ? '' : $cm->extra;
-    $icon  = '';
-    if (!empty($cm->icon)) {
-        $icon = $OUTPUT->pix_icon($cm->icon, get_string('modulename', $cm->modname));
-    }
-
-    $class         = $collabora->visible ? '' : 'class="dimmed"'; // Hidden modules are dimmed.
-    $table->data[] = [
-        $printsection,
-        "<a $class $extra href=\"view.php?id=$cm->id\">" . $icon . format_string($collabora->name) . '</a>',
-        format_module_intro('collabora', $collabora, $cm->id),
-    ];
-}
-
-echo html_writer::table($table);
-
-echo $OUTPUT->footer();
+\core_courseformat\activityoverviewbase::redirect_to_overview_page($courseid, 'collabora');
