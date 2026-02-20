@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v5.0.1
+* adjust code for Moodle 5.1
+* apply new coding style
+
 ### v5.0
 * adjust code for Moodle 5.0 using Bootstrap 5.3
 
