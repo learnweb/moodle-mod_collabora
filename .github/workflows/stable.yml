@@ -106,10 +106,16 @@ jobs:
         if: ${{ always() }}
         run: moodle-plugin-ci phpunit
 
-      - name: Run behat with scss deprecations check
-        if: ${{ always() }}
+      - name: Run behat with scss deprecations check in Moodle 5.0
+        if: ${{ always() && matrix.moodlebranch == 'MOODLE_500_STABLE' }}
         run: |
           php /home/runner/work/$REPO_DIRECTORY/$REPO_DIRECTORY/moodle/admin/tool/behat/cli/init.php --scss-deprecations
+          moodle-plugin-ci behat --profile chrome
+
+      - name: Run behat with scss deprecations check in Moodle 5.1
+        if: ${{ always() && matrix.moodlebranch == 'MOODLE_501_STABLE' }}
+        run: |
+          php /home/runner/work/$REPO_DIRECTORY/$REPO_DIRECTORY/moodle/public/admin/tool/behat/cli/init.php --scss-deprecations
           moodle-plugin-ci behat --profile chrome
 
       - name: PHP Copy/Paste Detector
