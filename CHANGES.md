@@ -4,6 +4,10 @@ moodle-mod_collabora
 Changes
 -------
 
+### v5.0.2
+* fix error on security helper (#56)
+* optimize cache and connection check
+
 ### v5.0.1
 * adjust code for Moodle 5.1
 * apply new coding style
