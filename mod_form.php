@@ -29,7 +29,6 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_collabora_mod_form extends moodleform_mod {
-
     /**
      * Get the file link to the document as an html fragment.
      *
@@ -38,22 +37,29 @@ class mod_collabora_mod_form extends moodleform_mod {
     private function get_initial_file_link() {
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            $this->context->id,             // Param contextid.
-            'mod_collabora',                // Param component.
+            $this->context->id, // Param contextid.
+            'mod_collabora', // Param component.
             collabora_fs::FILEAREA_INITIAL, // Param filearea.
-            false,                          // Param itemid.
-            '',                             // Param sort.
-            false,                          // Param includedirs.
-            0,                              // Param updatedsince.
-            0,                              // Param limitfrom.
-            1                               // Param limitnum.
+            false, // Param itemid.
+            '', // Param sort.
+            false, // Param includedirs.
+            0, // Param updatedsince.
+            0, // Param limitfrom.
+            1 // Param limitnum.
         );
         $file = reset($files);
         if (!$file) {
             return get_string('missingfile', 'mod_collabora');
         }
-        $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-            $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true);
+        $url = moodle_url::make_pluginfile_url(
+            $file->get_contextid(),
+            $file->get_component(),
+            $file->get_filearea(),
+            $file->get_itemid(),
+            $file->get_filepath(),
+            $file->get_filename(),
+            true
+        );
 
         return html_writer::link($url, $file->get_filename());
     }
@@ -87,8 +93,13 @@ class mod_collabora_mod_form extends moodleform_mod {
         }
 
         if (!$this->_instance) {
-            $mform->addElement('filemanager', 'initialfile_filemanager', get_string('initialfile', 'mod_collabora'),
-                null, util::get_filemanager_opts());
+            $mform->addElement(
+                'filemanager',
+                'initialfile_filemanager',
+                get_string('initialfile', 'mod_collabora'),
+                null,
+                util::get_filemanager_opts()
+            );
             $mform->hideIf('initialfile_filemanager', 'format', 'neq', util::FORMAT_UPLOAD);
         } else {
             $mform->addElement('static', 'initialfile', get_string('initialfile', 'mod_collabora'), $this->get_initial_file_link());

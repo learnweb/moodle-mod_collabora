@@ -101,8 +101,12 @@ function collabora_update_instance($collabora) {
     $DB->update_record('collabora', $collabora);
 
     $completiontimeexpected = !empty($collabora->completionexpected) ? $collabora->completionexpected : null;
-    \core_completion\api::update_completion_date_event($collabora->coursemodule, 'collabora',
-        $collabora->id, $completiontimeexpected);
+    \core_completion\api::update_completion_date_event(
+        $collabora->coursemodule,
+        'collabora',
+        $collabora->id,
+        $completiontimeexpected
+    );
 
     // Do not save the 'initial file' here, as you cannot change this after the activity has been created.
 

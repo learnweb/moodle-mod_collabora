@@ -46,7 +46,8 @@ final class icons_test extends \advanced_testcase {
     public function test_default_module_icon(): void {
         global $USER;
 
-        $collabora = $this->getDataGenerator()->create_module('collabora',
+        $collabora = $this->getDataGenerator()->create_module(
+            'collabora',
             [
                 'course'      => $this->course,
                 'format'      => 'text',
@@ -67,7 +68,8 @@ final class icons_test extends \advanced_testcase {
     public function test_wordprocessor_module_icon(): void {
         global $USER;
 
-        $collabora = $this->getDataGenerator()->create_module('collabora',
+        $collabora = $this->getDataGenerator()->create_module(
+            'collabora',
             [
                 'course' => $this->course,
                 'format' => 'wordprocessor',
@@ -87,7 +89,8 @@ final class icons_test extends \advanced_testcase {
     public function test_spreadsheet_module_icon(): void {
         global $USER;
 
-        $collabora = $this->getDataGenerator()->create_module('collabora',
+        $collabora = $this->getDataGenerator()->create_module(
+            'collabora',
             [
                 'course' => $this->course,
                 'format' => 'spreadsheet',
@@ -107,7 +110,8 @@ final class icons_test extends \advanced_testcase {
     public function test_presentation_module_icon(): void {
         global $USER;
 
-        $collabora = $this->getDataGenerator()->create_module('collabora',
+        $collabora = $this->getDataGenerator()->create_module(
+            'collabora',
             [
                 'course' => $this->course,
                 'format' => 'presentation',

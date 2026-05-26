@@ -41,5 +41,4 @@ if ($hassiteconfig) {
         'modsettings',
         $settingscategory
     );
-
 }

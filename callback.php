@@ -35,7 +35,7 @@ $relativepath = get_file_argument();
 $accesstoken  = required_param('access_token', PARAM_ALPHANUMEXT);
 $postdata     = file_get_contents('php://input');
 
-list($requesttyp, $fileid) = api::get_request_and_fileid_from_path($relativepath, $postdata);
+[$requesttyp, $fileid] = api::get_request_and_fileid_from_path($relativepath, $postdata);
 $collaborafs               = collabora_fs::get_instance_by_fileid($fileid, $accesstoken);
 $api                       = new api($requesttyp, $collaborafs, $postdata);
 $api->handle_request();

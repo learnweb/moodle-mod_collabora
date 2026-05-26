@@ -40,9 +40,15 @@ class confirmation implements \renderable, \templatable {
      * @param string|null $cancellabel
      * @param string|null $moreinfos
      */
-    public function __construct(\moodle_url $confirmurl, \moodle_url $cancelurl,
-        string $title, string $confirmquestion, ?string $confirmlabel = null,
-        ?string $cancellabel = null, ?string $moreinfos = null) {
+    public function __construct(
+        \moodle_url $confirmurl,
+        \moodle_url $cancelurl,
+        string $title,
+        string $confirmquestion,
+        ?string $confirmlabel = null,
+        ?string $cancellabel = null,
+        ?string $moreinfos = null
+    ) {
         global $OUTPUT;
         $confirmlabel = $confirmlabel === null ? get_string('ok') : $confirmlabel;
         $cancellabel  = $cancellabel === null ? get_string('cancel') : $cancellabel;

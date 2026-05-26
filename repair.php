@@ -28,7 +28,7 @@ global $PAGE, $DB, $USER;
 $cmid    = required_param('id', PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 
-list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'collabora');
+[$course, $cm] = get_course_and_cm_from_cmid($cmid, 'collabora');
 
 $myurl = new \moodle_url($FULLME);
 $myurl->remove_all_params();
@@ -70,11 +70,11 @@ if ($confirm) {
 $confirm = new \mod_collabora\output\confirmation(
     $confirmurl,
     $returnurl,
-    get_string('repairdocument', 'mod_collabora', $rec->name),  // The title string.
-    get_string('repairdocumentconfirm', 'mod_collabora'),       // The confirmation question.
-    get_string('repair', 'mod_collabora'),                      // The label of the confirm button.
+    get_string('repairdocument', 'mod_collabora', $rec->name), // The title string.
+    get_string('repairdocumentconfirm', 'mod_collabora'), // The confirmation question.
+    get_string('repair', 'mod_collabora'), // The label of the confirm button.
     null,
-    get_string('repairdocumentconfirm_help', 'mod_collabora')   // The moreinfo text to show additional infos.
+    get_string('repairdocumentconfirm_help', 'mod_collabora') // The moreinfo text to show additional infos.
 );
 
 // Start the output.

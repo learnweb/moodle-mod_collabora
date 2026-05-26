@@ -30,7 +30,6 @@ use mod_collabora\util;
  * Settings tab for template settings.
  */
 class template extends base {
-
     /**
      * Get a tab based settings page
      *

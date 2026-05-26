@@ -61,7 +61,7 @@ class util {
 
         $version = $args['version'] ?? 0;
 
-        list($course, $cm) = get_course_and_cm_from_instance($id, 'collabora');
+        [$course, $cm] = get_course_and_cm_from_instance($id, 'collabora');
         $versionwidget     = new \mod_collabora\output\version_viewer_content($cm, $version);
 
         return $OUTPUT->render($versionwidget);
@@ -82,7 +82,7 @@ class util {
             throw new \moodle_exception('missing or wrong id');
         }
 
-        list($course, $cm) = get_course_and_cm_from_instance($id, 'collabora');
+        [$course, $cm] = get_course_and_cm_from_instance($id, 'collabora');
         $collabora         = $DB->get_record('collabora', ['id' => $cm->instance], '*', MUST_EXIST);
         $groupid           = \mod_collabora\util::get_current_groupid_from_cm($cm);
 

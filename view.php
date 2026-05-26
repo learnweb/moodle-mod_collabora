@@ -29,7 +29,7 @@ $cmid            = required_param('id', PARAM_INT);
 $loadcurrentfile = optional_param('loadcurrentfile', false, PARAM_BOOL);
 $loadversion     = optional_param('loadversion', false, PARAM_INT); // The version is the timemodified timestamp.
 
-list($course, $cm) = get_course_and_cm_from_cmid($cmid, 'collabora');
+[$course, $cm] = get_course_and_cm_from_cmid($cmid, 'collabora');
 
 $PAGE->set_url('/mod/collabora/view.php', ['id' => $cm->id]);
 require_login($course, false, $cm);

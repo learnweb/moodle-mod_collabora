@@ -641,11 +641,11 @@ abstract class base_filesystem {
         $files = $fs->get_area_files(
             $this->file->get_contextid(), // Param contextid.
             $this->file->get_component(), // Param component.
-            $this->file->get_filearea(),  // Param filearea.
-            $this->file->get_itemid(),    // Param itemid.
+            $this->file->get_filearea(), // Param filearea.
+            $this->file->get_itemid(), // Param itemid.
             // The sorting is important because of the way we store document versions.
-            'filepath',                   // Param sort.
-            false                         // Param includedirs.
+            'filepath', // Param sort.
+            false // Param includedirs.
         );
         $result = [];
         foreach ($files as $file) {

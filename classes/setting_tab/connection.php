@@ -30,7 +30,6 @@ use mod_collabora\util;
  * Settings tab for the connection settings
  */
 class connection extends base {
-
     /**
      * Get a tab based settings page
      *

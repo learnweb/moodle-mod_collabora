@@ -144,6 +144,5 @@ class restore_collabora_activity_structure_step extends restore_activity_structu
             }
             $file->set_timemodified($timestamp);
         }
-
     }
 }

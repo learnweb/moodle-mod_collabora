@@ -297,12 +297,12 @@ class util {
         $fs = get_file_storage();
 
         $templates = $fs->get_area_files(
-            $context->id,                    // Param contextid.
-            'mod_collabora',                 // Param component.
+            $context->id, // Param contextid.
+            'mod_collabora', // Param component.
             collabora_fs::FILEAREA_TEMPLATE, // Param filearea.
-            false,                           // Param itemid.
-            'filename',                      // Param sort.
-            false                            // Param includedirs.
+            false, // Param itemid.
+            'filename', // Param sort.
+            false // Param includedirs.
         );
 
         $templatelist = [];
@@ -326,15 +326,15 @@ class util {
         $context = \context_module::instance($cm->id);
         $fs    = get_file_storage();
         $files = $fs->get_area_files(
-            $context->id,                   // Param contextid.
-            'mod_collabora',                // Param component.
+            $context->id, // Param contextid.
+            'mod_collabora', // Param component.
             collabora_fs::FILEAREA_INITIAL, // Param filearea.
-            false,                          // Param itemid.
-            'filename',                     // Param sort.
-            false,                          // Param includedirs.
-            0,                              // Param updatedsince.
-            0,                              // Param limitfrom.
-            1                               // Param limitnum.
+            false, // Param itemid.
+            'filename', // Param sort.
+            false, // Param includedirs.
+            0, // Param updatedsince.
+            0, // Param limitfrom.
+            1 // Param limitnum.
         );
         if ($files) {
             $file  = reset($files);
