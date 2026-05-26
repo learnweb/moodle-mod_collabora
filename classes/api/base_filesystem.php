@@ -51,6 +51,10 @@ abstract class base_filesystem {
     protected $showversionui;
     /** @var int */
     protected $version;
+    /** @var \curl */
+    protected $curl;
+    /** @var string */
+    protected $baseurl;
 
     /**
      * Get the URL for editing built from the given mimetype.
@@ -71,48 +75,7 @@ abstract class base_filesystem {
         if (!$url) {
             throw new \moodle_exception('unsupportedtype', 'mod_collabora', '', $mimetype);
         }
-
         return (string) $url;
-    }
-
-    /**
-     * Get the discovery XML file from the collabora server.
-     * @param  \stdClass $cfg the collabora configuration
-     * @return string    The xml string
-     */
-    public static function get_discovery_xml($cfg) {
-        $baseurl = trim($cfg->url);
-
-        $cache = \cache::make('mod_collabora', 'discovery');
-        if (!$xml = $cache->get($baseurl)) {
-            if (static::is_testing()) {
-                $xml = static::get_fixture_discovery_xml();
-            } else {
-                $url = rtrim($baseurl, '/') . '/hosting/discovery';
-
-                // Do we explicitely allow the Collabora host?
-                $curlsettings = [];
-                if (!empty($cfg->allowcollaboraserverexplicit)) {
-                    $curlsettings = [
-                        'securityhelper' => new curl_security_helper($url),
-                    ];
-                }
-                $curl = new \curl($curlsettings);
-                $xml  = $curl->get($url);
-            }
-            // Check whether or not the xml is valid.
-            try {
-                new \SimpleXMLElement($xml);
-            } catch (\Exception $e) {
-                $xmlerror = true;
-            }
-            if (!empty($xmlerror)) {
-                throw new \moodle_exception('XML-Error: ' . $xml);
-            }
-            $cache->set($baseurl, $xml);
-        }
-
-        return $xml;
     }
 
     /**
@@ -179,9 +142,9 @@ abstract class base_filesystem {
      * Get a dummy discovery xml from the fixtures folder. This is used if the Moodle instance is in testing mode
      * or the "url" setting is empty. {@see static::is_testing}.
      *
-     * @return void
+     * @return string
      */
-    public static function get_fixture_discovery_xml() {
+    public static function get_fixture_discovery_xml(): string {
         global $CFG;
 
         $search  = 'https://example.com/browser/randomid/cool.html';
@@ -252,6 +215,17 @@ abstract class base_filesystem {
         $this->useversions   = $this->myconfig->enableversions ?? false;
         $this->useversions   = $this->useversions && $useversions; // Versions can be disabled through the constructor param.
         $this->showversionui = $showversionui;
+
+        $this->baseurl = trim($this->myconfig->url);
+
+        // Do we explicitely allow the Collabora host?
+        $curlsettings = [];
+        if (!empty($this->myconfig->allowcollaboraserverexplicit)) {
+            $curlsettings = [
+                'ignoresecurity' => true,
+            ];
+        }
+        $this->curl = new \curl($curlsettings);
     }
 
     /**
@@ -304,10 +278,15 @@ abstract class base_filesystem {
      * Get the URL of the handler, based on the mimetype of the existing file.
      *
      * @return \moodle_url
+     * @throws \moodle_exception
      */
     public function get_collabora_url() {
         $mimetype     = $this->get_file_mimetype();
-        $discoveryxml = $this->load_discovery_xml();
+        $discoveryxml = $this->get_discovery_xml();
+
+        if (is_null($discoveryxml)) {
+            throw new \moodle_exception('couldnotconnecttocollabora', 'mod_collabora');
+        }
 
         return new \moodle_url(
             static::get_url_from_mimetype(
@@ -364,14 +343,6 @@ abstract class base_filesystem {
      * @return \moodle_url
      */
     public function get_view_url() {
-        // Preparing the parameters.
-        $fileid  = $this->get_file_id();
-        $wopisrc = $this->callbackurl->out() . '/wopi/files/' . $fileid;
-        $token   = $this->get_user_token();
-        // The loleaflet.html from $collaboraurl accepts a lang parameter but only with hyphen and not the underscore from moodle.
-        // This is prepared by get_collabora_lang().
-        $lang = static::get_collabora_lang();
-
         $collaboraurl = $this->get_collabora_url();
         $params       = $this->get_view_params();
         $collaboraurl->params($params);
@@ -426,12 +397,139 @@ abstract class base_filesystem {
     }
 
     /**
-     * Load the discovery XML file from the collabora server into the cache.
+     * Get the productVersionHash from the collabora server
+     * If this hash changes, then the collabora server has been updated and the discovery.xml should be reloaded.
      *
      * @return string
      */
-    private function load_discovery_xml() {
-        return static::get_discovery_xml($this->myconfig);
+    protected function get_product_version_hash() {
+        // If we are in texting mode, we don't have the real hash, so we return a dummy hash.
+        if (static::is_testing()) {
+            return 'testhash';
+        }
+
+        $url = rtrim($this->baseurl, '/') . '/hosting/capabilities';
+        $collaboracaps = $this->curl->get($url);
+        $collaboracaps = @json_decode($collaboracaps);
+
+        return $collaboracaps->productVersionHash ?? '';
+    }
+
+    /**
+     * Checks if the Collabora product version has changed and updates the cached version hash.
+     *
+     * If the version has changed, the discovery XML cache is cleared to ensure
+     * fresh data is loaded from the server.
+     *
+     * @throws \moodle_exception If the product version hash cannot be retrieved
+     */
+    protected function check_product_version() {
+        if (!$productversionhash = $this->get_product_version_hash()) {
+            throw new \moodle_exception('couldnotconnecttocollabora', 'mod_collabora');
+        }
+        $currenthash = $this->myconfig->productversionhash ?? '';
+        if ($currenthash != $productversionhash) {
+            // Remove discovery xml from cache.
+            $this->clear_discovery_cache();
+        }
+        set_config('productversionhash', $productversionhash, 'mod_collabora');
+    }
+
+
+    /**
+     * Clears the discovery cache for Collabora.
+     *
+     * This method purges the cached discovery data used by the Collabora module,
+     * forcing a fresh retrieval on the next request.
+     *
+     * @return void
+     */
+    protected function clear_discovery_cache() {
+        $cache = \cache::make('mod_collabora', 'discovery');
+        $cache->purge();
+    }
+
+    /**
+     * Caches the discovery XML response from the Collabora server.
+     *
+     * @param string $rawxml The raw XML discovery response to be cached
+     */
+    protected function cache_discovery($rawxml) {
+        $cache = \cache::make('mod_collabora', 'discovery');
+        $cache->set($this->baseurl, $rawxml);
+    }
+
+    /**
+     * Retrieves the discovery XML from cache if available and valid.
+     *
+     * @return ?string The cached discovery XML if valid, null otherwise
+     */
+    protected function get_discovery_from_cache(): ?string {
+        $cache = \cache::make('mod_collabora', 'discovery');
+        if (!$rawxml = $cache->get($this->baseurl)) {
+            return null;
+        }
+
+        if ($this->simple_check_xml($rawxml)) {
+            return $rawxml;
+        }
+        return null;
+    }
+
+    /**
+     * Validates the structure of a Collabora XML document.
+     *
+     * Does a simple check if the provided XML string is valid and contains a "calc" app node
+     * with a required "urlsrc" action attribute.
+     *
+     * @param string $rawxml The raw XML string to validate
+     * @return bool True if XML is valid and contains required attributes, false otherwise
+     */
+    protected function simple_check_xml(string $rawxml): bool {
+        try {
+            $xml = new \SimpleXMLElement($rawxml);
+        } catch (\Exception $e) {
+            return false;
+        }
+        $check = $xml->xpath("//app[@name='calc']");
+        if (empty($check[0]->action['urlsrc'])) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Load the discovery XML file from the collabora server into the cache.
+     *
+     * @return ?string
+     */
+    protected function get_discovery_xml(): ?string {
+        // First check if the product version is compatible.
+        $this->check_product_version();
+
+        // Try to retrieve the discovery XML from cache first.
+        if ($rawxml = $this->get_discovery_from_cache()) {
+            return $rawxml;
+        }
+
+        if (static::is_testing()) {
+            // In testing mode, use the fixture discovery XML.
+            $rawxml = static::get_fixture_discovery_xml();
+        } else {
+            // Construct the discovery URL by appending the endpoint to the base URL.
+            $url = rtrim($this->baseurl, '/') . '/hosting/discovery';
+            // Retrive the discovery XML from the collabora server.
+            $rawxml  = $this->curl->get($url);
+        }
+
+        // Do a simple check to see if the XML is valid.
+        if (!$this->simple_check_xml($rawxml)) {
+            return null;
+        }
+
+        // Cache the valid discovery XML for future use.
+        $this->cache_discovery($rawxml);
+        return $rawxml;
     }
 
     /**
@@ -565,7 +663,8 @@ abstract class base_filesystem {
      * Get a version of our file from this instance.
      *
      * @param int $version
-     * @return \stored_file
+     * @return ?\stored_file
+     * @throws \moodle_exception
      */
     public function get_version_file(int $version) {
         if (!$this->use_versions()) {
@@ -586,10 +685,10 @@ abstract class base_filesystem {
     }
 
     /**
-     * Get a version of our file from this instance.
+     * Delete a version of our file from this instance.
      *
      * @param int $version
-     * @return \stored_file
+     * @return bool
      */
     public function delete_version(int $version) {
         $versionfile = $this->get_version_file($version);
