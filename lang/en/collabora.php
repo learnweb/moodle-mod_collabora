@@ -33,6 +33,7 @@ $string['collabora:repair']                                  = 'Repair a broken 
 $string['collabora:view']                                    = 'View a collaborative document';
 $string['collaboraurl']                                      = 'Collabora URL';
 $string['collaboraurlnotset']                                = 'Collabora URL is not configured for this site';
+$string['couldnotconnecttocollabora']                        = 'Could not connect to the Collabora Server. Please contact your administrator.';
 $string['couldnotdeleteversion']                             = 'Could not delete version';
 $string['couldnotrestoreversion']                            = 'Could not restore version';
 $string['current']                                           = 'Current tab';
