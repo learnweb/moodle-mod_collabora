@@ -25,6 +25,7 @@
 
 namespace mod_collabora\setting_tab;
 use mod_collabora\util;
+use mod_collabora\api\collabora_fs;
 
 /**
  * Settings tab for the connection settings

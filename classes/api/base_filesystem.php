@@ -196,6 +196,153 @@ abstract class base_filesystem {
     }
 
     /**
+     * Gets or initializes a curl instance for Collabora API requests.
+     *
+     * If the Collabora server is explicitly allowed in the configuration,
+     * security checks will be ignored for the curl requests.
+     *
+     * @return \curl The cURL instance configured for Collabora API communication
+     */
+    public static function get_curl(): \curl {
+        static $curl;
+
+        if (empty($curl)) {
+            // Do we explicitely allow the Collabora host?
+            $curlsettings = [];
+            $config = static::get_config();
+            if (!empty($config->allowcollaboraserverexplicit)) {
+                $curlsettings = [
+                    'ignoresecurity' => true,
+                ];
+            }
+            $curl = new \curl($curlsettings);
+        }
+        return $curl;
+    }
+
+    /**
+     * Retrieves the Collabora module configuration.
+     *
+     * @return \stdClass The Collabora module configuration object containing all settings
+     */
+    public static function get_config() {
+        static $config;
+
+        if (empty($config)) {
+            $config = get_config('mod_collabora');
+        }
+        return $config;
+    }
+
+    /**
+     * Retrieves the base URL for the Collabora service.
+     *
+     * @return string The base URL of the Collabora service without trailing slashes
+     */
+    public static function get_base_url() {
+        static $baseurl;
+
+        if (empty($baseurl)) {
+            $config = static::get_config();
+            $baseurl = trim($config->url);
+            $baseurl = rtrim($baseurl, '/');
+        }
+        return $baseurl;
+    }
+
+    /**
+     * Retrieves the capabilities of the Collabora server.
+     *
+     * @return \stdClass|null Returns the capabilities as an object on success,
+     *                        null if in testing mode or if the request fails.
+     */
+    public static function get_capabilities(): ?\stdClass {
+        // If we are in texting mode, we don't have the real hash, so we return a dummy hash.
+        if (static::is_testing()) {
+            return null;
+        }
+
+        $baseurl = static::get_base_url();
+        $url = $baseurl . '/hosting/capabilities';
+        $curl = static::get_curl();
+        $collaboracaps = $curl->get($url);
+        return @json_decode($collaboracaps);
+    }
+
+    /**
+     * Checks whether PDF conversion is enabled in the global configuration.
+     *
+     * @return bool True if PDF conversion is enabled, false otherwise
+     */
+    public static function is_pdf_convert_enabled() {
+        return true; // There is actually no setting yet.
+    }
+
+    /**
+     * Gets the conversion endpoint URL for the specified file type.
+     *
+     * @param string $type The target file type to convert to (default: 'pdf')
+     * @return string The full conversion endpoint URL, or empty string if not available
+     */
+    public static function get_convert_endpoint($type = 'pdf') {
+        $caps = static::get_capabilities();
+        if (empty($caps->{'convert-to'}->available)) {
+            return '';
+        }
+        $endpoint = $caps->{'convert-to'}->endpoint ?? '';
+        if (empty($endpoint)) {
+            return '';
+        }
+        $baseurl = static::get_base_url();
+        // The endpoint has a leading slash e.g. "/cool/convert-to".
+        return $baseurl . $endpoint . '/' . $type;
+    }
+
+    /**
+     * Converts a given file to PDF format using the Collabora conversion service.
+     *
+     * @param \stored_file $filetoconvert The file to be converted to PDF.
+     * @return string|null The PDF content as a string if successful, null otherwise.
+     */
+    public static function convert_to_pdf(\stored_file $filetoconvert): ?string {
+        global $CFG;
+        require_once($CFG->libdir . '/filelib.php');
+
+        $filename = $filetoconvert->get_filename();
+        $filecontent = $filetoconvert->get_content();
+
+        // Return null if the conversion endpoint is not available.
+        if (!$converturl = static::get_convert_endpoint()) {
+            return null;
+        }
+
+        // Configure curl options for the request.
+        $options = [
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_NOBODY' => false,
+        ];
+        $curl = static::get_curl();
+        $curl->setopt($options);
+
+        // Prepare data for conversion service.
+        $postdata = [
+            'data' => new \CURLStringFile($filecontent, $filename),
+            'lang' => static::get_collabora_lang(),
+        ];
+
+        // Post data and get the converted file as string.
+        $pdfdata = $curl->post($converturl, $postdata);
+
+        // Return the PDF data if no errors occurred during the request.
+        if (!$curl->get_errno()) {
+            return $pdfdata;
+        }
+
+        // Return null if there was an error.
+        return null;
+    }
+
+    /**
      * Constructor.
      *
      * @param \stdClass    $user
@@ -206,7 +353,7 @@ abstract class base_filesystem {
      * @param bool         $showversionui
      */
     public function __construct($user, $file, $callbackurl, $version = 0, $useversions = true, $showversionui = false) {
-        $this->myconfig    = get_config('mod_collabora');
+        $this->myconfig    = static::get_config();
         $this->user        = $user;
         $this->file        = $file;
         $this->callbackurl = $callbackurl;
@@ -216,16 +363,10 @@ abstract class base_filesystem {
         $this->useversions   = $this->useversions && $useversions; // Versions can be disabled through the constructor param.
         $this->showversionui = $showversionui;
 
-        $this->baseurl = trim($this->myconfig->url);
+        $this->baseurl = static::get_base_url();
 
-        // Do we explicitely allow the Collabora host?
-        $curlsettings = [];
-        if (!empty($this->myconfig->allowcollaboraserverexplicit)) {
-            $curlsettings = [
-                'ignoresecurity' => true,
-            ];
-        }
-        $this->curl = new \curl($curlsettings);
+        // Get the curl instance for later use.
+        $this->curl = static::get_curl();
     }
 
     /**
@@ -408,9 +549,7 @@ abstract class base_filesystem {
             return 'testhash';
         }
 
-        $url = rtrim($this->baseurl, '/') . '/hosting/capabilities';
-        $collaboracaps = $this->curl->get($url);
-        $collaboracaps = @json_decode($collaboracaps);
+        $collaboracaps = static::get_capabilities();
 
         return $collaboracaps->productVersionHash ?? '';
     }
@@ -517,7 +656,7 @@ abstract class base_filesystem {
             $rawxml = static::get_fixture_discovery_xml();
         } else {
             // Construct the discovery URL by appending the endpoint to the base URL.
-            $url = rtrim($this->baseurl, '/') . '/hosting/discovery';
+            $url = $this->baseurl . '/hosting/discovery';
             // Retrive the discovery XML from the collabora server.
             $rawxml  = $this->curl->get($url);
         }
