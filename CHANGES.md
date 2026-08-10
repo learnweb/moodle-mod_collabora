@@ -4,6 +4,12 @@ moodle-mod_collabora
 Changes
 -------
 
+### v5.0.3
+* fix HTML iframe tag to allow clipboard read / write in Chrome (#55, #57)
+* use conversion API to convert documents to PDF (currently only used in assignsubmission_collabora)
+* adjust github actions for Moodle 5.3
+* changed maturity to stable (#58)
+
 ### v5.0.2
 * fix error on security helper (#56)
 * optimize cache and connection check
